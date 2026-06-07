@@ -19,6 +19,7 @@ public static class MauiProgram
             });
 
         // Register pages + view models
+        builder.Services.AddSingleton<SettingsViewModel>();
         builder.Services.AddTransient<MainPage>();
         builder.Services.AddTransient<MainViewModel>();
 
