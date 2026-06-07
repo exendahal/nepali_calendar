@@ -69,7 +69,11 @@ internal class NepaliDatePickerSheet : ContentView
     private readonly ContentView _calendarHost;
     private readonly Border _bsChip, _adChip;
 
-    private static readonly string[] DowLabels = ["S", "M", "T", "W", "T", "F", "S"];
+    // Sun → Sat, matching DayOfWeek order (Sunday = 0)
+    private static readonly string[] DowLabels       = ["S",    "M",   "T",     "W",   "T",     "F",     "S"   ];
+    private static readonly string[] DowLabelsNepali = ["आइ",  "सो",  "मं",   "बु",  "बि",   "शु",   "श"   ];
+    // Longer abbreviations used in the header date line (e.g. "आइत, बैशाख ५, २०८२")
+    private static readonly string[] DowHeaderNepali = ["आइत", "सोम", "मंगल", "बुध", "बिही", "शुक्र", "शनि"];
     private static readonly string[] AdMonthNames =
     [
         "January","February","March","April","May","June",
@@ -131,10 +135,10 @@ internal class NepaliDatePickerSheet : ContentView
         // ── Header ────────────────────────────────────────────────────────────
         var selectLabel = new Label
         {
-            Text = "SELECT DATE",
+            Text = _useNepaliScript && _isBsMode ? "मिति छान्नुहोस्" : "SELECT DATE",
             FontSize = 11,
             FontAttributes = FontAttributes.Bold,
-            CharacterSpacing = 1.5,
+            CharacterSpacing = _useNepaliScript && _isBsMode ? 0 : 1.5,
             TextColor = Color.FromRgba((byte)255, (byte)255, (byte)255, (byte)178),
         };
         ApplyFont(selectLabel);
@@ -152,20 +156,16 @@ internal class NepaliDatePickerSheet : ContentView
             Text = "▾",
             FontSize = 13,
             VerticalTextAlignment = TextAlignment.Center,
-            Margin = new Thickness(6, 0, 0, 0),
-            TextColor = Color.FromRgba((byte)255, (byte)255, (byte)255, (byte)178),
         };
+        _chevronLabel.SetAppThemeColor(Label.TextColorProperty, _onSurface, _onSurfaceDark);
 
         var headerDateRow = new HorizontalStackLayout
         {
             Spacing = 0,
             Margin = new Thickness(0, 4, 0, 2),
             HorizontalOptions = LayoutOptions.Start,
-            Children = { _headerDateLabel, _chevronLabel },
+            Children = { _headerDateLabel },
         };
-        var headerTap = new TapGestureRecognizer();
-        headerTap.Tapped += (_, _) => ToggleYearMonthPicker();
-        headerDateRow.GestureRecognizers.Add(headerTap);
 
         _headerEquivLabel = new Label
         {
@@ -212,20 +212,29 @@ internal class NepaliDatePickerSheet : ContentView
         {
             FontSize = 14,
             FontAttributes = FontAttributes.Bold,
-            HorizontalTextAlignment = TextAlignment.Center,
-            VerticalTextAlignment   = TextAlignment.Center,
-            HorizontalOptions       = LayoutOptions.Fill,
+            VerticalTextAlignment = TextAlignment.Center,
         };
         _monthYearLabel.SetAppThemeColor(Label.TextColorProperty, _onSurface, _onSurfaceDark);
         ApplyFont(_monthYearLabel);
+
+        var monthYearRow = new HorizontalStackLayout
+        {
+            Spacing = 4,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions   = LayoutOptions.Center,
+            Children = { _monthYearLabel, _chevronLabel },
+        };
+        var monthYearTap = new TapGestureRecognizer();
+        monthYearTap.Tapped += (_, _) => ToggleYearMonthPicker();
+        monthYearRow.GestureRecognizers.Add(monthYearTap);
 
         var navRow = new Grid { HeightRequest = 44, Padding = new Thickness(4, 0) };
         navRow.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
         navRow.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         navRow.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
         navRow.Add(_prevBtn);
-        Grid.SetColumn(_monthYearLabel, 1); navRow.Add(_monthYearLabel);
-        Grid.SetColumn(_nextBtn, 2);        navRow.Add(_nextBtn);
+        Grid.SetColumn(monthYearRow, 1); navRow.Add(monthYearRow);
+        Grid.SetColumn(_nextBtn, 2);     navRow.Add(_nextBtn);
 
         // ── Day-of-week header ────────────────────────────────────────────────
         _dowRow = BuildDowRow();
@@ -326,6 +335,7 @@ internal class NepaliDatePickerSheet : ContentView
         ApplyChipState();
         RefreshHeader();
         RefreshMonthYear();
+        RefreshDowRow();
         RebuildCalendar();
     }
 
@@ -452,7 +462,8 @@ internal class NepaliDatePickerSheet : ContentView
         {
             if (_useNepaliScript)
             {
-                _headerDateLabel.Text = $"{ad:ddd}, {NepaliDate.MonthNamesNepali[_bsMonth - 1]} {N(_bsDay)}, {N(_bsYear)}";
+                var dow = DowHeaderNepali[(int)ad.DayOfWeek];
+                _headerDateLabel.Text = $"{dow}, {NepaliDate.MonthNamesNepali[_bsMonth - 1]} {N(_bsDay)}, {N(_bsYear)}";
             }
             else
             {
@@ -820,12 +831,14 @@ internal class NepaliDatePickerSheet : ContentView
         for (int i = 0; i < 7; i++)
             grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
 
+        var labels = _useNepaliScript && _isBsMode ? DowLabelsNepali : DowLabels;
         for (int i = 0; i < 7; i++)
         {
             var lbl = new Label
             {
-                Text = DowLabels[i],
-                FontSize = 12,
+                Text = labels[i],
+                FontSize = 13,
+                FontAttributes = FontAttributes.Bold,
                 HorizontalTextAlignment = TextAlignment.Center,
                 VerticalTextAlignment   = TextAlignment.Center,
             };
@@ -835,6 +848,16 @@ internal class NepaliDatePickerSheet : ContentView
             grid.Add(lbl);
         }
         return grid;
+    }
+
+    private void RefreshDowRow()
+    {
+        var labels = _useNepaliScript && _isBsMode ? DowLabelsNepali : DowLabels;
+        int i = 0;
+        foreach (var child in _dowRow.Children)
+        {
+            if (child is Label lbl) lbl.Text = labels[i++];
+        }
     }
 
     // ── Builder helpers ───────────────────────────────────────────────────────
@@ -880,7 +903,11 @@ internal class NepaliDatePickerSheet : ContentView
 
     private void ApplyFont(Label label)
     {
-        if (_fontFamily is not null) label.FontFamily = _fontFamily;
+        // Always set FontFamily (even null) so the local setter wins over any app-level
+        // implicit style (e.g. "OpenSansRegular") that would otherwise block Devanagari glyphs.
+        // A null value here makes MAUI fall back to the system font, which includes
+        // Devanagari via Android's NotoSans composite font.
+        label.FontFamily = _fontFamily;
     }
 
     // Converts an integer to Nepali (Devanagari) numeral string.
