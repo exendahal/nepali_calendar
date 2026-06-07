@@ -1,6 +1,6 @@
 # NepaliDatePicker.Maui
 
-A **Bikram Sambat (BS)** date picker for **.NET MAUI** built on a Material Design 3 calendar grid. Supports bottom-sheet and dialog presentation, BS ↔ AD dual-calendar toggle, full Devanagari script rendering, and rich theming.
+A **Bikram Sambat (BS)** date picker for **.NET MAUI** built on a Material Design calendar grid. Supports bottom-sheet and dialog presentation, BS ↔ AD dual-calendar toggle, full Devanagari script rendering, and rich theming.
 
 ---
 
@@ -8,7 +8,7 @@ A **Bikram Sambat (BS)** date picker for **.NET MAUI** built on a Material Desig
 
 | Feature | Details |
 |---|---|
-| **Material Design 3 calendar** | Month grid with today highlight, selected-day fill, and smooth navigation |
+| **Material Design calendar** | Month grid with today highlight, selected-day fill, and smooth navigation |
 | **Dual presentation** | Bottom sheet (slide-up) or centered dialog (fade + scale) |
 | **BS / AD toggle** | Chip switch lets users pick in Bikram Sambat or Gregorian; live header updates |
 | **Devanagari script** | Month names, day/year numerals, weekday labels all render in Nepali script |
