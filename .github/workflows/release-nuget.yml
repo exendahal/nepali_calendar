@@ -1,0 +1,50 @@
+name: Create a (Pre)release on NuGet
+
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+      - "[0-9]+.[0-9]+.[0-9]+-beta"
+      - "[0-9]+.[0-9]+.[0-9]+-beta[0-9]+"
+      - "[0-9]+.[0-9]+.[0-9]+-preview[0-9]+"
+
+jobs:
+  release-nuget:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install MAUI workloads
+        run: dotnet workload install maui
+
+      - name: Verify commit exists in origin/main or origin/develop
+        run: |
+          git fetch --no-tags --prune origin +refs/heads/*:refs/remotes/origin/*
+          $branches = git branch --remote --contains
+          if (-not ($branches | Select-String -Pattern 'origin/main|origin/develop')) {
+            Write-Error "Tagged commit is not contained in origin/main or origin/develop"
+            exit 1
+          }
+
+      - name: Get version information from tag
+        id: get_version
+        run: |
+          "version=${{ github.ref_name }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Restore dependencies
+        run: dotnet restore src\NepaliDatePicker.csproj
+
+      - name: Build library
+        run: dotnet build src\NepaliDatePicker.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }}
+
+      - name: Pack library
+        run: dotnet pack src\NepaliDatePicker.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }} --no-build --output .
+
+      - name: Push
+        run: dotnet nuget push "*.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
