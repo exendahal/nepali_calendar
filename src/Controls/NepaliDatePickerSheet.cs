@@ -158,6 +158,7 @@ internal class NepaliDatePickerSheet : ContentView
         {
             Spacing = 0,
             Margin = new Thickness(0, 4, 0, 2),
+            HorizontalOptions = LayoutOptions.Start,
             Children = { _headerDateLabel, _chevronLabel },
         };
         var headerTap = new TapGestureRecognizer();
@@ -531,14 +532,24 @@ internal class NepaliDatePickerSheet : ContentView
 
         double yearScrollH = YearVisible * (YearCellH + YearSpacing) - YearSpacing;
         int    selRow      = (_pickerSelectedYear - minYear) / YearCols;
-        double scrollY     = Math.Max(0, (selRow - 1.5) * (YearCellH + YearSpacing));
+        double scrollY     = Math.Max(0, (selRow - 1) * (YearCellH + YearSpacing));
 
         var yearScroll = new ScrollView
         {
             Content       = yearGrid,
             HeightRequest = yearScrollH,
+            Opacity       = 0,  // hidden until scrolled to avoid visible jump from top
         };
-        yearScroll.Loaded += async (_, _) => await yearScroll.ScrollToAsync(0, scrollY, false);
+
+        // Loaded fires before Android's native layout pass on Android, so ScrollToAsync
+        // is a no-op at that point. Task.Delay yields past those passes before scrolling,
+        // and Opacity stays 0 until scroll is done so the user never sees the jump.
+        yearScroll.Loaded += async (_, _) =>
+        {
+            await Task.Delay(50);
+            await yearScroll.ScrollToAsync(0, scrollY, false);
+            yearScroll.Opacity = 1;
+        };
 
         root.Children.Add(yearScroll);
 
