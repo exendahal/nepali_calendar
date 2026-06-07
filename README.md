@@ -2,6 +2,8 @@
 
 A **Bikram Sambat (BS)** date picker for **.NET MAUI** built on a Material Design calendar grid. Supports bottom-sheet and dialog presentation, BS ↔ AD dual-calendar toggle, full Devanagari script rendering, and rich theming.
 
+[![NepaliDatePicker.Maui](https://img.shields.io/nuget/v/NepaliDatePicker.Maui)](https://www.nuget.org/packages/NepaliDatePicker.Maui/)
+
 ---
 
 ## Features
