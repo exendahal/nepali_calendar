@@ -288,6 +288,7 @@
                 SelectedDate="{Binding SelectedDate}"
                 DisplayMode="{Binding Settings.DisplayMode}"
                 Presentation="{Binding Settings.Presentation}"
+                UseNepaliScript="{Binding Settings.IsNepali}"
                 Placeholder="Pick a date…"
                 Format="d MMMM yyyy"
                 DateSelected="OnDateSelected"
@@ -302,6 +303,7 @@
                 SelectedDate="{Binding SelectedDate}"
                 DisplayMode="{Binding Settings.DisplayMode}"
                 Presentation="{Binding Settings.Presentation}"
+                UseNepaliScript="{Binding Settings.IsNepali}"
                 Placeholder="Custom teal picker…"
                 Format="d MMMM yyyy"
                 PrimaryColor="#00897B"
@@ -326,6 +328,7 @@
                 SelectedDate="{Binding SelectedDate}"
                 DisplayMode="{Binding Settings.DisplayMode}"
                 Presentation="{Binding Settings.Presentation}"
+                UseNepaliScript="{Binding Settings.IsNepali}"
                 Placeholder="Custom coral picker…"
                 Format="d MMMM yyyy"
                 PrimaryColor="#E53935"
@@ -356,6 +359,7 @@
                         SelectedDate="{Binding StartDate}"
                         DisplayMode="{Binding Settings.DisplayMode}"
                         Presentation="{Binding Settings.Presentation}"
+                        UseNepaliScript="{Binding Settings.IsNepali}"
                         Placeholder="Start…"
                         Format="d MMM yyyy" />
                 </VerticalStackLayout>
@@ -366,6 +370,7 @@
                         SelectedDate="{Binding EndDate}"
                         DisplayMode="{Binding Settings.DisplayMode}"
                         Presentation="{Binding Settings.Presentation}"
+                        UseNepaliScript="{Binding Settings.IsNepali}"
                         Placeholder="End…"
                         Format="d MMM yyyy" />
                 </VerticalStackLayout>

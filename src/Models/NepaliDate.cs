@@ -8,7 +8,7 @@ public record NepaliDate(int Year, int Month, int Day)
     public static readonly string[] MonthNames =
     [
         "Baisakh", "Jestha", "Ashadh", "Shrawan",
-        "Bhadra", "Ashwin", "Kartik", "Mangsir",
+        "Bhadra",  "Ashwin", "Kartik", "Mangsir",
         "Poush",   "Magh",   "Falgun", "Chaitra"
     ];
 
@@ -19,7 +19,7 @@ public record NepaliDate(int Year, int Month, int Day)
         "पुष",   "माघ",   "फाल्गुन", "चैत्र"
     ];
 
-    public string MonthName => MonthNames[Month - 1];
+    public string MonthName       => MonthNames[Month - 1];
     public string MonthNameNepali => MonthNamesNepali[Month - 1];
 
     public override string ToString() => $"{Year}/{Month:D2}/{Day:D2}";

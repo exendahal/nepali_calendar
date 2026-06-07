@@ -76,8 +76,9 @@ public partial class MainViewModel : ObservableObject
     {
         var opts = new NepaliDatePickerOptions
         {
-            DisplayMode  = Settings.DisplayMode,
-            Presentation = Settings.Presentation,
+            DisplayMode     = Settings.DisplayMode,
+            Presentation    = Settings.Presentation,
+            UseNepaliScript = Settings.IsNepali,
         };
         var result = await _picker.ShowAsync(SelectedDate, opts);
         if (result is not null)
@@ -96,8 +97,9 @@ public partial class MainViewModel : ObservableObject
     {
         var opts = new NepaliDatePickerOptions
         {
-            DisplayMode  = Settings.DisplayMode,
-            Presentation = Settings.Presentation,
+            DisplayMode     = Settings.DisplayMode,
+            Presentation    = Settings.Presentation,
+            UseNepaliScript = Settings.IsNepali,
         };
         var result = await _picker.ShowAsync(new NepaliDate(2075, 6, 15), opts);
         if (result is not null)
@@ -114,6 +116,7 @@ public partial class MainViewModel : ObservableObject
         {
             DisplayMode           = Settings.DisplayMode,
             Presentation          = Settings.Presentation,
+            UseNepaliScript       = Settings.IsNepali,
             PrimaryColor          = Color.FromArgb("#00897B"),
             PrimaryColorDark      = Color.FromArgb("#80CBC4"),
             HeaderBackgroundColor = Color.FromArgb("#00695C"),
@@ -146,8 +149,9 @@ public partial class MainViewModel : ObservableObject
     {
         var opts = new NepaliDatePickerOptions
         {
-            DisplayMode  = Settings.DisplayMode,
-            Presentation = Settings.Presentation,
+            DisplayMode     = Settings.DisplayMode,
+            Presentation    = Settings.Presentation,
+            UseNepaliScript = Settings.IsNepali,
         };
         var start = await _picker.ShowAsync(StartDate, opts);
         if (start is null) return;

@@ -141,6 +141,14 @@ public class NepaliDatePicker : ContentView
         BindableProperty.Create(nameof(CalendarIcon), typeof(string), typeof(NepaliDatePicker), "📅",
             propertyChanged: (b, _, n) => ((NepaliDatePicker)b)._iconLabel.Text = (string?)n ?? "📅");
 
+    /// <summary>
+    /// When <c>true</c>, the selected date on the button and inside the picker is rendered
+    /// in Devanagari script (Nepali numerals and month names). AD dates stay in English.
+    /// </summary>
+    public static readonly BindableProperty UseNepaliScriptProperty =
+        BindableProperty.Create(nameof(UseNepaliScript), typeof(bool), typeof(NepaliDatePicker), false,
+            propertyChanged: (b, _, _) => ((NepaliDatePicker)b).Refresh());
+
     // ── Public property accessors ─────────────────────────────────────────────
 
     public NepaliDate? SelectedDate
@@ -276,6 +284,12 @@ public class NepaliDatePicker : ContentView
         set => SetValue(CalendarIconProperty, value);
     }
 
+    public bool UseNepaliScript
+    {
+        get => (bool)GetValue(UseNepaliScriptProperty);
+        set => SetValue(UseNepaliScriptProperty, value);
+    }
+
     // ── Events ────────────────────────────────────────────────────────────────
     public event EventHandler<NepaliDate?>? DateSelected;
 
@@ -361,9 +375,10 @@ public class NepaliDatePicker : ContentView
     {
         var opts = new NepaliDatePickerOptions
         {
-            DisplayMode  = DisplayMode,
-            FontFamily   = PickerFontFamily,
-            Presentation = Presentation,
+            DisplayMode     = DisplayMode,
+            FontFamily      = PickerFontFamily,
+            Presentation    = Presentation,
+            UseNepaliScript = UseNepaliScript,
         };
 
         if (PrimaryColor is not null)      opts.PrimaryColor          = PrimaryColor;
@@ -411,6 +426,19 @@ public class NepaliDatePicker : ContentView
                 .Replace("d",    ad.Day.ToString());
         }
 
+        if (UseNepaliScript)
+        {
+            return Format
+                .Replace("MMMM", bsDate.MonthNameNepali)
+                .Replace("MMM",  bsDate.MonthNameNepali)
+                .Replace("MM",   Nep(bsDate.Month, pad: true))
+                .Replace("M",    Nep(bsDate.Month))
+                .Replace("yyyy", Nep(bsDate.Year))
+                .Replace("yy",   Nep(bsDate.Year % 100, pad: true))
+                .Replace("dd",   Nep(bsDate.Day, pad: true))
+                .Replace("d",    Nep(bsDate.Day));
+        }
+
         return Format
             .Replace("MMMM", bsDate.MonthName)
             .Replace("MMM",  bsDate.MonthName[..3])
@@ -420,5 +448,15 @@ public class NepaliDatePicker : ContentView
             .Replace("yy",   (bsDate.Year % 100).ToString("D2"))
             .Replace("dd",   bsDate.Day.ToString("D2"))
             .Replace("d",    bsDate.Day.ToString());
+    }
+
+    private static string Nep(int n, bool pad = false)
+    {
+        var s = pad ? n.ToString("D2") : n.ToString();
+        return s
+            .Replace('0', '०').Replace('1', '१').Replace('2', '२')
+            .Replace('3', '३').Replace('4', '४').Replace('5', '५')
+            .Replace('6', '६').Replace('7', '७').Replace('8', '८')
+            .Replace('9', '९');
     }
 }

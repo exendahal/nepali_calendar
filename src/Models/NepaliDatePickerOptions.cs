@@ -66,4 +66,11 @@ public class NepaliDatePickerOptions
     /// <see cref="PickerPresentation.Dialog"/> floats centered over the page.
     /// </summary>
     public PickerPresentation Presentation { get; set; } = PickerPresentation.BottomSheet;
+
+    /// <summary>
+    /// When <c>true</c>, all BS month names and numbers inside the picker are rendered
+    /// in Devanagari script (e.g. बैशाख, २०८२, ०१). AD dates always stay in English.
+    /// Default: <c>false</c>.
+    /// </summary>
+    public bool UseNepaliScript { get; set; } = false;
 }

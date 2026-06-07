@@ -39,6 +39,7 @@ internal class NepaliDatePickerSheet : ContentView
     private readonly Color _onSurface, _onSurfaceDark;
     private readonly Color _onSurfaceVar, _onSurfaceVarDk;
     private readonly string? _fontFamily;
+    private readonly bool _useNepaliScript;
 
     // ── Events ────────────────────────────────────────────────────────────────
     public event EventHandler<NepaliDate>? Done;
@@ -100,7 +101,8 @@ internal class NepaliDatePickerSheet : ContentView
         _onSurfaceDark  = options?.OnSurfaceColorDark            ?? options?.OnSurfaceColor ?? Md3OnSurfaceDark;
         _onSurfaceVar   = options?.OnSurfaceVariantColor         ?? Md3OnSurfaceVar;
         _onSurfaceVarDk = options?.OnSurfaceVariantColorDark     ?? options?.OnSurfaceVariantColor ?? Md3OnSurfaceVarDk;
-        _fontFamily     = options?.FontFamily;
+        _fontFamily       = options?.FontFamily;
+        _useNepaliScript  = options?.UseNepaliScript ?? false;
 
         _displayMode = options?.DisplayMode ?? DateDisplayMode.Both;
         _isBsMode    = _displayMode != DateDisplayMode.AdOnly;
@@ -448,7 +450,14 @@ internal class NepaliDatePickerSheet : ContentView
 
         if (_isBsMode)
         {
-            _headerDateLabel.Text  = $"{ad:ddd}, {NepaliDate.MonthNames[_bsMonth - 1]} {_bsDay}, {_bsYear}";
+            if (_useNepaliScript)
+            {
+                _headerDateLabel.Text = $"{ad:ddd}, {NepaliDate.MonthNamesNepali[_bsMonth - 1]} {N(_bsDay)}, {N(_bsYear)}";
+            }
+            else
+            {
+                _headerDateLabel.Text = $"{ad:ddd}, {NepaliDate.MonthNames[_bsMonth - 1]} {_bsDay}, {_bsYear}";
+            }
             _headerEquivLabel.Text = _displayMode == DateDisplayMode.BsOnly
                 ? string.Empty
                 : $"AD  {ad:d MMMM yyyy}";
@@ -464,9 +473,16 @@ internal class NepaliDatePickerSheet : ContentView
 
     private void RefreshMonthYear()
     {
-        _monthYearLabel.Text = _isBsMode
-            ? $"{NepaliDate.MonthNames[_viewMonth - 1]}  {_viewYear}"
-            : $"{new DateTime(_viewYear, _viewMonth, 1):MMMM yyyy}";
+        if (_isBsMode)
+        {
+            var month = _useNepaliScript ? NepaliDate.MonthNamesNepali[_viewMonth - 1] : NepaliDate.MonthNames[_viewMonth - 1];
+            var year  = _useNepaliScript ? N(_viewYear) : _viewYear.ToString();
+            _monthYearLabel.Text = $"{month}  {year}";
+        }
+        else
+        {
+            _monthYearLabel.Text = $"{new DateTime(_viewYear, _viewMonth, 1):MMMM yyyy}";
+        }
     }
 
     // ── Calendar / year-month dispatch ────────────────────────────────────────
@@ -560,7 +576,9 @@ internal class NepaliDatePickerSheet : ContentView
         root.Children.Add(sep);
 
         // ── Month grid (3 × 4) ────────────────────────────────────────────────
-        string[] monthNames = _isBsMode ? NepaliDate.MonthNames : AdMonthNames;
+        string[] monthNames = _isBsMode
+            ? (_useNepaliScript ? NepaliDate.MonthNamesNepali : NepaliDate.MonthNames)
+            : AdMonthNames;
 
         var monthGrid = new Grid { RowSpacing = MonthSpacing, ColumnSpacing = MonthSpacing };
         for (int c = 0; c < MonthCols; c++)
@@ -593,7 +611,7 @@ internal class NepaliDatePickerSheet : ContentView
     {
         var label = new Label
         {
-            Text = year.ToString(),
+            Text = (_useNepaliScript && _isBsMode) ? N(year) : year.ToString(),
             FontSize = 13,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment   = TextAlignment.Center,
@@ -745,7 +763,7 @@ internal class NepaliDatePickerSheet : ContentView
     {
         var label = new Label
         {
-            Text = day.ToString(),
+            Text = (_useNepaliScript && _isBsMode) ? N(day) : day.ToString(),
             FontSize = 14,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment   = TextAlignment.Center,
@@ -863,5 +881,17 @@ internal class NepaliDatePickerSheet : ContentView
     private void ApplyFont(Label label)
     {
         if (_fontFamily is not null) label.FontFamily = _fontFamily;
+    }
+
+    // Converts an integer to Nepali (Devanagari) numeral string.
+    // pad=true zero-pads to 2 digits before converting (e.g. 5 → "०५").
+    private static string N(int n, bool pad = false)
+    {
+        var s = pad ? n.ToString("D2") : n.ToString();
+        return s
+            .Replace('0', '०').Replace('1', '१').Replace('2', '२')
+            .Replace('3', '३').Replace('4', '४').Replace('5', '५')
+            .Replace('6', '६').Replace('7', '७').Replace('8', '८')
+            .Replace('9', '९');
     }
 }
