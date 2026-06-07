@@ -10,3 +10,5 @@
 /example/bin/Debug/net10.0-android
 /example/obj
 /example/bin/Debug/net10.0-windows10.0.19041.0/win-x64
+/example/bin/Release/net10.0-android
+/src/bin/Release
