@@ -1,139 +1,138 @@
-﻿using nepali_calendar_picker.Controls;
-using nepali_calendar_picker.Models;
+using NepaliDatePicker.Controls;
+using NepaliDatePicker.Models;
 
-namespace nepali_calendar_picker
+namespace NepaliDatePicker;
+
+internal class NepaliDatePickerPage : ContentPage
 {
-    internal class NepaliDatePickerPage : ContentPage
+    private readonly TaskCompletionSource<NepaliDate?> _tcs = new();
+    private readonly Grid _sheetContainer;
+    private readonly bool _isDialog;
+
+    public Task<NepaliDate?> Result => _tcs.Task;
+
+    public NepaliDatePickerPage(NepaliDate? initialDate = null, NepaliDatePickerOptions? options = null)
     {
-        private readonly TaskCompletionSource<NepaliDate?> _Tcs = new();
-        private readonly Grid _SheetContainer;
-        private readonly bool _IsDialog;
+        BackgroundColor = Colors.Transparent;
+        Shell.SetNavBarIsVisible(this, false);
 
-        public Task<NepaliDate?> Result => _Tcs.Task;
+        _isDialog = (options?.Presentation ?? PickerPresentation.BottomSheet) == PickerPresentation.Dialog;
 
-        public NepaliDatePickerPage(NepaliDate? initialDate = null, NepaliDatePickerOptions? options = null)
+        var sheet = new NepaliDatePickerSheet(initialDate, options);
+        sheet.Done      += async (_, date) => await DismissAsync(date);
+        sheet.Cancelled += async (_, _)    => await DismissAsync(null);
+
+        var scrim = new BoxView { Color = Color.FromArgb("#80000000") };
+
+        double cr = options?.SheetCornerRadius ?? 28;
+        CornerRadius cornerRadius = _isDialog
+            ? new CornerRadius(cr)
+            : new CornerRadius(cr, cr, 0, 0);
+
+        var sheetFrame = new Border
         {
-            BackgroundColor = Colors.Transparent;
-            Shell.SetNavBarIsVisible(this, false);
+            StrokeShape     = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = cornerRadius },
+            Stroke          = Colors.Transparent,
+            StrokeThickness = 0,
+            Padding         = 0,
+            Content         = sheet,
+        };
 
-            _IsDialog = (options?.Presentation ?? PickerPresentation.BottomSheet) == PickerPresentation.Dialog;
+        Color surfaceLight = options?.SurfaceColor ?? Color.FromArgb("#FFFBFE");
+        Color surfaceDark  = options?.SurfaceColorDark ?? options?.SurfaceColor ?? Color.FromArgb("#1C1B1F");
+        sheetFrame.SetAppThemeColor(Border.BackgroundColorProperty, surfaceLight, surfaceDark);
 
-            var sheet = new NepaliDatePickerSheet(initialDate, options);
-            sheet.Done += async (_, date) => await DismissAsync(date);
-            sheet.Cancelled += async (_, _) => await DismissAsync(null);
+        _sheetContainer = new Grid
+        {
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions   = _isDialog ? LayoutOptions.Center : LayoutOptions.End,
+            Margin            = _isDialog ? new Thickness(32, 0) : Thickness.Zero,
+        };
+        _sheetContainer.Add(sheetFrame);
 
-            var scrim = new BoxView { Color = Color.FromArgb("#80000000") };
-
-            double cr = options?.SheetCornerRadius ?? 28;
-            CornerRadius cornerRadius = _IsDialog
-                ? new CornerRadius(cr)
-                : new CornerRadius(cr, cr, 0, 0);
-
-            var sheetFrame = new Border
+        Grid rootGrid;
+        if (_isDialog)
+        {
+            // Single full-screen cell; scrim fills everything, container floats centered on top.
+            rootGrid = new Grid();
+            rootGrid.Add(scrim);
+            rootGrid.Add(_sheetContainer);
+        }
+        else
+        {
+            // Two-row layout so the sheet anchors to the bottom.
+            rootGrid = new Grid
             {
-                StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = cornerRadius },
-                Stroke = Colors.Transparent,
-                StrokeThickness = 0,
-                Padding = 0,
-                Content = sheet,
-            };
-
-            Color surfaceLight = options?.SurfaceColor ?? Color.FromArgb("#FFFBFE");
-            Color surfaceDark = options?.SurfaceColorDark ?? options?.SurfaceColor ?? Color.FromArgb("#1C1B1F");
-            sheetFrame.SetAppThemeColor(Border.BackgroundColorProperty, surfaceLight, surfaceDark);
-
-            _SheetContainer = new Grid
-            {
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = _IsDialog ? LayoutOptions.Center : LayoutOptions.End,
-                Margin = _IsDialog ? new Thickness(32, 0) : Thickness.Zero,
-            };
-            _SheetContainer.Add(sheetFrame);
-
-            Grid rootGrid;
-            if (_IsDialog)
-            {
-                // Single full-screen cell; scrim fills everything, container floats centered on top.
-                rootGrid = new Grid();
-                rootGrid.Add(scrim);
-                rootGrid.Add(_SheetContainer);
-            }
-            else
-            {
-                // Two-row layout so the sheet anchors to the bottom.
-                rootGrid = new Grid
-                {
-                    RowDefinitions =
+                RowDefinitions =
                 {
                     new RowDefinition(GridLength.Star),
                     new RowDefinition(GridLength.Auto),
                 }
-                };
-                rootGrid.Add(scrim);
-                Grid.SetRowSpan(scrim, 2);
-                Grid.SetRow(_SheetContainer, 1);
-                rootGrid.Add(_SheetContainer);
-            }
-
-            Content = rootGrid;
+            };
+            rootGrid.Add(scrim);
+            Grid.SetRowSpan(scrim, 2);
+            Grid.SetRow(_sheetContainer, 1);
+            rootGrid.Add(_sheetContainer);
         }
 
-        protected override void OnAppearing()
+        Content = rootGrid;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _ = AnimateIn();
+    }
+
+    protected override bool OnBackButtonPressed()
+    {
+        _ = DismissAsync(null);
+        return true;
+    }
+
+    private async Task AnimateIn()
+    {
+        if (_isDialog)
         {
-            base.OnAppearing();
-            _ = AnimateIn();
+            _sheetContainer.Opacity = 0;
+            _sheetContainer.Scale   = 0.92;
+            await Task.WhenAll(
+                _sheetContainer.FadeToAsync(1, 220, Easing.CubicOut),
+                _sheetContainer.ScaleToAsync(1.0, 220, Easing.CubicOut));
+        }
+        else
+        {
+            _sheetContainer.TranslationY = 600;
+            await _sheetContainer.TranslateToAsync(0, 0, 300, Easing.CubicOut);
+        }
+    }
+
+    private bool _dismissing;
+
+    private async Task DismissAsync(NepaliDate? result)
+    {
+        if (_dismissing) return;
+        _dismissing = true;
+
+        if (_isDialog)
+        {
+            await Task.WhenAll(
+                _sheetContainer.FadeToAsync(0, 180, Easing.CubicIn),
+                _sheetContainer.ScaleToAsync(0.92, 180, Easing.CubicIn));
+        }
+        else
+        {
+            await _sheetContainer.TranslateToAsync(0, 600, 260, Easing.CubicIn);
         }
 
-        protected override bool OnBackButtonPressed()
+        try
         {
-            _ = DismissAsync(null);
-            return true;
+            if (Navigation != null)
+                await Navigation.PopModalAsync(false);
         }
-
-        private async Task AnimateIn()
+        finally
         {
-            if (_IsDialog)
-            {
-                _SheetContainer.Opacity = 0;
-                _SheetContainer.Scale = 0.92;
-                await Task.WhenAll(
-                    _SheetContainer.FadeToAsync(1, 220, Easing.CubicOut),
-                    _SheetContainer.ScaleToAsync(1.0, 220, Easing.CubicOut));
-            }
-            else
-            {
-                _SheetContainer.TranslationY = 600;
-                await _SheetContainer.TranslateToAsync(0, 0, 300, Easing.CubicOut);
-            }
-        }
-
-        private bool _dismissing;
-
-        private async Task DismissAsync(NepaliDate? result)
-        {
-            if (_dismissing) return;
-            _dismissing = true;
-
-            if (_IsDialog)
-            {
-                await Task.WhenAll(
-                    _SheetContainer.FadeToAsync(0, 180, Easing.CubicIn),
-                    _SheetContainer.ScaleToAsync(0.92, 180, Easing.CubicIn));
-            }
-            else
-            {
-                await _SheetContainer.TranslateToAsync(0, 600, 260, Easing.CubicIn);
-            }
-
-            try
-            {
-                if (Navigation != null)
-                    await Navigation.PopModalAsync(false);
-            }
-            finally
-            {
-                _Tcs.TrySetResult(result);
-            }
+            _tcs.TrySetResult(result);
         }
     }
 }

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:nep="clr-namespace:NepaliDatePicker.Controls;assembly=NepaliDatePicker.Maui"
+             xmlns:models="clr-namespace:NepaliDatePicker.Models;assembly=NepaliDatePicker.Maui"
+             xmlns:vm="clr-namespace:NepaliDatePickerDemo"
+             x:Class="NepaliDatePickerDemo.MainPage"
+             x:DataType="vm:MainViewModel"
+             Title="Nepali Date Picker Demo">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,16" Spacing="0">
+
+            <!-- ── Hero ───────────────────────────────────────────────────── -->
+            <Label Text="Nepali Date Picker"
+                   FontSize="26"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,8,0,4" />
+
+            <Label Text="Bikram Sambat (BS) calendar · Material Design 3 · .NET MAUI"
+                   FontSize="12"
+                   HorizontalTextAlignment="Center"
+                   Opacity="0.6"
+                   Margin="0,0,0,28" />
+
+            <!-- ── Today info card ────────────────────────────────────────── -->
+            <Border StrokeShape="RoundRectangle 12"
+                    StrokeThickness="0"
+                    Padding="16,14"
+                    Margin="0,0,0,20">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#6750A4" Offset="0" />
+                        <GradientStop Color="#9C27B0" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Today"
+                           FontSize="12" TextColor="White" Opacity="0.75" />
+                    <Label Text="{Binding TodayBsDisplay}"
+                           FontSize="20" FontAttributes="Bold" TextColor="White" />
+                    <Label Text="{Binding TodayAdDisplay}"
+                           FontSize="13" TextColor="White" Opacity="0.85" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 SECTION 1 — Default picker (BS + AD toggle)
+            ══════════════════════════════════════════════════════════════════ -->
+            <Label Text="DEFAULT — BS + AD toggle"
+                   FontSize="12" FontAttributes="Bold" Opacity="0.5"
+                   Margin="0,0,0,6" />
+
+            <nep:NepaliDatePicker
+                SelectedDate="{Binding SelectedDate}"
+                Placeholder="Pick a date…"
+                Format="d MMMM yyyy"
+                DateSelected="OnDateSelected"
+                Margin="0,0,0,16" />
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 SECTION 2 — BS Only mode
+            ══════════════════════════════════════════════════════════════════ -->
+            <Label Text="BS ONLY mode"
+                   FontSize="12" FontAttributes="Bold" Opacity="0.5"
+                   Margin="0,0,0,6" />
+
+            <nep:NepaliDatePicker
+                SelectedDate="{Binding SelectedDate}"
+                DisplayMode="BsOnly"
+                Placeholder="Pick a BS date…"
+                Format="dd/MM/yyyy"
+                Margin="0,0,0,16" />
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 SECTION 3 — AD Only mode
+            ══════════════════════════════════════════════════════════════════ -->
+            <Label Text="AD (GREGORIAN) ONLY mode"
+                   FontSize="12" FontAttributes="Bold" Opacity="0.5"
+                   Margin="0,0,0,6" />
+
+            <nep:NepaliDatePicker
+                SelectedDate="{Binding SelectedDate}"
+                DisplayMode="AdOnly"
+                Placeholder="Pick a Gregorian date…"
+                Format="d MMMM yyyy"
+                Margin="0,0,0,16" />
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 SECTION 4 — Custom styled picker
+            ══════════════════════════════════════════════════════════════════ -->
+            <Label Text="CUSTOM STYLE — teal theme"
+                   FontSize="12" FontAttributes="Bold" Opacity="0.5"
+                   Margin="0,0,0,6" />
+
+            <nep:NepaliDatePicker
+                SelectedDate="{Binding SelectedDate}"
+                Placeholder="Custom teal picker…"
+                Format="d MMMM yyyy"
+                PrimaryColor="#00897B"
+                PrimaryColorDark="#80CBC4"
+                PickerHeaderColor="#00695C"
+                BorderColor="#00897B"
+                BorderColorDark="#4DB6AC"
+                InputBackgroundColor="#E0F2F1"
+                InputBackgroundColorDark="#004D40"
+                TextColor="#004D40"
+                TextColorDark="#A7FFEB"
+                PlaceholderColor="#80CBC4"
+                CornerRadius="20"
+                Margin="0,0,0,16" />
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 SECTION 5 — Custom styled red/orange theme
+            ══════════════════════════════════════════════════════════════════ -->
+            <Label Text="CUSTOM STYLE — coral theme"
+                   FontSize="12" FontAttributes="Bold" Opacity="0.5"
+                   Margin="0,0,0,6" />
+
+            <nep:NepaliDatePicker
+                SelectedDate="{Binding SelectedDate}"
+                Placeholder="Custom coral picker…"
+                Format="d MMMM yyyy"
+                PrimaryColor="#E53935"
+                PickerHeaderColor="#B71C1C"
+                BorderColor="#E53935"
+                InputBackgroundColor="#FFEBEE"
+                InputBackgroundColorDark="#4A0000"
+                TextColor="#B71C1C"
+                TextColorDark="#FF8A80"
+                PlaceholderColor="#EF9A9A"
+                CornerRadius="4"
+                Margin="0,0,0,24" />
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 SECTION 6 — Date range selection
+            ══════════════════════════════════════════════════════════════════ -->
+            <Label Text="DATE RANGE SELECTION"
+                   FontSize="12" FontAttributes="Bold" Opacity="0.5"
+                   Margin="0,0,0,6" />
+
+            <Grid ColumnSpacing="12" Margin="0,0,0,6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Start date" FontSize="11" Opacity="0.55" />
+                    <nep:NepaliDatePicker
+                        SelectedDate="{Binding StartDate}"
+                        Placeholder="Start…"
+                        Format="d MMM yyyy" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="4">
+                    <Label Text="End date" FontSize="11" Opacity="0.55" />
+                    <nep:NepaliDatePicker
+                        SelectedDate="{Binding EndDate}"
+                        Placeholder="End…"
+                        Format="d MMM yyyy" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <Border StrokeShape="RoundRectangle 12"
+                    StrokeThickness="0"
+                    Padding="16,14"
+                    Margin="0,0,0,8">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#0097A7" Offset="0" />
+                        <GradientStop Color="#00695C" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Selected Range"
+                           FontSize="12" TextColor="White" Opacity="0.75" />
+                    <Label Text="{Binding RangeDurationDisplay}"
+                           FontSize="22" FontAttributes="Bold" TextColor="White" />
+                    <Label Text="{Binding StartDateDisplay, StringFormat='From: {0}'}"
+                           FontSize="13" TextColor="White" Opacity="0.85" />
+                    <Label Text="{Binding EndDateDisplay, StringFormat='To:     {0}'}"
+                           FontSize="13" TextColor="White" Opacity="0.85" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Open Range Picker (programmatic)"
+                    Command="{Binding OpenRangePickerCommand}"
+                    Margin="0,0,0,24"
+                    HeightRequest="50"
+                    CornerRadius="12"
+                    BackgroundColor="#0097A7"
+                    TextColor="White"
+                    FontAttributes="Bold" />
+
+            <!-- ══════════════════════════════════════════════════════════════
+                 SECTION 7 — Dialog presentation
+            ══════════════════════════════════════════════════════════════════ -->
+            <Label Text="DIALOG PRESENTATION"
+                   FontSize="12" FontAttributes="Bold" Opacity="0.5"
+                   Margin="0,0,0,6" />
+
+            <nep:NepaliDatePicker
+                SelectedDate="{Binding SelectedDate}"
+                Presentation="Dialog"
+                Placeholder="Pick a date (dialog)…"
+                Format="d MMMM yyyy"
+                Margin="0,0,0,10" />
+
+            <Button Text="Open Dialog Picker (programmatic)"
+                    Command="{Binding OpenDialogPickerCommand}"
+                    Margin="0,0,0,24"
+                    HeightRequest="50"
+                    CornerRadius="12"
+                    BackgroundColor="#5856D6"
+                    TextColor="White"
+                    FontAttributes="Bold" />
+
+            <!-- ── Selected date card ──────────────────────────────────────── -->
+            <Border StrokeShape="RoundRectangle 12"
+                    StrokeThickness="0"
+                    Padding="16,14"
+                    Margin="0,0,0,12">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#FF4081" Offset="0" />
+                        <GradientStop Color="#7C4DFF" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Selected Date"
+                           FontSize="12" TextColor="White" Opacity="0.75" />
+                    <Label Text="{Binding SelectedDateDisplay}"
+                           FontSize="22" FontAttributes="Bold" TextColor="White" />
+                    <Label Text="{Binding AdEquivalentDisplay}"
+                           FontSize="13" TextColor="White" Opacity="0.85" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding StatusMessage}"
+                   FontSize="13"
+                   Opacity="0.65"
+                   HorizontalTextAlignment="Center"
+                   Margin="0,8,0,20" />
+
+            <!-- ── Programmatic API ───────────────────────────────────────── -->
+            <Label Text="PROGRAMMATIC API"
+                   FontSize="12" FontAttributes="Bold" Opacity="0.5"
+                   Margin="0,0,0,8" />
+
+            <Button Text="Open Picker (today's date)"
+                    Command="{Binding OpenPickerCommand}"
+                    Margin="0,0,0,8"
+                    HeightRequest="50"
+                    CornerRadius="12"
+                    BackgroundColor="#007AFF"
+                    TextColor="White"
+                    FontAttributes="Bold" />
+
+            <Button Text="Open Picker at 2075 / Ashwin / 15"
+                    Command="{Binding OpenPickerAtSpecificDateCommand}"
+                    Margin="0,0,0,8"
+                    HeightRequest="50"
+                    CornerRadius="12"
+                    BackgroundColor="#5856D6"
+                    TextColor="White" />
+
+            <Button Text="Open Picker (BS Only, custom teal)"
+                    Command="{Binding OpenPickerBsOnlyCommand}"
+                    Margin="0,0,0,8"
+                    HeightRequest="50"
+                    CornerRadius="12"
+                    BackgroundColor="#00897B"
+                    TextColor="White" />
+
+            <Grid ColumnSpacing="12" Margin="0,0,0,32">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Text="Set Today"
+                        Command="{Binding SetTodayCommand}"
+                        CornerRadius="12"
+                        HeightRequest="48"
+                        BackgroundColor="#34C759"
+                        TextColor="White" />
+
+                <Button Text="Clear"
+                        Grid.Column="1"
+                        Command="{Binding ClearDateCommand}"
+                        CornerRadius="12"
+                        HeightRequest="48"
+                        BackgroundColor="#FF3B30"
+                        TextColor="White" />
+            </Grid>
+
+            <!-- ── Feature list ───────────────────────────────────────────── -->
+            <Label Text="Features"
+                   FontSize="17" FontAttributes="Bold"
+                   Margin="0,0,0,10" />
+
+            <VerticalStackLayout Spacing="8" Margin="0,0,0,40">
+                <Label Text="✅  Material Design 3 calendar grid UI" FontSize="14" />
+                <Label Text="✅  Bottom sheet with slide animation" FontSize="14" />
+                <Label Text="✅  Auto day clamping (BS months vary 29–32 days)" FontSize="14" />
+                <Label Text="✅  Accurate BS ↔ AD conversion (validated to Jestha 23, 2083)" FontSize="14" />
+                <Label Text="✅  DisplayMode: BsOnly / AdOnly / Both (with chip toggle)" FontSize="14" />
+                <Label Text="✅  User-defined colors, corner radius, font family" FontSize="14" />
+                <Label Text="✅  Light and dark theme aware" FontSize="14" />
+                <Label Text="✅  NepaliDatePicker drop-in control" FontSize="14" />
+                <Label Text="✅  INepaliDatePickerService for DI / MVVM" FontSize="14" />
+                <Label Text="✅  Date range selection (two-picker pattern)" FontSize="14" />
+                <Label Text="✅  Dialog presentation (centered floating + fade/scale animation)" FontSize="14" />
+                <Label Text="✅  BS year range 1970 – 2100" FontSize="14" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
