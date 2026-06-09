@@ -66,6 +66,14 @@ public class NepaliDatePicker : ContentView
     public static readonly BindableProperty PickerHeaderColorProperty =
         BindableProperty.Create(nameof(PickerHeaderColor), typeof(Color), typeof(NepaliDatePicker), null);
 
+    /// <summary>Calendar sheet body background color for the light theme.</summary>
+    public static readonly BindableProperty PickerBackgroundColorProperty =
+        BindableProperty.Create(nameof(PickerBackgroundColor), typeof(Color), typeof(NepaliDatePicker), null);
+
+    /// <summary>Calendar sheet body background color for the dark theme.</summary>
+    public static readonly BindableProperty PickerBackgroundColorDarkProperty =
+        BindableProperty.Create(nameof(PickerBackgroundColorDark), typeof(Color), typeof(NepaliDatePicker), null);
+
     // ── Bindable: button appearance ───────────────────────────────────────────
 
     /// <summary>Border (stroke) color of the date input field in light theme.</summary>
@@ -210,6 +218,18 @@ public class NepaliDatePicker : ContentView
     {
         get => (Color?)GetValue(PickerHeaderColorProperty);
         set => SetValue(PickerHeaderColorProperty, value);
+    }
+
+    public Color? PickerBackgroundColor
+    {
+        get => (Color?)GetValue(PickerBackgroundColorProperty);
+        set => SetValue(PickerBackgroundColorProperty, value);
+    }
+
+    public Color? PickerBackgroundColorDark
+    {
+        get => (Color?)GetValue(PickerBackgroundColorDarkProperty);
+        set => SetValue(PickerBackgroundColorDarkProperty, value);
     }
 
     public Color BorderColor
@@ -381,9 +401,11 @@ public class NepaliDatePicker : ContentView
             UseNepaliScript = UseNepaliScript,
         };
 
-        if (PrimaryColor is not null)      opts.PrimaryColor          = PrimaryColor;
-        if (PrimaryColorDark is not null)  opts.PrimaryColorDark      = PrimaryColorDark;
-        if (PickerHeaderColor is not null)  opts.HeaderBackgroundColor = PickerHeaderColor;
+        if (PrimaryColor is not null)            opts.PrimaryColor            = PrimaryColor;
+        if (PrimaryColorDark is not null)        opts.PrimaryColorDark        = PrimaryColorDark;
+        if (PickerHeaderColor is not null)       opts.HeaderBackgroundColor   = PickerHeaderColor;
+        if (PickerBackgroundColor is not null)   opts.SurfaceColor            = PickerBackgroundColor;
+        if (PickerBackgroundColorDark is not null) opts.SurfaceColorDark      = PickerBackgroundColorDark;
 
         return opts;
     }

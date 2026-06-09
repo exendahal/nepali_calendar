@@ -27,7 +27,11 @@
 	<Title>Nepali Bikram Sambat (BS) Date Picker for .NET MAUI</Title>
 	<Description>A Nepali Bikram Sambat (BS) date picker control for .NET MAUI. Features a bottom-sheet UI with drum-roll pickers, BS/AD calendar toggle, automatic day clamping, and full light/dark mode support.</Description>
     <PackageTags>maui;dotnet;nepali;calendar;bikram-sambat;bs;date-picker;nepal;nepali-calendar</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<PackageProjectUrl>https://github.com/exendahal/nepali_calendar</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/exendahal/nepali_calendar</RepositoryUrl>
+	  
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <IsPackable>true</IsPackable>
