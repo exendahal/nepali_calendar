@@ -16,4 +16,9 @@ public partial class MainPage : ContentPage
         if (date is not null && BindingContext is MainViewModel vm)
             vm.StatusMessage = $"Control selected: {date.ToDisplayString()}";
     }
+
+    private async void OnOpenCalendarPageClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new CalendarPage());
+    }
 }
