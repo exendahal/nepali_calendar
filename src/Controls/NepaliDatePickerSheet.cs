@@ -89,6 +89,10 @@ internal class NepaliDatePickerSheet : ContentView
     private const int _MonthSpacing = 2;
     private const int _MonthCols    = 3;
 
+    // Nepali script applies in BS mode, and also to the AD calendar when the
+    // picker is AD-only (there is no BS view to carry the script in that case).
+    private bool UseNepaliGlyphs => _UseNepaliScript && (_IsBsMode || _DisplayMode == DateDisplayMode.AdOnly);
+
     public NepaliDatePickerSheet(NepaliDate? initial = null, NepaliDatePickerOptions? options = null)
     {
         // ── Resolve effective colors ──────────────────────────────────────────
@@ -135,10 +139,10 @@ internal class NepaliDatePickerSheet : ContentView
         // ── Header ────────────────────────────────────────────────────────────
         var selectLabel = new Label
         {
-            Text = _UseNepaliScript && _IsBsMode ? "मिति छान्नुहोस्" : "SELECT DATE",
+            Text = UseNepaliGlyphs ? "मिति छान्नुहोस्" : "SELECT DATE",
             FontSize = 11,
             FontAttributes = FontAttributes.Bold,
-            CharacterSpacing = _UseNepaliScript && _IsBsMode ? 0 : 1.5,
+            CharacterSpacing = UseNepaliGlyphs ? 0 : 1.5,
             TextColor = Color.FromRgba((byte)255, (byte)255, (byte)255, (byte)178),
         };
         ApplyFont(selectLabel);
@@ -475,7 +479,15 @@ internal class NepaliDatePickerSheet : ContentView
         }
         else
         {
-            _HeaderDateLabel.Text  = $"{_AdDate:ddd, MMMM d, yyyy}";
+            if (UseNepaliGlyphs)
+            {
+                var dow = _DowHeaderNepali[(int)_AdDate.DayOfWeek];
+                _HeaderDateLabel.Text = $"{dow}, {NepaliDate.AdMonthNamesNepali[_AdDate.Month - 1]} {N(_AdDate.Day)}, {N(_AdDate.Year)}";
+            }
+            else
+            {
+                _HeaderDateLabel.Text = $"{_AdDate:ddd, MMMM d, yyyy}";
+            }
             _HeaderEquivLabel.Text = _DisplayMode == DateDisplayMode.AdOnly
                 ? string.Empty
                 : $"BS  {new NepaliDate(_BsYear, _BsMonth, _BsDay).ToDisplayString()}";
@@ -492,7 +504,9 @@ internal class NepaliDatePickerSheet : ContentView
         }
         else
         {
-            _MonthYearLabel.Text = $"{new DateTime(_ViewYear, _ViewMonth, 1):MMMM yyyy}";
+            _MonthYearLabel.Text = UseNepaliGlyphs
+                ? $"{NepaliDate.AdMonthNamesNepali[_ViewMonth - 1]}  {N(_ViewYear)}"
+                : $"{new DateTime(_ViewYear, _ViewMonth, 1):MMMM yyyy}";
         }
     }
 
@@ -589,7 +603,7 @@ internal class NepaliDatePickerSheet : ContentView
         // ── Month grid (3 × 4) ────────────────────────────────────────────────
         string[] monthNames = _IsBsMode
             ? (_UseNepaliScript ? NepaliDate.MonthNamesNepali : NepaliDate.MonthNames)
-            : _AdMonthNames;
+            : (UseNepaliGlyphs ? NepaliDate.AdMonthNamesNepali : _AdMonthNames);
 
         var monthGrid = new Grid { RowSpacing = _MonthSpacing, ColumnSpacing = _MonthSpacing };
         for (int c = 0; c < _MonthCols; c++)
@@ -622,7 +636,7 @@ internal class NepaliDatePickerSheet : ContentView
     {
         var label = new Label
         {
-            Text = (_UseNepaliScript && _IsBsMode) ? N(year) : year.ToString(),
+            Text = UseNepaliGlyphs ? N(year) : year.ToString(),
             FontSize = 13,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment   = TextAlignment.Center,
@@ -774,7 +788,7 @@ internal class NepaliDatePickerSheet : ContentView
     {
         var label = new Label
         {
-            Text = (_UseNepaliScript && _IsBsMode) ? N(day) : day.ToString(),
+            Text = UseNepaliGlyphs ? N(day) : day.ToString(),
             FontSize = 14,
             HorizontalTextAlignment = TextAlignment.Center,
             VerticalTextAlignment   = TextAlignment.Center,
@@ -831,7 +845,7 @@ internal class NepaliDatePickerSheet : ContentView
         for (int i = 0; i < 7; i++)
             grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
 
-        var labels = _UseNepaliScript && _IsBsMode ? _DowLabelsNepali : _DowLabels;
+        var labels = UseNepaliGlyphs ? _DowLabelsNepali : _DowLabels;
         for (int i = 0; i < 7; i++)
         {
             var lbl = new Label
@@ -852,7 +866,7 @@ internal class NepaliDatePickerSheet : ContentView
 
     private void RefreshDowRow()
     {
-        var labels = _UseNepaliScript && _IsBsMode ? _DowLabelsNepali : _DowLabels;
+        var labels = UseNepaliGlyphs ? _DowLabelsNepali : _DowLabels;
         int i = 0;
         foreach (var child in _DowRow.Children)
         {

@@ -437,6 +437,20 @@ public class NepaliDatePicker : ContentView
         if (DisplayMode == DateDisplayMode.AdOnly)
         {
             DateTime ad = BsAdConverter.BsToAd(bsDate);
+
+            if (UseNepaliScript)
+            {
+                return Format
+                    .Replace("MMMM", NepaliDate.AdMonthNamesNepali[ad.Month - 1])
+                    .Replace("MMM",  NepaliDate.AdMonthNamesNepali[ad.Month - 1])
+                    .Replace("MM",   Nep(ad.Month, pad: true))
+                    .Replace("M",    Nep(ad.Month))
+                    .Replace("yyyy", Nep(ad.Year))
+                    .Replace("yy",   Nep(ad.Year % 100, pad: true))
+                    .Replace("dd",   Nep(ad.Day, pad: true))
+                    .Replace("d",    Nep(ad.Day));
+            }
+
             return Format
                 .Replace("MMMM", ad.ToString("MMMM"))
                 .Replace("MMM",  ad.ToString("MMM"))
