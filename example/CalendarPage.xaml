@@ -14,9 +14,11 @@
         <nep:NepaliDatePicker
             x:Name="CalendarPicker"
             DateSelected="OnDateSelected"
+            DisplayMode="AdOnly"
             Format="d MMMM yyyy"
             Placeholder="Select a date…"
-            Presentation="Dialog" />
+            Presentation="Dialog"
+            UseNepaliScript="False" />
 
         <Label
             x:Name="SelectedDateLabel"

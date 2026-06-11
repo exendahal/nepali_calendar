@@ -53,6 +53,20 @@ xmlns:nep="clr-namespace:NepaliDatePicker.Controls;assembly=NepaliDatePicker.Mau
     DateSelected="OnDateSelected" />
 ```
 
+### Wheel picker style (iOS drum roll)
+
+Set `PickerStyle="Wheel"` to swap the calendar grid for three iOS-style drum-roll
+wheels (year | month | day). Works with every display mode, presentation and theme
+option; the day wheel adapts to the number of days in the selected month.
+
+```xml
+<nep:NepaliDatePicker
+    SelectedDate="{Binding MyDate}"
+    PickerStyle="Wheel"
+    UseNepaliScript="True"
+    DateSelected="OnDateSelected" />
+```
+
 ### Programmatic / MVVM
 
 ```csharp
@@ -95,6 +109,7 @@ The drop-in control renders as a tappable date-input field. All properties are b
 |---|---|---|---|
 | `DisplayMode` | `DateDisplayMode` | `Both` | Which calendar system(s) the picker exposes |
 | `Presentation` | `PickerPresentation` | `BottomSheet` | Bottom sheet or centered dialog |
+| `PickerStyle` | `PickerStyle` | `Calendar` | MD3 calendar grid or iOS-style drum wheels |
 | `UseNepaliScript` | `bool` | `false` | Render BS dates in Devanagari script |
 
 ### Picker theming (passed through to the sheet)
@@ -141,6 +156,7 @@ Passed to `INepaliDatePickerService.ShowAsync()` for full programmatic control.
 |---|---|---|---|
 | `DisplayMode` | `DateDisplayMode` | `Both` | `BsOnly`, `AdOnly`, or `Both` (shows BS/AD chip toggle) |
 | `Presentation` | `PickerPresentation` | `BottomSheet` | `BottomSheet` or `Dialog` |
+| `PickerStyle` | `PickerStyle` | `Calendar` | `Calendar` grid or iOS-style `Wheel` drum roll |
 | `UseNepaliScript` | `bool` | `false` | All BS text rendered in Devanagari script |
 | `SheetCornerRadius` | `double` | `28` | Top-corner radius of the bottom sheet / dialog |
 | `FontFamily` | `string?` | `null` | Custom font family for all picker labels |
@@ -180,9 +196,20 @@ Every color token is nullable — unset tokens fall back to MD3 defaults.
 
 ---
 
+## `PickerStyle` enum
+
+| Value | Behaviour |
+|---|---|
+| `Calendar` *(default)* | Material Design 3 month grid with tap-to-jump year/month picker |
+| `Wheel` | Three iOS-style drum-roll wheels (year \| month \| day); the day wheel adapts to the selected month |
+
+---
+
 ## Nepali script mode (`UseNepaliScript`)
 
-When enabled (and `DisplayMode` is `BsOnly` or `Both` with BS active):
+When enabled (and `DisplayMode` is `BsOnly` or `Both` with BS active — or `AdOnly`,
+where the AD calendar itself is rendered in Devanagari with Nepali Gregorian month
+names like जनवरी, फेब्रुअरी):
 
 - **Month names** — "Baisakh" → "बैशाख", "Jestha" → "जेठ", … "Chaitra" → "चैत्र"
 - **Day numbers** — 1–32 → १–३२
@@ -262,7 +289,7 @@ src/                               ← NuGet library
 ├─ Controls/
 │   NepaliDatePickerSheet.cs       MD3 calendar sheet (header, nav, grid, year picker)
 │   NepaliDatePickerButton.cs      drop-in bindable input control
-│   DrumRollPicker.cs              scroll-snap drum roll (internal)
+│   DrumRollPicker.cs              scroll-snap drum roll (wheel picker style)
 │
 ├─ Data/
 │   BsCalendarData.cs              1970–2100 BS month-day counts

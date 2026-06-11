@@ -26,6 +26,10 @@ public class DrumRollPicker : ContentView
             BindingMode.TwoWay,
             propertyChanged: (b, o, n) => ((DrumRollPicker)b).OnSelectedIndexChanged((int)o, (int)n));
 
+    public static readonly BindableProperty FontFamilyProperty =
+        BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(DrumRollPicker), null,
+            propertyChanged: (b, _, _) => ((DrumRollPicker)b).ApplyFontFamily());
+
     public IReadOnlyList<string> Items
     {
         get => (IReadOnlyList<string>)GetValue(ItemsProperty);
@@ -36,6 +40,12 @@ public class DrumRollPicker : ContentView
     {
         get => (int)GetValue(SelectedIndexProperty);
         set => SetValue(SelectedIndexProperty, value);
+    }
+
+    public string? FontFamily
+    {
+        get => (string?)GetValue(FontFamilyProperty);
+        set => SetValue(FontFamilyProperty, value);
     }
 
     public event EventHandler<int>? SelectionChanged;
@@ -97,6 +107,38 @@ public class DrumRollPicker : ContentView
         root.Add(overlay);
 
         Content = root;
+
+        // ScrollToAsync is a no-op before the native layout pass (notably on Android),
+        // so a picker built off-screen rests at the top with the selection out of the
+        // centre band. Re-sync once loaded; opacity hides the visible jump — same
+        // workaround as the year grid in NepaliDatePickerSheet.
+        Loaded += async (_, _) =>
+        {
+            // A long list (e.g. a century of years) measures across several frames;
+            // scrolling before the stack is fully measured clamps to a partial extent.
+            double expected = (_ItemLabels.Count + 2 * _PaddingItems) * _ItemHeight;
+            for (int i = 0; i < 20 && _Stack.Height < expected - 1; i++)
+                await Task.Delay(50);
+
+            await CenterOnSelection();
+            await Task.Delay(50);
+            await CenterOnSelection();   // settle in case a late re-measure shifted content
+        };
+    }
+
+    // Anchors the scroll on the selected label element rather than an absolute Y
+    // offset — the platform resolves the element's actual position, which stays
+    // correct even where offset-based ScrollToAsync lands short on tall content.
+    private async Task CenterOnSelection()
+    {
+        if (_ItemLabels.Count == 0) return;
+        int index = Math.Clamp(SelectedIndex, 0, _ItemLabels.Count - 1);
+
+        _ProgrammaticScroll = true;
+        await _Scroll.ScrollToAsync(_ItemLabels[index], ScrollToPosition.Center, animated: false);
+        _ProgrammaticScroll = false;
+
+        UpdateItemAppearances(index * RowHeight);
     }
 
     // ── Item construction ────────────────────────────────────────────────────
@@ -115,12 +157,19 @@ public class DrumRollPicker : ContentView
             _ItemLabels.Add(label);
             _Stack.Children.Add(label);
         }
+        ApplyFontFamily();
 
         for (int i = 0; i < _PaddingItems; i++)
             _Stack.Children.Add(MakePhantomItem());
 
-        // Fire-and-forget scroll to selected position after layout
-        Dispatcher.Dispatch(async () => await ScrollTo(SelectedIndex, animated: false));
+        // Fire-and-forget reposition after the rebuilt stack arranges; element-anchored
+        // so the target stays exact even before RowHeight is reliable again.
+        if (IsLoaded)
+            Dispatcher.Dispatch(async () =>
+            {
+                await Task.Delay(50);
+                await CenterOnSelection();
+            });
     }
 
     private static Label MakeItemLabel(string text) => new()
@@ -138,6 +187,32 @@ public class DrumRollPicker : ContentView
         HeightRequest = _ItemHeight,
         Color = Colors.Transparent,
     };
+
+    // Always set FontFamily (even null) so the local setter wins over any app-level
+    // implicit Label style that would otherwise block Devanagari glyphs.
+    private void ApplyFontFamily()
+    {
+        foreach (var label in _ItemLabels)
+            label.FontFamily = FontFamily;
+    }
+
+    // Actual rendered row height. Android rounds each 44-dip row up to whole device
+    // pixels (e.g. 116 px = 44.19 dip at 2.625x density), so positions computed from
+    // the nominal 44 drift by half a row ~100 items in. Divide the arranged stack
+    // height by its row count to get the true per-row value. Values far from the
+    // nominal height mean the stack hasn't re-arranged after an item swap — ignore.
+    private double RowHeight
+    {
+        get
+        {
+            if (_Stack.Height > 0 && _Stack.Children.Count > 0)
+            {
+                double h = _Stack.Height / _Stack.Children.Count;
+                if (Math.Abs(h - _ItemHeight) <= 1) return h;
+            }
+            return _ItemHeight;
+        }
+    }
 
     // ── Scroll handling ──────────────────────────────────────────────────────
 
@@ -166,7 +241,7 @@ public class DrumRollPicker : ContentView
 
     private async Task SnapAsync()
     {
-        double rawIndex = _Scroll.ScrollY / _ItemHeight;
+        double rawIndex = _Scroll.ScrollY / RowHeight;
         int nearestIndex = (int)Math.Round(rawIndex);
         nearestIndex = Math.Clamp(nearestIndex, 0, Items.Count - 1);
 
@@ -180,14 +255,14 @@ public class DrumRollPicker : ContentView
             SelectionChanged?.Invoke(this, nearestIndex);
         }
 
-        UpdateItemAppearances(nearestIndex * _ItemHeight);
+        UpdateItemAppearances(nearestIndex * RowHeight);
     }
 
     private async Task ScrollTo(int index, bool animated)
     {
         if (Items.Count == 0) return;
         index = Math.Clamp(index, 0, Items.Count - 1);
-        double targetY = index * _ItemHeight;
+        double targetY = index * RowHeight;
 
         _ProgrammaticScroll = true;
         await _Scroll.ScrollToAsync(0, targetY, animated);
@@ -200,6 +275,7 @@ public class DrumRollPicker : ContentView
     {
         if (_ProgrammaticScroll) return;
         if (Items.Count == 0) return;
+        if (!IsLoaded) return;   // the Loaded handler centres the selection once laid out
         Dispatcher.Dispatch(async () => await ScrollTo(newIndex, animated: true));
     }
 
@@ -207,7 +283,7 @@ public class DrumRollPicker : ContentView
 
     private void UpdateItemAppearances(double scrollY)
     {
-        double centerItemIndex = scrollY / _ItemHeight;
+        double centerItemIndex = scrollY / RowHeight;
 
         for (int i = 0; i < _ItemLabels.Count; i++)
         {

@@ -10,6 +10,8 @@ namespace NepaliDatePicker.Controls;
 /// Layout: drag handle → colored header → BS/AD chip toggle (optional) →
 ///         month navigation → day-of-week headers → calendar grid → CANCEL / OK actions.
 /// Tapping the month/year label toggles a year + month grid for fast navigation.
+/// With <see cref="PickerStyle.Wheel"/> the navigation and calendar grid are replaced
+/// by three iOS-style drum-roll wheels (year / month / day).
 /// </summary>
 internal class NepaliDatePickerSheet : ContentView
 {
@@ -50,6 +52,7 @@ internal class NepaliDatePickerSheet : ContentView
     private int _BsYear, _BsMonth, _BsDay;
     private DateTime _AdDate;
     private readonly DateDisplayMode _DisplayMode;
+    private readonly PickerStyle _PickerStyle;
 
     // ── View state ────────────────────────────────────────────────────────────
     private int _ViewYear, _ViewMonth;
@@ -68,6 +71,12 @@ internal class NepaliDatePickerSheet : ContentView
     private readonly Grid _DowRow;
     private readonly ContentView _CalendarHost;
     private readonly Border _BsChip, _AdChip;
+
+    // ── Wheel-style state (created only for PickerStyle.Wheel) ────────────────
+    private DrumRollPicker? _YearWheel, _MonthWheel, _DayWheel;
+    private bool _WheelSyncing;     // guards wheel ⇄ selection feedback loops
+    private int  _WheelMinYear;     // year represented by index 0 of the year wheel
+    private int  _WheelDayCount;    // number of items currently in the day wheel
 
     // Sun → Sat, matching DayOfWeek order (Sunday = 0)
     private static readonly string[] _DowLabels       = ["S",    "M",   "T",     "W",   "T",     "F",     "S"   ];
@@ -113,6 +122,7 @@ internal class NepaliDatePickerSheet : ContentView
         _UseNepaliScript  = options?.UseNepaliScript ?? false;
 
         _DisplayMode = options?.DisplayMode ?? DateDisplayMode.Both;
+        _PickerStyle = options?.PickerStyle ?? PickerStyle.Calendar;
         _IsBsMode    = _DisplayMode != DateDisplayMode.AdOnly;
 
         var seed = initial ?? BsAdConverter.AdToBs(DateTime.Today);
@@ -294,8 +304,11 @@ internal class NepaliDatePickerSheet : ContentView
         root.Children.Add(handle);
         root.Children.Add(headerContent);
         root.Children.Add(chipRow);
-        root.Children.Add(navRow);
-        root.Children.Add(_DowRow);
+        if (_PickerStyle == PickerStyle.Calendar)
+        {
+            root.Children.Add(navRow);
+            root.Children.Add(_DowRow);
+        }
         root.Children.Add(_CalendarHost);
         root.Children.Add(divider);
         root.Children.Add(actionRow);
@@ -304,8 +317,16 @@ internal class NepaliDatePickerSheet : ContentView
 
         ApplyChipState();
         RefreshHeader();
-        RefreshMonthYear();
-        RebuildCalendar();
+        if (_PickerStyle == PickerStyle.Wheel)
+        {
+            BuildWheels();
+            RebuildWheelItems();
+        }
+        else
+        {
+            RefreshMonthYear();
+            RebuildCalendar();
+        }
     }
 
     // ── BS / AD mode switching ────────────────────────────────────────────────
@@ -338,9 +359,16 @@ internal class NepaliDatePickerSheet : ContentView
         _PickerSelectedYear = _ViewYear;
         ApplyChipState();
         RefreshHeader();
-        RefreshMonthYear();
-        RefreshDowRow();
-        RebuildCalendar();
+        if (_PickerStyle == PickerStyle.Wheel)
+        {
+            RebuildWheelItems();
+        }
+        else
+        {
+            RefreshMonthYear();
+            RefreshDowRow();
+            RebuildCalendar();
+        }
     }
 
     private void ApplyChipState()
@@ -780,6 +808,118 @@ internal class NepaliDatePickerSheet : ContentView
         }
 
         return (grid, rowCount);
+    }
+
+    // ── Wheel style (iOS drum roll) ───────────────────────────────────────────
+
+    private void BuildWheels()
+    {
+        _YearWheel  = new DrumRollPicker { FontFamily = _FontFamily };
+        _MonthWheel = new DrumRollPicker { FontFamily = _FontFamily };
+        _DayWheel   = new DrumRollPicker { FontFamily = _FontFamily };
+
+        _YearWheel.SelectionChanged  += (_, _) => OnWheelChanged();
+        _MonthWheel.SelectionChanged += (_, _) => OnWheelChanged();
+        _DayWheel.SelectionChanged   += (_, _) => OnWheelChanged();
+
+        var grid = new Grid
+        {
+            ColumnDefinitions =
+            {
+                new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Star),
+            },
+        };
+        grid.Add(_YearWheel);
+        Grid.SetColumn(_MonthWheel, 1); grid.Add(_MonthWheel);
+        Grid.SetColumn(_DayWheel, 2);   grid.Add(_DayWheel);
+
+        _CalendarHost.Content       = grid;
+        _CalendarHost.HeightRequest = 5 * 44 + 12;  // wheel height + host padding
+    }
+
+    /// <summary>Rebuilds all wheel items for the current calendar system and script,
+    /// then positions the wheels on the current selection.</summary>
+    private void RebuildWheelItems()
+    {
+        if (_YearWheel is null || _MonthWheel is null || _DayWheel is null) return;
+
+        int minYear = _IsBsMode ? BsCalendarData.MinYear : 1900;
+        int maxYear = _IsBsMode ? BsCalendarData.MaxYear : 2100;
+        _WheelMinYear = minYear;
+
+        var years = new string[maxYear - minYear + 1];
+        for (int y = minYear; y <= maxYear; y++)
+            years[y - minYear] = UseNepaliGlyphs ? N(y) : y.ToString();
+
+        _WheelSyncing = true;
+
+        _YearWheel.Items  = years;
+        _MonthWheel.Items = _IsBsMode
+            ? (_UseNepaliScript ? NepaliDate.MonthNamesNepali : NepaliDate.MonthNames)
+            : (UseNepaliGlyphs ? NepaliDate.AdMonthNamesNepali : _AdMonthNames);
+        _WheelDayCount = 0;  // force the day wheel to re-render in the current script
+
+        int year  = _IsBsMode ? _BsYear  : _AdDate.Year;
+        int month = _IsBsMode ? _BsMonth : _AdDate.Month;
+        int day   = _IsBsMode ? _BsDay   : _AdDate.Day;
+
+        _YearWheel.SelectedIndex  = Math.Clamp(year - minYear, 0, years.Length - 1);
+        _MonthWheel.SelectedIndex = month - 1;
+        RefreshWheelDays(minYear + _YearWheel.SelectedIndex, month);
+        _DayWheel.SelectedIndex   = Math.Clamp(day - 1, 0, _WheelDayCount - 1);
+
+        _WheelSyncing = false;
+    }
+
+    /// <summary>Resizes the day wheel to the given month, keeping the day selection clamped.</summary>
+    private void RefreshWheelDays(int year, int month)
+    {
+        if (_DayWheel is null) return;
+
+        int days = _IsBsMode
+            ? BsCalendarData.GetDaysInMonth(year, month)
+            : DateTime.DaysInMonth(year, month);
+        if (days == _WheelDayCount) return;
+
+        if (_DayWheel.SelectedIndex > days - 1)
+            _DayWheel.SelectedIndex = days - 1;
+
+        var items = new string[days];
+        for (int d = 1; d <= days; d++)
+            items[d - 1] = UseNepaliGlyphs ? N(d) : d.ToString();
+
+        _WheelDayCount  = days;
+        _DayWheel.Items = items;
+    }
+
+    private void OnWheelChanged()
+    {
+        if (_WheelSyncing || _YearWheel is null || _MonthWheel is null || _DayWheel is null) return;
+
+        int year  = _WheelMinYear + _YearWheel.SelectedIndex;
+        int month = _MonthWheel.SelectedIndex + 1;
+
+        _WheelSyncing = true;
+        RefreshWheelDays(year, month);
+        _WheelSyncing = false;
+
+        int day = _DayWheel.SelectedIndex + 1;
+
+        if (_IsBsMode)
+        {
+            _BsYear = year; _BsMonth = month; _BsDay = day;
+            _AdDate = BsAdConverter.BsToAd(new NepaliDate(year, month, day));
+        }
+        else
+        {
+            _AdDate = new DateTime(year, month, day);
+            var bs  = BsAdConverter.AdToBs(_AdDate);
+            _BsYear = bs.Year; _BsMonth = bs.Month; _BsDay = bs.Day;
+        }
+
+        RefreshHeader();
     }
 
     // ── Day cell ──────────────────────────────────────────────────────────────

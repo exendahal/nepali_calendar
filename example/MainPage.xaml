@@ -433,7 +433,24 @@
 
             <!--
                 ══════════════════════════════════════════════════════════════
-                SECTION 4 — Date range selection
+                SECTION 4 — Wheel picker style
+                ══════════════════════════════════════════════════════════════════
+            -->
+            <Label Style="{StaticResource SectionLabel}" Text="WHEEL STYLE" />
+
+            <nep:NepaliDatePicker
+                Margin="0,0,0,24"
+                DateSelected="OnDateSelected"
+                DisplayMode="{Binding Settings.DisplayMode}"
+                PickerStyle="Wheel"
+                Placeholder="Wheel style picker…"
+                Presentation="{Binding Settings.Presentation}"
+                SelectedDate="{Binding SelectedDate}"
+                UseNepaliScript="{Binding Settings.IsNepali}" />
+
+            <!--
+                ══════════════════════════════════════════════════════════════
+                SECTION 5 — Date range selection
                 ══════════════════════════════════════════════════════════════════
             -->
             <Label Style="{StaticResource SectionLabel}" Text="DATE RANGE SELECTION" />

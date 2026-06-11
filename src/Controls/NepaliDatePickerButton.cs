@@ -48,6 +48,15 @@ public class NepaliDatePicker : ContentView
         BindableProperty.Create(nameof(Presentation), typeof(PickerPresentation), typeof(NepaliDatePicker),
             PickerPresentation.BottomSheet);
 
+    /// <summary>
+    /// Visual style of the picker body.
+    /// <see cref="PickerStyle.Calendar"/> shows the MD3 month grid (default).
+    /// <see cref="PickerStyle.Wheel"/> shows iOS-style drum-roll wheels (year / month / day).
+    /// </summary>
+    public static readonly BindableProperty PickerStyleProperty =
+        BindableProperty.Create(nameof(PickerStyle), typeof(PickerStyle), typeof(NepaliDatePicker),
+            PickerStyle.Calendar);
+
     // ── Bindable: picker palette ──────────────────────────────────────────────
 
     /// <summary>Primary accent color passed to the picker (selected day, chips, buttons, today outline).</summary>
@@ -194,6 +203,12 @@ public class NepaliDatePicker : ContentView
     {
         get => (PickerPresentation)GetValue(PresentationProperty);
         set => SetValue(PresentationProperty, value);
+    }
+
+    public PickerStyle PickerStyle
+    {
+        get => (PickerStyle)GetValue(PickerStyleProperty);
+        set => SetValue(PickerStyleProperty, value);
     }
 
     public Color? PrimaryColor
@@ -398,6 +413,7 @@ public class NepaliDatePicker : ContentView
             DisplayMode     = DisplayMode,
             FontFamily      = PickerFontFamily,
             Presentation    = Presentation,
+            PickerStyle     = PickerStyle,
             UseNepaliScript = UseNepaliScript,
         };
 
