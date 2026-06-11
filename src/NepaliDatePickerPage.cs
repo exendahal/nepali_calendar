@@ -51,6 +51,11 @@ internal class NepaliDatePickerPage
         if (_IsDialog)
         {
             rootGrid = new Grid { BackgroundColor = Color.FromArgb("#80000000") };
+            var scrim = new BoxView { Color = Colors.Transparent };
+            var tgr = new TapGestureRecognizer();
+            tgr.Tapped += async (_, _) => await DismissAsync(null);
+            scrim.GestureRecognizers.Add(tgr);
+            rootGrid.Add(scrim);
             rootGrid.Add(_SheetContainer);
         }
         else
@@ -64,6 +69,12 @@ internal class NepaliDatePickerPage
                     new RowDefinition(GridLength.Auto),
                 }
             };
+            var scrim = new BoxView { Color = Colors.Transparent };
+            var tgr = new TapGestureRecognizer();
+            tgr.Tapped += async (_, _) => await DismissAsync(null);
+            scrim.GestureRecognizers.Add(tgr);
+            Grid.SetRow(scrim, 0);
+            rootGrid.Add(scrim);
             Grid.SetRow(_SheetContainer, 1);
             rootGrid.Add(_SheetContainer);
         }

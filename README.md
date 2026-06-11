@@ -6,6 +6,68 @@ A **Bikram Sambat (BS)** date picker for **.NET MAUI** built on a Material Desig
 
 ---
 
+## Preview
+
+### Bottom Sheet — Light Theme
+
+<table>
+  <tr>
+    <th>English (Purple)</th>
+    <th>English (Teal)</th>
+    <th>Nepali Script (Purple)</th>
+    <th>Nepali Script (Teal)</th>
+  </tr>
+  <tr>
+    <td><img src="preview/1.png" width="180"/></td>
+    <td><img src="preview/2.png" width="180"/></td>
+    <td><img src="preview/3.png" width="180"/></td>
+    <td><img src="preview/4.png" width="180"/></td>
+  </tr>
+</table>
+
+### Dialog — Light & Dark Theme
+
+<table>
+  <tr>
+    <th>Light (Purple)</th>
+    <th>Light (Teal)</th>
+    <th>Dark (Teal)</th>
+  </tr>
+  <tr>
+    <td><img src="preview/5.png" width="180"/></td>
+    <td><img src="preview/6.png" width="180"/></td>
+    <td><img src="preview/7.png" width="180"/></td>
+  </tr>
+</table>
+
+### Year / Month Fast-Nav — Dark Theme
+
+<table>
+  <tr>
+    <th>Purple Theme</th>
+    <th>Teal Theme</th>
+  </tr>
+  <tr>
+    <td><img src="preview/8.png" width="180"/></td>
+    <td><img src="preview/9.png" width="180"/></td>
+  </tr>
+</table>
+
+### Wheel Style
+
+<table>
+  <tr>
+    <th>Dark Theme</th>
+    <th>Light Theme</th>
+  </tr>
+  <tr>
+    <td><img src="preview/10.png" width="180"/></td>
+    <td><img src="preview/11.png" width="180"/></td>
+  </tr>
+</table>
+
+---
+
 ## Features
 
 | Feature | Details |
