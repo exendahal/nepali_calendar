@@ -115,7 +115,7 @@ xmlns:nep="clr-namespace:NepaliDatePicker.Controls;assembly=NepaliDatePicker.Mau
     DateSelected="OnDateSelected" />
 ```
 
-### Wheel picker style (iOS drum roll)
+### Wheel picker style
 
 Set `PickerStyle="Wheel"` to swap the calendar grid for three iOS-style drum-roll
 wheels (year | month | day). Works with every display mode, presentation and theme
