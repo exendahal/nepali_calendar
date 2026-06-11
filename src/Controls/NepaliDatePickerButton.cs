@@ -127,12 +127,12 @@ public class NepaliDatePicker : ContentView
     /// <summary>Font family for the date / placeholder label in the button.</summary>
     public static readonly BindableProperty FontFamilyProperty =
         BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(NepaliDatePicker), null,
-            propertyChanged: (b, _, n) => ((NepaliDatePicker)b)._dateLabel.FontFamily = (string?)n);
+            propertyChanged: (b, _, n) => ((NepaliDatePicker)b)._DateLabel.FontFamily = (string?)n);
 
     /// <summary>Font size for the date / placeholder label. Default: 15.</summary>
     public static readonly BindableProperty FontSizeProperty =
         BindableProperty.Create(nameof(FontSize), typeof(double), typeof(NepaliDatePicker), 15.0,
-            propertyChanged: (b, _, n) => ((NepaliDatePicker)b)._dateLabel.FontSize = (double)n);
+            propertyChanged: (b, _, n) => ((NepaliDatePicker)b)._DateLabel.FontSize = (double)n);
 
     /// <summary>Corner radius of the date input border. Default: 10.</summary>
     public static readonly BindableProperty CornerRadiusProperty =
@@ -140,14 +140,14 @@ public class NepaliDatePicker : ContentView
             propertyChanged: (b, _, n) =>
             {
                 var self = (NepaliDatePicker)b;
-                if (self._containerShape is not null)
-                    self._containerShape.CornerRadius = new CornerRadius((double)n);
+                if (self._ContainerShape is not null)
+                    self._ContainerShape.CornerRadius = new CornerRadius((double)n);
             });
 
     /// <summary>Calendar icon shown on the right of the input. Default: 📅</summary>
     public static readonly BindableProperty CalendarIconProperty =
         BindableProperty.Create(nameof(CalendarIcon), typeof(string), typeof(NepaliDatePicker), "📅",
-            propertyChanged: (b, _, n) => ((NepaliDatePicker)b)._iconLabel.Text = (string?)n ?? "📅");
+            propertyChanged: (b, _, n) => ((NepaliDatePicker)b)._IconLabel.Text = (string?)n ?? "📅");
 
     /// <summary>
     /// When <c>true</c>, the selected date on the button and inside the picker is rendered
@@ -314,15 +314,15 @@ public class NepaliDatePicker : ContentView
     public event EventHandler<NepaliDate?>? DateSelected;
 
     // ── Private state ─────────────────────────────────────────────────────────
-    private readonly Label _dateLabel;
-    private readonly Label _iconLabel;
-    private readonly Border _container;
-    private readonly RoundRectangle _containerShape;
-    private bool _isPickerOpen;
+    private readonly Label _DateLabel;
+    private readonly Label _IconLabel;
+    private readonly Border _Container;
+    private readonly RoundRectangle _ContainerShape;
+    private bool _IsPickerOpen;
 
     public NepaliDatePicker()
     {
-        _dateLabel = new Label
+        _DateLabel = new Label
         {
             VerticalTextAlignment   = TextAlignment.Center,
             HorizontalTextAlignment = TextAlignment.Start,
@@ -330,20 +330,20 @@ public class NepaliDatePicker : ContentView
             HorizontalOptions = LayoutOptions.Fill,
         };
 
-        _iconLabel = new Label
+        _IconLabel = new Label
         {
             Text = "📅",
             FontSize = 16,
             VerticalTextAlignment = TextAlignment.Center,
         };
 
-        _containerShape = new RoundRectangle { CornerRadius = 10 };
+        _ContainerShape = new RoundRectangle { CornerRadius = 10 };
 
-        _container = new Border
+        _Container = new Border
         {
             Padding         = new Thickness(14, 0),
             HeightRequest   = 48,
-            StrokeShape     = _containerShape,
+            StrokeShape     = _ContainerShape,
             StrokeThickness = 1,
             Content         = new Grid
             {
@@ -352,18 +352,18 @@ public class NepaliDatePicker : ContentView
                     new ColumnDefinition(GridLength.Star),
                     new ColumnDefinition(GridLength.Auto),
                 },
-                Children = { _dateLabel, _iconLabel }
+                Children = { _DateLabel, _IconLabel }
             }
         };
-        Grid.SetColumn(_iconLabel, 1);
+        Grid.SetColumn(_IconLabel, 1);
 
         RefreshStyle();
 
         var tap = new TapGestureRecognizer();
         tap.Tapped += OnTapped;
-        _container.GestureRecognizers.Add(tap);
+        _Container.GestureRecognizers.Add(tap);
 
-        Content = _container;
+        Content = _Container;
         Refresh();
     }
 
@@ -371,8 +371,8 @@ public class NepaliDatePicker : ContentView
 
     private async void OnTapped(object? sender, TappedEventArgs e)
     {
-        if (IsReadOnly || _isPickerOpen) return;
-        _isPickerOpen = true;
+        if (IsReadOnly || _IsPickerOpen) return;
+        _IsPickerOpen = true;
 
         try
         {
@@ -387,7 +387,7 @@ public class NepaliDatePicker : ContentView
         }
         finally
         {
-            _isPickerOpen = false;
+            _IsPickerOpen = false;
         }
     }
 
@@ -416,20 +416,20 @@ public class NepaliDatePicker : ContentView
     {
         if (SelectedDate is null)
         {
-            _dateLabel.Text = Placeholder;
-            _dateLabel.SetAppThemeColor(Label.TextColorProperty, PlaceholderColor, PlaceholderColorDark);
+            _DateLabel.Text = Placeholder;
+            _DateLabel.SetAppThemeColor(Label.TextColorProperty, PlaceholderColor, PlaceholderColorDark);
         }
         else
         {
-            _dateLabel.Text = FormatDate(SelectedDate);
-            _dateLabel.SetAppThemeColor(Label.TextColorProperty, TextColor, TextColorDark);
+            _DateLabel.Text = FormatDate(SelectedDate);
+            _DateLabel.SetAppThemeColor(Label.TextColorProperty, TextColor, TextColorDark);
         }
     }
 
     private void RefreshStyle()
     {
-        _container.SetAppThemeColor(Border.StrokeProperty,            BorderColor,          BorderColorDark);
-        _container.SetAppThemeColor(Border.BackgroundColorProperty,   InputBackgroundColor, InputBackgroundColorDark);
+        _Container.SetAppThemeColor(Border.StrokeProperty,            BorderColor,          BorderColorDark);
+        _Container.SetAppThemeColor(Border.BackgroundColorProperty,   InputBackgroundColor, InputBackgroundColorDark);
     }
 
     private string FormatDate(NepaliDate bsDate)

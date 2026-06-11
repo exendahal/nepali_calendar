@@ -11,7 +11,7 @@ public static class BsCalendarData
     public const int MaxYear = 2100;
 
     // [year] => int[12] days-per-month (index 0 = Baisakh, 11 = Chaitra)
-    private static readonly Dictionary<int, int[]> Data = new()
+    private static readonly Dictionary<int, int[]> _Data = new()
     {
         [1970] = [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
         [1971] = [31, 31, 32, 31, 32, 30, 30, 29, 30, 29, 30, 30],
@@ -150,7 +150,7 @@ public static class BsCalendarData
     public static int GetDaysInMonth(int year, int month)
     {
         if (month < 1 || month > 12) throw new ArgumentOutOfRangeException(nameof(month));
-        if (!Data.TryGetValue(year, out var months))
+        if (!_Data.TryGetValue(year, out var months))
             throw new ArgumentOutOfRangeException(nameof(year), $"BS year {year} is outside supported range ({MinYear}–{MaxYear}).");
         return months[month - 1];
     }
@@ -158,7 +158,7 @@ public static class BsCalendarData
     /// <summary>Returns the total number of days in a given BS year.</summary>
     public static int GetDaysInYear(int year)
     {
-        if (!Data.TryGetValue(year, out var months))
+        if (!_Data.TryGetValue(year, out var months))
             throw new ArgumentOutOfRangeException(nameof(year));
         return months.Sum();
     }
@@ -166,12 +166,12 @@ public static class BsCalendarData
     /// <summary>Returns all 12 month day-counts for a BS year.</summary>
     public static int[] GetMonthDays(int year)
     {
-        if (!Data.TryGetValue(year, out var months))
+        if (!_Data.TryGetValue(year, out var months))
             throw new ArgumentOutOfRangeException(nameof(year));
         return months;
     }
 
-    public static bool IsYearSupported(int year) => Data.ContainsKey(year);
+    public static bool IsYearSupported(int year) => _Data.ContainsKey(year);
 
     /// <summary>Clamps the day if it exceeds the number of days in the target month/year.</summary>
     public static int ClampDay(int year, int month, int day)
