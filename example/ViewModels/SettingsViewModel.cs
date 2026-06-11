@@ -8,15 +8,15 @@ public partial class SettingsViewModel : ObservableObject
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsLight), nameof(IsDark), nameof(IsSystem))]
-    private AppTheme _theme = AppTheme.Unspecified;
+    private AppTheme _Theme = AppTheme.Unspecified;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEnglish), nameof(IsNepali))]
-    private DateDisplayMode _displayMode = DateDisplayMode.Both;
+    private DateDisplayMode _DisplayMode = DateDisplayMode.Both;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsBottomSheet), nameof(IsDialog))]
-    private PickerPresentation _presentation = PickerPresentation.BottomSheet;
+    private PickerPresentation _Presentation = PickerPresentation.BottomSheet;
 
     public bool IsLight       => Theme == AppTheme.Light;
     public bool IsDark        => Theme == AppTheme.Dark;

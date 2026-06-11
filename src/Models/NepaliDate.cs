@@ -19,6 +19,14 @@ public record NepaliDate(int Year, int Month, int Day)
         "पुष",   "माघ",   "फाल्गुन", "चैत्र"
     ];
 
+    /// <summary>AD (Gregorian) month names in Nepali (Devanagari) script.</summary>
+    public static readonly string[] AdMonthNamesNepali =
+    [
+        "जनवरी",  "फेब्रुअरी", "मार्च",     "अप्रिल",
+        "मे",      "जुन",      "जुलाई",     "अगस्ट",
+        "सेप्टेम्बर", "अक्टोबर",  "नोभेम्बर",  "डिसेम्बर"
+    ];
+
     public string MonthName       => MonthNames[Month - 1];
     public string MonthNameNepali => MonthNamesNepali[Month - 1];
 

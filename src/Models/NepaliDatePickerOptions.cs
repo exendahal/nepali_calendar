@@ -68,6 +68,13 @@ public class NepaliDatePickerOptions
     public PickerPresentation Presentation { get; set; } = PickerPresentation.BottomSheet;
 
     /// <summary>
+    /// Visual style of the picker body.
+    /// <see cref="PickerStyle.Calendar"/> shows the MD3 month grid (default).
+    /// <see cref="PickerStyle.Wheel"/> shows iOS-style drum-roll wheels (year / month / day).
+    /// </summary>
+    public PickerStyle PickerStyle { get; set; } = PickerStyle.Calendar;
+
+    /// <summary>
     /// When <c>true</c>, all BS month names and numbers inside the picker are rendered
     /// in Devanagari script (e.g. बैशाख, २०८२, ०१). AD dates always stay in English.
     /// Default: <c>false</c>.

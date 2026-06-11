@@ -10,10 +10,10 @@ namespace NepaliDatePicker.Controls;
 public class DrumRollPicker : ContentView
 {
     // ── Layout constants ────────────────────────────────────────────────────
-    private const double ItemHeight = 44;
-    private const int VisibleItems = 5;   // must be odd
-    private const int PaddingItems = VisibleItems / 2;  // = 2 phantom items each end
-    private const double TotalHeight = ItemHeight * VisibleItems;
+    private const double _ItemHeight = 44;
+    private const int _VisibleItems = 5;   // must be odd
+    private const int _PaddingItems = _VisibleItems / 2;  // = 2 phantom items each end
+    private const double _TotalHeight = _ItemHeight * _VisibleItems;
 
     // ── Bindable properties ─────────────────────────────────────────────────
     public static readonly BindableProperty ItemsProperty =
@@ -25,6 +25,10 @@ public class DrumRollPicker : ContentView
         BindableProperty.Create(nameof(SelectedIndex), typeof(int), typeof(DrumRollPicker), 0,
             BindingMode.TwoWay,
             propertyChanged: (b, o, n) => ((DrumRollPicker)b).OnSelectedIndexChanged((int)o, (int)n));
+
+    public static readonly BindableProperty FontFamilyProperty =
+        BindableProperty.Create(nameof(FontFamily), typeof(string), typeof(DrumRollPicker), null,
+            propertyChanged: (b, _, _) => ((DrumRollPicker)b).ApplyFontFamily());
 
     public IReadOnlyList<string> Items
     {
@@ -38,29 +42,35 @@ public class DrumRollPicker : ContentView
         set => SetValue(SelectedIndexProperty, value);
     }
 
+    public string? FontFamily
+    {
+        get => (string?)GetValue(FontFamilyProperty);
+        set => SetValue(FontFamilyProperty, value);
+    }
+
     public event EventHandler<int>? SelectionChanged;
 
     // ── Private state ────────────────────────────────────────────────────────
-    private readonly ScrollView _scroll;
-    private readonly VerticalStackLayout _stack;
-    private readonly List<Label> _itemLabels = [];
-    private IDispatcherTimer? _snapTimer;
-    private bool _programmaticScroll;
+    private readonly ScrollView _Scroll;
+    private readonly VerticalStackLayout _Stack;
+    private readonly List<Label> _ItemLabels = [];
+    private IDispatcherTimer? _SnapTimer;
+    private bool _ProgrammaticScroll;
 
     public DrumRollPicker()
     {
-        HeightRequest = TotalHeight;
+        HeightRequest = _TotalHeight;
 
-        _stack = new VerticalStackLayout { Spacing = 0 };
+        _Stack = new VerticalStackLayout { Spacing = 0 };
 
-        _scroll = new ScrollView
+        _Scroll = new ScrollView
         {
-            Content = _stack,
+            Content = _Stack,
             Orientation = ScrollOrientation.Vertical,
             VerticalScrollBarVisibility = ScrollBarVisibility.Never,
             HorizontalScrollBarVisibility = ScrollBarVisibility.Never,
         };
-        _scroll.Scrolled += OnScrolled;
+        _Scroll.Scrolled += OnScrolled;
 
         // Selection band: two thin separator lines around the centre item
         var topRule = new BoxView
@@ -68,7 +78,7 @@ public class DrumRollPicker : ContentView
             HeightRequest = 1,
             BackgroundColor = Colors.Transparent,
             VerticalOptions = LayoutOptions.Start,
-            Margin = new Thickness(0, ItemHeight * PaddingItems, 0, 0),
+            Margin = new Thickness(0, _ItemHeight * _PaddingItems, 0, 0),
             InputTransparent = true,
         };
         topRule.SetAppThemeColor(BoxView.ColorProperty, Color.FromArgb("#40000000"), Color.FromArgb("#40FFFFFF"));
@@ -78,7 +88,7 @@ public class DrumRollPicker : ContentView
             HeightRequest = 1,
             BackgroundColor = Colors.Transparent,
             VerticalOptions = LayoutOptions.Start,
-            Margin = new Thickness(0, ItemHeight * (PaddingItems + 1), 0, 0),
+            Margin = new Thickness(0, _ItemHeight * (_PaddingItems + 1), 0, 0),
             InputTransparent = true,
         };
         bottomRule.SetAppThemeColor(BoxView.ColorProperty, Color.FromArgb("#40000000"), Color.FromArgb("#40FFFFFF"));
@@ -93,40 +103,79 @@ public class DrumRollPicker : ContentView
         overlay.Add(bottomFade);
 
         var root = new Grid();
-        root.Add(_scroll);
+        root.Add(_Scroll);
         root.Add(overlay);
 
         Content = root;
+
+        // ScrollToAsync is a no-op before the native layout pass (notably on Android),
+        // so a picker built off-screen rests at the top with the selection out of the
+        // centre band. Re-sync once loaded; opacity hides the visible jump — same
+        // workaround as the year grid in NepaliDatePickerSheet.
+        Loaded += async (_, _) =>
+        {
+            // A long list (e.g. a century of years) measures across several frames;
+            // scrolling before the stack is fully measured clamps to a partial extent.
+            double expected = (_ItemLabels.Count + 2 * _PaddingItems) * _ItemHeight;
+            for (int i = 0; i < 20 && _Stack.Height < expected - 1; i++)
+                await Task.Delay(50);
+
+            await CenterOnSelection();
+            await Task.Delay(50);
+            await CenterOnSelection();   // settle in case a late re-measure shifted content
+        };
+    }
+
+    // Anchors the scroll on the selected label element rather than an absolute Y
+    // offset — the platform resolves the element's actual position, which stays
+    // correct even where offset-based ScrollToAsync lands short on tall content.
+    private async Task CenterOnSelection()
+    {
+        if (_ItemLabels.Count == 0) return;
+        int index = Math.Clamp(SelectedIndex, 0, _ItemLabels.Count - 1);
+
+        _ProgrammaticScroll = true;
+        await _Scroll.ScrollToAsync(_ItemLabels[index], ScrollToPosition.Center, animated: false);
+        _ProgrammaticScroll = false;
+
+        UpdateItemAppearances(index * RowHeight);
     }
 
     // ── Item construction ────────────────────────────────────────────────────
 
     private void OnItemsChanged(IReadOnlyList<string> items)
     {
-        _stack.Children.Clear();
-        _itemLabels.Clear();
+        _Stack.Children.Clear();
+        _ItemLabels.Clear();
 
-        for (int i = 0; i < PaddingItems; i++)
-            _stack.Children.Add(MakePhantomItem());
+        for (int i = 0; i < _PaddingItems; i++)
+            _Stack.Children.Add(MakePhantomItem());
 
         for (int i = 0; i < items.Count; i++)
         {
             var label = MakeItemLabel(items[i]);
-            _itemLabels.Add(label);
-            _stack.Children.Add(label);
+            _ItemLabels.Add(label);
+            _Stack.Children.Add(label);
         }
+        ApplyFontFamily();
 
-        for (int i = 0; i < PaddingItems; i++)
-            _stack.Children.Add(MakePhantomItem());
+        for (int i = 0; i < _PaddingItems; i++)
+            _Stack.Children.Add(MakePhantomItem());
 
-        // Fire-and-forget scroll to selected position after layout
-        Dispatcher.Dispatch(async () => await ScrollTo(SelectedIndex, animated: false));
+        // Fire-and-forget reposition after the rebuilt stack arranges; element-anchored
+        // so the target stays exact even before RowHeight is reliable again.
+        if (IsLoaded)
+            Dispatcher.Dispatch(async () =>
+            {
+                await Task.Delay(50);
+                await CenterOnSelection();
+            });
     }
 
     private static Label MakeItemLabel(string text) => new()
     {
         Text = text,
-        HeightRequest = ItemHeight,
+        HeightRequest = _ItemHeight,
         HorizontalTextAlignment = TextAlignment.Center,
         VerticalTextAlignment = TextAlignment.Center,
         FontSize = 16,
@@ -135,38 +184,64 @@ public class DrumRollPicker : ContentView
 
     private static BoxView MakePhantomItem() => new()
     {
-        HeightRequest = ItemHeight,
+        HeightRequest = _ItemHeight,
         Color = Colors.Transparent,
     };
+
+    // Always set FontFamily (even null) so the local setter wins over any app-level
+    // implicit Label style that would otherwise block Devanagari glyphs.
+    private void ApplyFontFamily()
+    {
+        foreach (var label in _ItemLabels)
+            label.FontFamily = FontFamily;
+    }
+
+    // Actual rendered row height. Android rounds each 44-dip row up to whole device
+    // pixels (e.g. 116 px = 44.19 dip at 2.625x density), so positions computed from
+    // the nominal 44 drift by half a row ~100 items in. Divide the arranged stack
+    // height by its row count to get the true per-row value. Values far from the
+    // nominal height mean the stack hasn't re-arranged after an item swap — ignore.
+    private double RowHeight
+    {
+        get
+        {
+            if (_Stack.Height > 0 && _Stack.Children.Count > 0)
+            {
+                double h = _Stack.Height / _Stack.Children.Count;
+                if (Math.Abs(h - _ItemHeight) <= 1) return h;
+            }
+            return _ItemHeight;
+        }
+    }
 
     // ── Scroll handling ──────────────────────────────────────────────────────
 
     private void OnScrolled(object? sender, ScrolledEventArgs e)
     {
-        if (_programmaticScroll) return;
+        if (_ProgrammaticScroll) return;
         UpdateItemAppearances(e.ScrollY);
         StartSnapTimer();
     }
 
     private void StartSnapTimer()
     {
-        _snapTimer?.Stop();
-        _snapTimer = Dispatcher.CreateTimer();
-        _snapTimer.Interval = TimeSpan.FromMilliseconds(160);
-        _snapTimer.IsRepeating = false;
-        _snapTimer.Tick += OnSnapTimerTick;
-        _snapTimer.Start();
+        _SnapTimer?.Stop();
+        _SnapTimer = Dispatcher.CreateTimer();
+        _SnapTimer.Interval = TimeSpan.FromMilliseconds(160);
+        _SnapTimer.IsRepeating = false;
+        _SnapTimer.Tick += OnSnapTimerTick;
+        _SnapTimer.Start();
     }
 
     private async void OnSnapTimerTick(object? sender, EventArgs e)
     {
-        _snapTimer?.Stop();
+        _SnapTimer?.Stop();
         await SnapAsync();
     }
 
     private async Task SnapAsync()
     {
-        double rawIndex = _scroll.ScrollY / ItemHeight;
+        double rawIndex = _Scroll.ScrollY / RowHeight;
         int nearestIndex = (int)Math.Round(rawIndex);
         nearestIndex = Math.Clamp(nearestIndex, 0, Items.Count - 1);
 
@@ -174,32 +249,33 @@ public class DrumRollPicker : ContentView
 
         if (SelectedIndex != nearestIndex)
         {
-            _programmaticScroll = true;
+            _ProgrammaticScroll = true;
             SelectedIndex = nearestIndex;
-            _programmaticScroll = false;
+            _ProgrammaticScroll = false;
             SelectionChanged?.Invoke(this, nearestIndex);
         }
 
-        UpdateItemAppearances(nearestIndex * ItemHeight);
+        UpdateItemAppearances(nearestIndex * RowHeight);
     }
 
     private async Task ScrollTo(int index, bool animated)
     {
         if (Items.Count == 0) return;
         index = Math.Clamp(index, 0, Items.Count - 1);
-        double targetY = index * ItemHeight;
+        double targetY = index * RowHeight;
 
-        _programmaticScroll = true;
-        await _scroll.ScrollToAsync(0, targetY, animated);
-        _programmaticScroll = false;
+        _ProgrammaticScroll = true;
+        await _Scroll.ScrollToAsync(0, targetY, animated);
+        _ProgrammaticScroll = false;
 
         UpdateItemAppearances(targetY);
     }
 
     private void OnSelectedIndexChanged(int oldIndex, int newIndex)
     {
-        if (_programmaticScroll) return;
+        if (_ProgrammaticScroll) return;
         if (Items.Count == 0) return;
+        if (!IsLoaded) return;   // the Loaded handler centres the selection once laid out
         Dispatcher.Dispatch(async () => await ScrollTo(newIndex, animated: true));
     }
 
@@ -207,12 +283,12 @@ public class DrumRollPicker : ContentView
 
     private void UpdateItemAppearances(double scrollY)
     {
-        double centerItemIndex = scrollY / ItemHeight;
+        double centerItemIndex = scrollY / RowHeight;
 
-        for (int i = 0; i < _itemLabels.Count; i++)
+        for (int i = 0; i < _ItemLabels.Count; i++)
         {
             double distance = Math.Abs(i - centerItemIndex);
-            var label = _itemLabels[i];
+            var label = _ItemLabels[i];
 
             label.Opacity = distance switch
             {
@@ -235,7 +311,7 @@ public class DrumRollPicker : ContentView
         {
             Spacing = 0,
             VerticalOptions = isTop ? LayoutOptions.Start : LayoutOptions.End,
-            HeightRequest = ItemHeight * PaddingItems,
+            HeightRequest = _ItemHeight * _PaddingItems,
             InputTransparent = true,
         };
 
@@ -245,7 +321,7 @@ public class DrumRollPicker : ContentView
         foreach (double alpha in alphas)
         {
             byte a = (byte)(alpha * 255);
-            var box = new BoxView { HeightRequest = ItemHeight, InputTransparent = true };
+            var box = new BoxView { HeightRequest = _ItemHeight, InputTransparent = true };
             box.SetAppThemeColor(BoxView.ColorProperty,
                 Color.FromRgba((byte)255, (byte)255, (byte)255, a),   // white fade for light mode
                 Color.FromRgba((byte)0,   (byte)0,   (byte)0,   a));  // black fade for dark mode

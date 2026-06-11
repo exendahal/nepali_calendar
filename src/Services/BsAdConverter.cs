@@ -11,22 +11,22 @@ public static class BsAdConverter
 {
     // Epoch: 1 Baisakh 2000 BS = 4 April 1943 AD
     // Validated: BS 2083/02/23 (Jestha 23) = AD 2026/06/06 ✓
-    private static readonly DateTime AdEpoch = new(1943, 4, 4);
-    private const int BsEpochYear = 2000;
-    private const int BsEpochMonth = 1;
-    private const int BsEpochDay = 1;
+    private static readonly DateTime _AdEpoch = new(1943, 4, 4);
+    private const int _BsEpochYear = 2000;
+    private const int _BsEpochMonth = 1;
+    private const int _BsEpochDay = 1;
 
     /// <summary>Converts a BS date to its equivalent AD date.</summary>
     public static DateTime BsToAd(NepaliDate bs)
     {
         int totalDays = DaysFromBsEpoch(bs.Year, bs.Month, bs.Day);
-        return AdEpoch.AddDays(totalDays);
+        return _AdEpoch.AddDays(totalDays);
     }
 
     /// <summary>Converts an AD date to its equivalent BS date.</summary>
     public static NepaliDate AdToBs(DateTime ad)
     {
-        int totalDays = (ad.Date - AdEpoch).Days;
+        int totalDays = (ad.Date - _AdEpoch).Days;
         return DaysToBS(totalDays);
     }
 
@@ -35,21 +35,21 @@ public static class BsAdConverter
     {
         int days = 0;
 
-        if (year >= BsEpochYear)
+        if (year >= _BsEpochYear)
         {
             // Count forward from epoch year
-            for (int y = BsEpochYear; y < year; y++)
+            for (int y = _BsEpochYear; y < year; y++)
                 days += BsCalendarData.GetDaysInYear(y);
 
-            for (int m = BsEpochMonth; m < month; m++)
+            for (int m = _BsEpochMonth; m < month; m++)
                 days += BsCalendarData.GetDaysInMonth(year, m);
 
-            days += day - BsEpochDay;
+            days += day - _BsEpochDay;
         }
         else
         {
             // Count backward from epoch year
-            for (int y = BsEpochYear - 1; y >= year; y--)
+            for (int y = _BsEpochYear - 1; y >= year; y--)
                 days -= BsCalendarData.GetDaysInYear(y);
 
             // Now add back partial year
@@ -66,9 +66,9 @@ public static class BsAdConverter
 
     private static NepaliDate DaysToBS(int totalDays)
     {
-        int year = BsEpochYear;
-        int month = BsEpochMonth;
-        int day = BsEpochDay;
+        int year = _BsEpochYear;
+        int month = _BsEpochMonth;
+        int day = _BsEpochDay;
 
         if (totalDays >= 0)
         {

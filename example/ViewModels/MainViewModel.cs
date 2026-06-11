@@ -7,27 +7,27 @@ namespace NepaliDatePickerDemo;
 
 public partial class MainViewModel : ObservableObject
 {
-    private readonly INepaliDatePickerService _picker;
+    private readonly INepaliDatePickerService _Picker;
 
     public SettingsViewModel Settings { get; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedDateDisplay))]
     [NotifyPropertyChangedFor(nameof(AdEquivalentDisplay))]
-    private NepaliDate? _selectedDate;
+    private NepaliDate? _SelectedDate;
 
     [ObservableProperty]
-    private string _statusMessage = "Tap any input or button below to open the picker.";
+    private string _StatusMessage = "Tap any input or button below to open the picker.";
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(StartDateDisplay))]
     [NotifyPropertyChangedFor(nameof(RangeDurationDisplay))]
-    private NepaliDate? _startDate;
+    private NepaliDate? _StartDate;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EndDateDisplay))]
     [NotifyPropertyChangedFor(nameof(RangeDurationDisplay))]
-    private NepaliDate? _endDate;
+    private NepaliDate? _EndDate;
 
     // ── Range displays ────────────────────────────────────────────────────────
 
@@ -51,8 +51,8 @@ public partial class MainViewModel : ObservableObject
 
     // ── Today displays ────────────────────────────────────────────────────────
 
-    public string TodayBsDisplay => _picker.Today.ToDisplayString();
-    public string TodayAdDisplay => $"AD: {BsAdConverter.FormatAdEquivalent(_picker.Today)}";
+    public string TodayBsDisplay => _Picker.Today.ToDisplayString();
+    public string TodayAdDisplay => $"AD: {BsAdConverter.FormatAdEquivalent(_Picker.Today)}";
 
     // ── Selected date displays ────────────────────────────────────────────────
 
@@ -64,7 +64,7 @@ public partial class MainViewModel : ObservableObject
 
     public MainViewModel(INepaliDatePickerService picker, SettingsViewModel settings)
     {
-        _picker  = picker;
+        _Picker  = picker;
         Settings = settings;
         SelectedDate = picker.Today;
     }
@@ -80,7 +80,7 @@ public partial class MainViewModel : ObservableObject
             Presentation    = Settings.Presentation,
             UseNepaliScript = Settings.IsNepali,
         };
-        var result = await _picker.ShowAsync(SelectedDate, opts);
+        var result = await _Picker.ShowAsync(SelectedDate, opts);
         if (result is not null)
         {
             SelectedDate  = result;
@@ -101,7 +101,7 @@ public partial class MainViewModel : ObservableObject
             Presentation    = Settings.Presentation,
             UseNepaliScript = Settings.IsNepali,
         };
-        var result = await _picker.ShowAsync(new NepaliDate(2075, 6, 15), opts);
+        var result = await _Picker.ShowAsync(new NepaliDate(2075, 6, 15), opts);
         if (result is not null)
         {
             SelectedDate  = result;
@@ -122,7 +122,7 @@ public partial class MainViewModel : ObservableObject
             HeaderBackgroundColor = Color.FromArgb("#00695C"),
             SheetCornerRadius     = 20,
         };
-        var result = await _picker.ShowAsync(SelectedDate, opts);
+        var result = await _Picker.ShowAsync(SelectedDate, opts);
         if (result is not null)
         {
             SelectedDate  = result;
@@ -140,7 +140,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void SetToday()
     {
-        SelectedDate  = _picker.Today;
+        SelectedDate  = _Picker.Today;
         StatusMessage = $"Set to today: {SelectedDate?.ToDisplayString()}";
     }
 
@@ -153,10 +153,10 @@ public partial class MainViewModel : ObservableObject
             Presentation    = Settings.Presentation,
             UseNepaliScript = Settings.IsNepali,
         };
-        var start = await _picker.ShowAsync(StartDate, opts);
+        var start = await _Picker.ShowAsync(StartDate, opts);
         if (start is null) return;
 
-        var end = await _picker.ShowAsync(EndDate ?? start, opts);
+        var end = await _Picker.ShowAsync(EndDate ?? start, opts);
         if (end is null) return;
 
         StartDate     = start;

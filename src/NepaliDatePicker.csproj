@@ -15,11 +15,13 @@
 
     <RootNamespace>NepaliDatePicker</RootNamespace>
     <AssemblyName>NepaliDatePicker.Maui</AssemblyName>
+	<PackageIcon>icon.png</PackageIcon>
 
     <!-- NuGet package metadata -->
     <PackageId>NepaliDatePicker.Maui</PackageId>
-    <Version>1.0.0-preview1</Version>
-    <Authors>exendahal</Authors>
+    <Version>1.0.0</Version>
+    
+	  <Authors>exendahal</Authors>
     <Owners>exendahal</Owners>   
     <Copyright>Santosh Dahal</Copyright>
     <Product>NepaliDatePicker.Maui</Product>
@@ -27,7 +29,11 @@
 	<Title>Nepali Bikram Sambat (BS) Date Picker for .NET MAUI</Title>
 	<Description>A Nepali Bikram Sambat (BS) date picker control for .NET MAUI. Features a bottom-sheet UI with drum-roll pickers, BS/AD calendar toggle, automatic day clamping, and full light/dark mode support.</Description>
     <PackageTags>maui;dotnet;nepali;calendar;bikram-sambat;bs;date-picker;nepal;nepali-calendar</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<PackageProjectUrl>https://github.com/exendahal/nepali_calendar</PackageProjectUrl>
+	<RepositoryUrl>https://github.com/exendahal/nepali_calendar</RepositoryUrl>
+	  
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <IsPackable>true</IsPackable>
@@ -39,6 +45,7 @@
 
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" Condition="Exists('..\README.md')" />
+	  <None Include="icon\icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

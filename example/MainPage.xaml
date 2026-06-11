@@ -48,6 +48,16 @@
                 Opacity="0.6"
                 Text="Bikram Sambat · Material Design 3 · .NET MAUI" />
 
+            <Button
+                Margin="0,0,0,20"
+                BackgroundColor="#6750A4"
+                Clicked="OnOpenCalendarPageClicked"
+                CornerRadius="12"
+                FontAttributes="Bold"
+                HeightRequest="50"
+                Text="Open Calendar Page"
+                TextColor="White" />
+
             <!--
                 ═══════════════════════════════════════════════════════════════
                 SETTINGS CARD
@@ -423,7 +433,24 @@
 
             <!--
                 ══════════════════════════════════════════════════════════════
-                SECTION 4 — Date range selection
+                SECTION 4 — Wheel picker style
+                ══════════════════════════════════════════════════════════════════
+            -->
+            <Label Style="{StaticResource SectionLabel}" Text="WHEEL STYLE" />
+
+            <nep:NepaliDatePicker
+                Margin="0,0,0,24"
+                DateSelected="OnDateSelected"
+                DisplayMode="{Binding Settings.DisplayMode}"
+                PickerStyle="Wheel"
+                Placeholder="Wheel style picker…"
+                Presentation="{Binding Settings.Presentation}"
+                SelectedDate="{Binding SelectedDate}"
+                UseNepaliScript="{Binding Settings.IsNepali}" />
+
+            <!--
+                ══════════════════════════════════════════════════════════════
+                SECTION 5 — Date range selection
                 ══════════════════════════════════════════════════════════════════
             -->
             <Label Style="{StaticResource SectionLabel}" Text="DATE RANGE SELECTION" />

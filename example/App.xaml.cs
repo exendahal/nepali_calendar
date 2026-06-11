@@ -2,14 +2,14 @@ namespace NepaliDatePickerDemo;
 
 public partial class App : Application
 {
-    private readonly MainPage _mainPage;
+    private readonly MainPage _MainPage;
 
     public App(MainPage mainPage)
     {
         InitializeComponent();
-        _mainPage = mainPage;
+        _MainPage = mainPage;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
-        => new(new NavigationPage(_mainPage));
+        => new(new NavigationPage(_MainPage));
 }
