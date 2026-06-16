@@ -48,16 +48,6 @@
                 Opacity="0.6"
                 Text="Bikram Sambat · Material Design 3 · .NET MAUI" />
 
-            <Button
-                Margin="0,0,0,20"
-                BackgroundColor="#6750A4"
-                Clicked="OnOpenCalendarPageClicked"
-                CornerRadius="12"
-                FontAttributes="Bold"
-                HeightRequest="50"
-                Text="Open Calendar Page"
-                TextColor="White" />
-
             <!--
                 ═══════════════════════════════════════════════════════════════
                 SETTINGS CARD
@@ -328,6 +318,110 @@
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
 
+                    <!--  PICKER STYLE row  -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label
+                            Margin="0"
+                            Style="{StaticResource SectionLabel}"
+                            Text="PICKER STYLE" />
+                        <HorizontalStackLayout Spacing="8">
+
+                            <!--  Calendar  -->
+                            <Border Style="{StaticResource ChipBorder}">
+                                <Border.Stroke>
+                                    <SolidColorBrush Color="#6750A4" />
+                                </Border.Stroke>
+                                <Border.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsCalendar}"
+                                        TargetType="Border"
+                                        Value="True">
+                                        <Setter Property="BackgroundColor" Value="#6750A4" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Settings.SetCalendarCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Style="{StaticResource ChipLabel}" Text="Calendar">
+                                    <Label.TextColor>
+                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
+                                    </Label.TextColor>
+                                    <Label.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsCalendar}"
+                                            TargetType="Label"
+                                            Value="True">
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+
+                            <!--  Wheel  -->
+                            <Border Style="{StaticResource ChipBorder}">
+                                <Border.Stroke>
+                                    <SolidColorBrush Color="#6750A4" />
+                                </Border.Stroke>
+                                <Border.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsWheel}"
+                                        TargetType="Border"
+                                        Value="True">
+                                        <Setter Property="BackgroundColor" Value="#6750A4" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Settings.SetWheelCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Style="{StaticResource ChipLabel}" Text="Wheel">
+                                    <Label.TextColor>
+                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
+                                    </Label.TextColor>
+                                    <Label.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsWheel}"
+                                            TargetType="Label"
+                                            Value="True">
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+
+                            <!--  Input  -->
+                            <Border Style="{StaticResource ChipBorder}">
+                                <Border.Stroke>
+                                    <SolidColorBrush Color="#6750A4" />
+                                </Border.Stroke>
+                                <Border.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsInput}"
+                                        TargetType="Border"
+                                        Value="True">
+                                        <Setter Property="BackgroundColor" Value="#6750A4" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Settings.SetInputCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Style="{StaticResource ChipLabel}" Text="Input">
+                                    <Label.TextColor>
+                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
+                                    </Label.TextColor>
+                                    <Label.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsInput}"
+                                            TargetType="Label"
+                                            Value="True">
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
                 </VerticalStackLayout>
             </Border>
 
@@ -374,6 +468,7 @@
                 DateSelected="OnDateSelected"
                 DisplayMode="{Binding Settings.DisplayMode}"
                 Format="d MMMM yyyy"
+                PickerStyle="{Binding Settings.PickerStyle}"
                 Placeholder="Pick a date…"
                 Presentation="{Binding Settings.Presentation}"
                 SelectedDate="{Binding SelectedDate}"
@@ -396,6 +491,7 @@
                 InputBackgroundColor="#E0F2F1"
                 InputBackgroundColorDark="#004D40"
                 PickerHeaderColor="#00695C"
+                PickerStyle="{Binding Settings.PickerStyle}"
                 Placeholder="Custom teal picker…"
                 PlaceholderColor="#80CBC4"
                 Presentation="{Binding Settings.Presentation}"
@@ -422,6 +518,7 @@
                 InputBackgroundColor="#FFEBEE"
                 InputBackgroundColorDark="#4A0000"
                 PickerHeaderColor="#B71C1C"
+                PickerStyle="{Binding Settings.PickerStyle}"
                 Placeholder="Custom coral picker…"
                 PlaceholderColor="#EF9A9A"
                 Presentation="{Binding Settings.Presentation}"
@@ -433,24 +530,7 @@
 
             <!--
                 ══════════════════════════════════════════════════════════════
-                SECTION 4 — Wheel picker style
-                ══════════════════════════════════════════════════════════════════
-            -->
-            <Label Style="{StaticResource SectionLabel}" Text="WHEEL STYLE" />
-
-            <nep:NepaliDatePicker
-                Margin="0,0,0,24"
-                DateSelected="OnDateSelected"
-                DisplayMode="{Binding Settings.DisplayMode}"
-                PickerStyle="Wheel"
-                Placeholder="Wheel style picker…"
-                Presentation="{Binding Settings.Presentation}"
-                SelectedDate="{Binding SelectedDate}"
-                UseNepaliScript="{Binding Settings.IsNepali}" />
-
-            <!--
-                ══════════════════════════════════════════════════════════════
-                SECTION 5 — Date range selection
+                SECTION 4 — Date range selection
                 ══════════════════════════════════════════════════════════════════
             -->
             <Label Style="{StaticResource SectionLabel}" Text="DATE RANGE SELECTION" />
@@ -636,28 +716,6 @@
                     Text="Clear"
                     TextColor="White" />
             </Grid>
-
-            <!--  ── Feature list ─────────────────────────────────────────────  -->
-            <Label
-                Margin="0,0,0,10"
-                FontAttributes="Bold"
-                FontSize="17"
-                Text="Features" />
-            <VerticalStackLayout Margin="0,0,0,40" Spacing="8">
-                <Label FontSize="14" Text="✅  Material Design 3 calendar grid UI" />
-                <Label FontSize="14" Text="✅  Bottom sheet with slide animation" />
-                <Label FontSize="14" Text="✅  Dialog presentation (centered + fade/scale animation)" />
-                <Label FontSize="14" Text="✅  Auto day clamping (BS months vary 29–32 days)" />
-                <Label FontSize="14" Text="✅  Accurate BS ↔ AD conversion (validated to Jestha 23, 2083)" />
-                <Label FontSize="14" Text="✅  DisplayMode: BsOnly / Both (with BS/AD chip toggle)" />
-                <Label FontSize="14" Text="✅  Live settings: Theme, Language, Picker Layout" />
-                <Label FontSize="14" Text="✅  User-defined colors, corner radius, font family" />
-                <Label FontSize="14" Text="✅  Light and dark theme aware" />
-                <Label FontSize="14" Text="✅  NepaliDatePicker drop-in control" />
-                <Label FontSize="14" Text="✅  INepaliDatePickerService for DI / MVVM" />
-                <Label FontSize="14" Text="✅  Date range selection (two-picker pattern)" />
-                <Label FontSize="14" Text="✅  BS year range 1970 – 2100" />
-            </VerticalStackLayout>
 
         </VerticalStackLayout>
     </ScrollView>

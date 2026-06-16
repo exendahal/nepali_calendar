@@ -78,6 +78,10 @@ internal class NepaliDatePickerSheet : ContentView
     private int  _WheelMinYear;     // year represented by index 0 of the year wheel
     private int  _WheelDayCount;    // number of items currently in the day wheel
 
+    // ── Input-style state (created only for PickerStyle.Input) ───────────────
+    private Button? _OkBtn;
+    private Entry?  _InputEntry;
+
     // Sun → Sat, matching DayOfWeek order (Sunday = 0)
     private static readonly string[] _DowLabels       = ["S",    "M",   "T",     "W",   "T",     "F",     "S"   ];
     private static readonly string[] _DowLabelsNepali = ["आइ",  "सो",  "मं",   "बु",  "बि",   "शु",   "श"   ];
@@ -173,13 +177,41 @@ internal class NepaliDatePickerSheet : ContentView
         };
         _ChevronLabel.SetAppThemeColor(Label.TextColorProperty, _OnSurface, _OnSurfaceDark);
 
-        var headerDateRow = new HorizontalStackLayout
+        View headerDateRow;
+        if (_PickerStyle == PickerStyle.Input)
         {
-            Spacing = 0,
-            Margin = new Thickness(0, 4, 0, 2),
-            HorizontalOptions = LayoutOptions.Start,
-            Children = { _HeaderDateLabel },
-        };
+            var calIcon = new Label
+            {
+                Text = "🗓",
+                FontSize = 20,
+                TextColor = _HeaderText,
+                VerticalTextAlignment = TextAlignment.Center,
+                Margin = new Thickness(8, 0, 0, 0),
+            };
+            var dateGrid = new Grid
+            {
+                Margin = new Thickness(0, 4, 0, 2),
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition(GridLength.Star),
+                    new ColumnDefinition(GridLength.Auto),
+                },
+            };
+            dateGrid.Add(_HeaderDateLabel);
+            Grid.SetColumn(calIcon, 1);
+            dateGrid.Add(calIcon);
+            headerDateRow = dateGrid;
+        }
+        else
+        {
+            headerDateRow = new HorizontalStackLayout
+            {
+                Spacing = 0,
+                Margin = new Thickness(0, 4, 0, 2),
+                HorizontalOptions = LayoutOptions.Start,
+                Children = { _HeaderDateLabel },
+            };
+        }
 
         _HeaderEquivLabel = new Label
         {
@@ -276,7 +308,7 @@ internal class NepaliDatePickerSheet : ContentView
         if (_FontFamily is not null) cancelBtn.FontFamily = _FontFamily;
         cancelBtn.Clicked += (_, _) => Cancelled?.Invoke(this, EventArgs.Empty);
 
-        var okBtn = new Button
+        _OkBtn = new Button
         {
             Text = "OK",
             BackgroundColor = Colors.Transparent,
@@ -286,16 +318,16 @@ internal class NepaliDatePickerSheet : ContentView
             Padding = new Thickness(16, 0),
             HeightRequest = 40,
         };
-        okBtn.SetAppThemeColor(Button.TextColorProperty, _Primary, _PrimaryDark);
-        if (_FontFamily is not null) okBtn.FontFamily = _FontFamily;
-        okBtn.Clicked += (_, _) => CommitAndClose();
+        _OkBtn.SetAppThemeColor(Button.TextColorProperty, _Primary, _PrimaryDark);
+        if (_FontFamily is not null) _OkBtn.FontFamily = _FontFamily;
+        _OkBtn.Clicked += (_, _) => CommitAndClose();
 
         var actionRow = new HorizontalStackLayout
         {
             HorizontalOptions = LayoutOptions.End,
             Padding = new Thickness(0, 4, 8, 12),
             Spacing = 0,
-            Children = { cancelBtn, okBtn },
+            Children = { cancelBtn, _OkBtn },
         };
 
         // ── Root ──────────────────────────────────────────────────────────────
@@ -321,6 +353,10 @@ internal class NepaliDatePickerSheet : ContentView
         {
             BuildWheels();
             RebuildWheelItems();
+        }
+        else if (_PickerStyle == PickerStyle.Input)
+        {
+            BuildInputField();
         }
         else
         {
@@ -362,6 +398,10 @@ internal class NepaliDatePickerSheet : ContentView
         if (_PickerStyle == PickerStyle.Wheel)
         {
             RebuildWheelItems();
+        }
+        else if (_PickerStyle == PickerStyle.Input)
+        {
+            RefreshInputEntry();
         }
         else
         {
@@ -920,6 +960,113 @@ internal class NepaliDatePickerSheet : ContentView
         }
 
         RefreshHeader();
+    }
+
+    // ── Input style (desktop text entry) ─────────────────────────────────────
+
+    private void BuildInputField()
+    {
+        string initialText = _IsBsMode
+            ? $"{_BsYear:D4}-{_BsMonth:D2}-{_BsDay:D2}"
+            : $"{_AdDate.Year:D4}-{_AdDate.Month:D2}-{_AdDate.Day:D2}";
+
+        _InputEntry = new Entry
+        {
+            Text = initialText,
+            Placeholder = "YYYY-MM-DD",
+            Keyboard = Keyboard.Default,
+            MaxLength = 10,
+            FontSize = 16,
+            BackgroundColor = Colors.Transparent,
+        };
+        if (_FontFamily is not null) _InputEntry.FontFamily = _FontFamily;
+        _InputEntry.SetAppThemeColor(Entry.TextColorProperty, _OnSurface, _OnSurfaceDark);
+        _InputEntry.TextChanged += (_, e) => ValidateAndApplyInput(e.NewTextValue);
+
+        var fieldLabel = new Label { Text = "Enter Date", FontSize = 11 };
+        fieldLabel.SetAppThemeColor(Label.TextColorProperty, _OnSurfaceVar, _OnSurfaceVarDk);
+        ApplyFont(fieldLabel);
+
+        var borderColor = Application.Current?.RequestedTheme == AppTheme.Dark ? _PrimaryDark : _Primary;
+        var entryBorder = new Border
+        {
+            Stroke = new SolidColorBrush(borderColor),
+            StrokeThickness = 1.5,
+            StrokeShape = new RoundRectangle { CornerRadius = 4 },
+            Padding = new Thickness(12, 8),
+            Content = new VerticalStackLayout
+            {
+                Spacing = 4,
+                Children = { fieldLabel, _InputEntry },
+            },
+        };
+
+        _CalendarHost.Content = entryBorder;
+    }
+
+    private void ValidateAndApplyInput(string text)
+    {
+        if (_OkBtn is null) return;
+
+        if (text.Length != 10 || text[4] != '-' || text[7] != '-')
+        {
+            _OkBtn.IsEnabled = false;
+            return;
+        }
+
+        if (!int.TryParse(text.AsSpan(0, 4), out int year) ||
+            !int.TryParse(text.AsSpan(5, 2), out int month) ||
+            !int.TryParse(text.AsSpan(8, 2), out int day))
+        {
+            _OkBtn.IsEnabled = false;
+            return;
+        }
+
+        if (_IsBsMode)
+        {
+            if (year < BsCalendarData.MinYear || year > BsCalendarData.MaxYear ||
+                month < 1 || month > 12)
+            {
+                _OkBtn.IsEnabled = false;
+                return;
+            }
+            int maxDay = BsCalendarData.GetDaysInMonth(year, month);
+            if (day < 1 || day > maxDay)
+            {
+                _OkBtn.IsEnabled = false;
+                return;
+            }
+            _BsYear = year; _BsMonth = month; _BsDay = day;
+            _AdDate = BsAdConverter.BsToAd(new NepaliDate(year, month, day));
+        }
+        else
+        {
+            if (year < 1900 || year > 2100 || month < 1 || month > 12)
+            {
+                _OkBtn.IsEnabled = false;
+                return;
+            }
+            int maxDay = DateTime.DaysInMonth(year, month);
+            if (day < 1 || day > maxDay)
+            {
+                _OkBtn.IsEnabled = false;
+                return;
+            }
+            _AdDate = new DateTime(year, month, day);
+            var bs = BsAdConverter.AdToBs(_AdDate);
+            _BsYear = bs.Year; _BsMonth = bs.Month; _BsDay = bs.Day;
+        }
+
+        _OkBtn.IsEnabled = true;
+        RefreshHeader();
+    }
+
+    private void RefreshInputEntry()
+    {
+        if (_InputEntry is null) return;
+        _InputEntry.Text = _IsBsMode
+            ? $"{_BsYear:D4}-{_BsMonth:D2}-{_BsDay:D2}"
+            : $"{_AdDate.Year:D4}-{_AdDate.Month:D2}-{_AdDate.Day:D2}";
     }
 
     // ── Day cell ──────────────────────────────────────────────────────────────
