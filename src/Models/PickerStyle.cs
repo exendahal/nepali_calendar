@@ -8,4 +8,7 @@ public enum PickerStyle
 
     /// <summary>iOS-style drum-roll wheels (year / month / day).</summary>
     Wheel,
+
+    /// <summary>Desktop-friendly text-input mode. User types a date in YYYY-MM-DD format; OK is enabled only when the value is valid.</summary>
+    Input,
 }

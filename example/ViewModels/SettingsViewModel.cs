@@ -18,6 +18,10 @@ public partial class SettingsViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsBottomSheet), nameof(IsDialog))]
     private PickerPresentation _Presentation = PickerPresentation.BottomSheet;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsCalendar), nameof(IsWheel), nameof(IsInput))]
+    private PickerStyle _PickerStyle = PickerStyle.Calendar;
+
     public bool IsLight       => Theme == AppTheme.Light;
     public bool IsDark        => Theme == AppTheme.Dark;
     public bool IsSystem      => Theme == AppTheme.Unspecified;
@@ -25,6 +29,9 @@ public partial class SettingsViewModel : ObservableObject
     public bool IsNepali      => DisplayMode == DateDisplayMode.BsOnly;
     public bool IsBottomSheet => Presentation == PickerPresentation.BottomSheet;
     public bool IsDialog      => Presentation == PickerPresentation.Dialog;
+    public bool IsCalendar    => PickerStyle == PickerStyle.Calendar;
+    public bool IsWheel       => PickerStyle == PickerStyle.Wheel;
+    public bool IsInput       => PickerStyle == PickerStyle.Input;
 
     partial void OnThemeChanged(AppTheme value)
     {
@@ -39,4 +46,7 @@ public partial class SettingsViewModel : ObservableObject
     [RelayCommand] void SetNepali()      => DisplayMode = DateDisplayMode.BsOnly;
     [RelayCommand] void SetBottomSheet() => Presentation = PickerPresentation.BottomSheet;
     [RelayCommand] void SetDialog()      => Presentation = PickerPresentation.Dialog;
+    [RelayCommand] void SetCalendar()    => PickerStyle = PickerStyle.Calendar;
+    [RelayCommand] void SetWheel()       => PickerStyle = PickerStyle.Wheel;
+    [RelayCommand] void SetInput()       => PickerStyle = PickerStyle.Input;
 }

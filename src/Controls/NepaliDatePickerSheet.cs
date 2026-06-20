@@ -78,6 +78,11 @@ internal class NepaliDatePickerSheet : ContentView
     private int  _WheelMinYear;     // year represented by index 0 of the year wheel
     private int  _WheelDayCount;    // number of items currently in the day wheel
 
+    // ── Input-style state (created only for PickerStyle.Input) ───────────────
+    private Button? _OkBtn;
+    private Entry?  _InputEntry;
+    private bool    _FormattingInput;
+
     // Sun → Sat, matching DayOfWeek order (Sunday = 0)
     private static readonly string[] _DowLabels       = ["S",    "M",   "T",     "W",   "T",     "F",     "S"   ];
     private static readonly string[] _DowLabelsNepali = ["आइ",  "सो",  "मं",   "बु",  "बि",   "शु",   "श"   ];
@@ -155,7 +160,7 @@ internal class NepaliDatePickerSheet : ContentView
             CharacterSpacing = UseNepaliGlyphs ? 0 : 1.5,
             TextColor = Color.FromRgba((byte)255, (byte)255, (byte)255, (byte)178),
         };
-        ApplyFont(selectLabel);
+        ApplyFont(selectLabel, UseNepaliGlyphs);
 
         _HeaderDateLabel = new Label
         {
@@ -163,7 +168,7 @@ internal class NepaliDatePickerSheet : ContentView
             FontAttributes = FontAttributes.Bold,
             TextColor = _HeaderText,
         };
-        ApplyFont(_HeaderDateLabel);
+        ApplyFont(_HeaderDateLabel, UseNepaliGlyphs);
 
         _ChevronLabel = new Label
         {
@@ -186,7 +191,7 @@ internal class NepaliDatePickerSheet : ContentView
             FontSize = 12,
             TextColor = Color.FromRgba((byte)255, (byte)255, (byte)255, (byte)178),
         };
-        ApplyFont(_HeaderEquivLabel);
+        ApplyFont(_HeaderEquivLabel, false);
 
         var headerContent = new VerticalStackLayout
         {
@@ -229,7 +234,7 @@ internal class NepaliDatePickerSheet : ContentView
             VerticalTextAlignment = TextAlignment.Center,
         };
         _MonthYearLabel.SetAppThemeColor(Label.TextColorProperty, _OnSurface, _OnSurfaceDark);
-        ApplyFont(_MonthYearLabel);
+        ApplyFont(_MonthYearLabel, UseNepaliGlyphs);
 
         var monthYearRow = new HorizontalStackLayout
         {
@@ -276,7 +281,7 @@ internal class NepaliDatePickerSheet : ContentView
         if (_FontFamily is not null) cancelBtn.FontFamily = _FontFamily;
         cancelBtn.Clicked += (_, _) => Cancelled?.Invoke(this, EventArgs.Empty);
 
-        var okBtn = new Button
+        _OkBtn = new Button
         {
             Text = "OK",
             BackgroundColor = Colors.Transparent,
@@ -286,16 +291,16 @@ internal class NepaliDatePickerSheet : ContentView
             Padding = new Thickness(16, 0),
             HeightRequest = 40,
         };
-        okBtn.SetAppThemeColor(Button.TextColorProperty, _Primary, _PrimaryDark);
-        if (_FontFamily is not null) okBtn.FontFamily = _FontFamily;
-        okBtn.Clicked += (_, _) => CommitAndClose();
+        _OkBtn.SetAppThemeColor(Button.TextColorProperty, _Primary, _PrimaryDark);
+        if (_FontFamily is not null) _OkBtn.FontFamily = _FontFamily;
+        _OkBtn.Clicked += (_, _) => CommitAndClose();
 
         var actionRow = new HorizontalStackLayout
         {
             HorizontalOptions = LayoutOptions.End,
             Padding = new Thickness(0, 4, 8, 12),
             Spacing = 0,
-            Children = { cancelBtn, okBtn },
+            Children = { cancelBtn, _OkBtn },
         };
 
         // ── Root ──────────────────────────────────────────────────────────────
@@ -321,6 +326,10 @@ internal class NepaliDatePickerSheet : ContentView
         {
             BuildWheels();
             RebuildWheelItems();
+        }
+        else if (_PickerStyle == PickerStyle.Input)
+        {
+            BuildInputField();
         }
         else
         {
@@ -362,6 +371,10 @@ internal class NepaliDatePickerSheet : ContentView
         if (_PickerStyle == PickerStyle.Wheel)
         {
             RebuildWheelItems();
+        }
+        else if (_PickerStyle == PickerStyle.Input)
+        {
+            RefreshInputEntry();
         }
         else
         {
@@ -488,6 +501,7 @@ internal class NepaliDatePickerSheet : ContentView
 
     private void RefreshHeader()
     {
+        ApplyFont(_HeaderDateLabel, UseNepaliGlyphs);
         DateTime ad = BsAdConverter.BsToAd(new NepaliDate(_BsYear, _BsMonth, _BsDay));
 
         if (_IsBsMode)
@@ -524,6 +538,7 @@ internal class NepaliDatePickerSheet : ContentView
 
     private void RefreshMonthYear()
     {
+        ApplyFont(_MonthYearLabel, UseNepaliGlyphs);
         if (_IsBsMode)
         {
             var month = _UseNepaliScript ? NepaliDate.MonthNamesNepali[_ViewMonth - 1] : NepaliDate.MonthNames[_ViewMonth - 1];
@@ -632,6 +647,7 @@ internal class NepaliDatePickerSheet : ContentView
         string[] monthNames = _IsBsMode
             ? (_UseNepaliScript ? NepaliDate.MonthNamesNepali : NepaliDate.MonthNames)
             : (UseNepaliGlyphs ? NepaliDate.AdMonthNamesNepali : _AdMonthNames);
+        bool monthIsDevanagari = _IsBsMode ? _UseNepaliScript : UseNepaliGlyphs;
 
         var monthGrid = new Grid { RowSpacing = _MonthSpacing, ColumnSpacing = _MonthSpacing };
         for (int c = 0; c < _MonthCols; c++)
@@ -643,7 +659,7 @@ internal class NepaliDatePickerSheet : ContentView
         {
             int  month     = i + 1;
             bool isCurrent = month == _ViewMonth && _PickerSelectedYear == _ViewYear;
-            var  cell      = BuildMonthCell(monthNames[i], isCurrent);
+            var  cell      = BuildMonthCell(monthNames[i], isCurrent, monthIsDevanagari);
             Grid.SetRow(cell, i / _MonthCols);
             Grid.SetColumn(cell, i % _MonthCols);
 
@@ -671,7 +687,7 @@ internal class NepaliDatePickerSheet : ContentView
             HorizontalOptions       = LayoutOptions.Fill,
             VerticalOptions         = LayoutOptions.Fill,
         };
-        ApplyFont(label);
+        ApplyFont(label, UseNepaliGlyphs);
 
         if (isSelected)
         {
@@ -711,7 +727,7 @@ internal class NepaliDatePickerSheet : ContentView
 
     // ── Month cell ────────────────────────────────────────────────────────────
 
-    private View BuildMonthCell(string name, bool isSelected)
+    private View BuildMonthCell(string name, bool isSelected, bool devanagari = false)
     {
         var label = new Label
         {
@@ -722,7 +738,7 @@ internal class NepaliDatePickerSheet : ContentView
             HorizontalOptions       = LayoutOptions.Fill,
             VerticalOptions         = LayoutOptions.Fill,
         };
-        ApplyFont(label);
+        ApplyFont(label, devanagari);
 
         if (isSelected)
         {
@@ -814,9 +830,10 @@ internal class NepaliDatePickerSheet : ContentView
 
     private void BuildWheels()
     {
-        _YearWheel  = new DrumRollPicker { FontFamily = _FontFamily };
-        _MonthWheel = new DrumRollPicker { FontFamily = _FontFamily };
-        _DayWheel   = new DrumRollPicker { FontFamily = _FontFamily };
+        string? wheelFont = UseNepaliGlyphs ? _FontFamily : null;
+        _YearWheel  = new DrumRollPicker { FontFamily = wheelFont };
+        _MonthWheel = new DrumRollPicker { FontFamily = wheelFont };
+        _DayWheel   = new DrumRollPicker { FontFamily = wheelFont };
 
         _YearWheel.SelectionChanged  += (_, _) => OnWheelChanged();
         _MonthWheel.SelectionChanged += (_, _) => OnWheelChanged();
@@ -854,6 +871,11 @@ internal class NepaliDatePickerSheet : ContentView
             years[y - minYear] = UseNepaliGlyphs ? N(y) : y.ToString();
 
         _WheelSyncing = true;
+
+        string? wheelFont = UseNepaliGlyphs ? _FontFamily : null;
+        _YearWheel.FontFamily  = wheelFont;
+        _MonthWheel.FontFamily = wheelFont;
+        _DayWheel.FontFamily   = wheelFont;
 
         _YearWheel.Items  = years;
         _MonthWheel.Items = _IsBsMode
@@ -922,6 +944,154 @@ internal class NepaliDatePickerSheet : ContentView
         RefreshHeader();
     }
 
+    // ── Input style (desktop text entry) ─────────────────────────────────────
+
+    private void BuildInputField()
+    {
+        string initialText = _IsBsMode
+            ? $"{_BsYear:D4}-{_BsMonth:D2}-{_BsDay:D2}"
+            : $"{_AdDate.Year:D4}-{_AdDate.Month:D2}-{_AdDate.Day:D2}";
+
+        _InputEntry = new Entry
+        {
+            Text = initialText,
+            Placeholder = "YYYY-MM-DD",
+            Keyboard = Keyboard.Default,
+            MaxLength = 10,
+            FontSize = 14,
+            BackgroundColor = Colors.Transparent,
+        };
+        if (_FontFamily is not null) _InputEntry.FontFamily = _FontFamily;
+        _InputEntry.SetAppThemeColor(Entry.TextColorProperty, _OnSurface, _OnSurfaceDark);
+        _InputEntry.TextChanged += AutoFormatInput;
+
+        var fieldLabel = new Label { Text = _UseNepaliScript ? "मिति लेख्नुहोस्" : "Enter Date", FontSize = 10 };
+        fieldLabel.SetAppThemeColor(Label.TextColorProperty, _OnSurfaceVar, _OnSurfaceVarDk);
+        ApplyFont(fieldLabel, _UseNepaliScript);
+
+        _InputEntry.Margin = new Thickness(0, -6, 0, 0);
+
+        var borderColor = Application.Current?.RequestedTheme == AppTheme.Dark ? _PrimaryDark : _Primary;
+        var entryBorder = new Border
+        {
+            Stroke = new SolidColorBrush(borderColor),
+            StrokeThickness = 1.5,
+            StrokeShape = new RoundRectangle { CornerRadius = 4 },
+            Padding = new Thickness(10, 6),
+            Content = new VerticalStackLayout
+            {
+                Spacing = 0,
+                Children = { fieldLabel, _InputEntry },
+            },
+        };
+
+        _CalendarHost.Content = entryBorder;
+    }
+
+    private void AutoFormatInput(object? sender, TextChangedEventArgs e)
+    {
+        if (_FormattingInput) return;
+
+        string newText  = e.NewTextValue  ?? "";
+        bool isDeleting = newText.Length  < (e.OldTextValue?.Length ?? 0);
+
+        // Strip non-digits, cap at 8 (YYYYMMDD).
+        var digits = new string(newText.Where(char.IsDigit).ToArray());
+        if (digits.Length > 8) digits = digits[..8];
+
+        // Rebuild YYYY-MM-DD, appending the next separator automatically
+        // unless the user is deleting (to avoid the separator bouncing back).
+        string formatted = digits.Length switch
+        {
+            < 4 => digits,
+            4   => isDeleting ? digits : digits + "-",
+            < 6 => digits[..4] + "-" + digits[4..],
+            6   => isDeleting ? digits[..4] + "-" + digits[4..] : digits[..4] + "-" + digits[4..] + "-",
+            _   => digits[..4] + "-" + digits[4..6] + "-" + digits[6..],
+        };
+
+        if (formatted != newText)
+        {
+            _FormattingInput = true;
+            // Defer the assignment past Android's afterTextChanged pipeline.
+            // Setting Text synchronously here causes SpannableStringBuilder to
+            // throw "end should be < than charSequence length" when the new text
+            // is longer than the old (e.g. auto-inserting the '-' separator).
+            Dispatcher.Dispatch(() =>
+            {
+                _InputEntry!.Text = formatted;
+                _FormattingInput = false;
+            });
+        }
+
+        ValidateAndApplyInput(formatted);
+    }
+
+    private void ValidateAndApplyInput(string text)
+    {
+        if (_OkBtn is null) return;
+
+        if (text.Length != 10 || text[4] != '-' || text[7] != '-')
+        {
+            _OkBtn.IsEnabled = false;
+            return;
+        }
+
+        if (!int.TryParse(text.AsSpan(0, 4), out int year) ||
+            !int.TryParse(text.AsSpan(5, 2), out int month) ||
+            !int.TryParse(text.AsSpan(8, 2), out int day))
+        {
+            _OkBtn.IsEnabled = false;
+            return;
+        }
+
+        if (_IsBsMode)
+        {
+            if (year < BsCalendarData.MinYear || year > BsCalendarData.MaxYear ||
+                month < 1 || month > 12)
+            {
+                _OkBtn.IsEnabled = false;
+                return;
+            }
+            int maxDay = BsCalendarData.GetDaysInMonth(year, month);
+            if (day < 1 || day > maxDay)
+            {
+                _OkBtn.IsEnabled = false;
+                return;
+            }
+            _BsYear = year; _BsMonth = month; _BsDay = day;
+            _AdDate = BsAdConverter.BsToAd(new NepaliDate(year, month, day));
+        }
+        else
+        {
+            if (year < 1900 || year > 2100 || month < 1 || month > 12)
+            {
+                _OkBtn.IsEnabled = false;
+                return;
+            }
+            int maxDay = DateTime.DaysInMonth(year, month);
+            if (day < 1 || day > maxDay)
+            {
+                _OkBtn.IsEnabled = false;
+                return;
+            }
+            _AdDate = new DateTime(year, month, day);
+            var bs = BsAdConverter.AdToBs(_AdDate);
+            _BsYear = bs.Year; _BsMonth = bs.Month; _BsDay = bs.Day;
+        }
+
+        _OkBtn.IsEnabled = true;
+        RefreshHeader();
+    }
+
+    private void RefreshInputEntry()
+    {
+        if (_InputEntry is null) return;
+        _InputEntry.Text = _IsBsMode
+            ? $"{_BsYear:D4}-{_BsMonth:D2}-{_BsDay:D2}"
+            : $"{_AdDate.Year:D4}-{_AdDate.Month:D2}-{_AdDate.Day:D2}";
+    }
+
     // ── Day cell ──────────────────────────────────────────────────────────────
 
     private View BuildDayCell(int day, bool isSelected, bool isToday)
@@ -935,7 +1105,7 @@ internal class NepaliDatePickerSheet : ContentView
             HorizontalOptions       = LayoutOptions.Fill,
             VerticalOptions         = LayoutOptions.Fill,
         };
-        ApplyFont(label);
+        ApplyFont(label, UseNepaliGlyphs);
 
         if (isSelected)
         {
@@ -997,7 +1167,7 @@ internal class NepaliDatePickerSheet : ContentView
                 VerticalTextAlignment   = TextAlignment.Center,
             };
             lbl.SetAppThemeColor(Label.TextColorProperty, _OnSurfaceVar, _OnSurfaceVarDk);
-            ApplyFont(lbl);
+            ApplyFont(lbl, UseNepaliGlyphs);
             Grid.SetColumn(lbl, i);
             grid.Add(lbl);
         }
@@ -1027,7 +1197,7 @@ internal class NepaliDatePickerSheet : ContentView
             VerticalTextAlignment   = TextAlignment.Center,
             Margin = new Thickness(16, 6),
         };
-        ApplyFont(label);
+        ApplyFont(label, false);
         return new Border
         {
             StrokeShape         = new RoundRectangle { CornerRadius = 16 },
@@ -1055,13 +1225,16 @@ internal class NepaliDatePickerSheet : ContentView
         return btn;
     }
 
-    private void ApplyFont(Label label)
+    // Always set FontFamily (even null) so the local setter wins over any app-level
+    // implicit style (e.g. "OpenSansRegular") that would otherwise block Devanagari glyphs.
+    // A null value makes MAUI fall back to the system font (NotoSans on Android), which
+    // covers Devanagari natively and renders Latin correctly.
+    // For Latin labels, force null regardless of the user's custom font: a Devanagari-only
+    // font applied to Latin content may lack certain glyphs or have OpenType rules that
+    // produce unexpected output for Latin text.
+    private void ApplyFont(Label label, bool devanagari = false)
     {
-        // Always set FontFamily (even null) so the local setter wins over any app-level
-        // implicit style (e.g. "OpenSansRegular") that would otherwise block Devanagari glyphs.
-        // A null value here makes MAUI fall back to the system font, which includes
-        // Devanagari via Android's NotoSans composite font.
-        label.FontFamily = _FontFamily;
+        label.FontFamily = devanagari ? _FontFamily : null;
     }
 
     // Converts an integer to Nepali (Devanagari) numeral string.

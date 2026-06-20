@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 	<TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
@@ -26,9 +26,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- App icon (placeholder — replace with your own SVG/PNG) -->
-    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
-    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+    <MauiIcon Include="Resources\AppIcon\icon_calendar.svg" Color="#FFFFFF" />
+    <MauiSplashScreen Include="Resources\AppIcon\icon_calendar.svg" Color="#FFFFFF" BaseSize="128,128" />
     <MauiFont Include="Resources\Fonts\*" />
     <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>

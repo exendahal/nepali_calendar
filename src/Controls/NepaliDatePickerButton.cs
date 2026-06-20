@@ -450,56 +450,72 @@ public class NepaliDatePicker : ContentView
 
     private string FormatDate(NepaliDate bsDate)
     {
+        // Replace month-name tokens with placeholders first so that numeric token
+        // replacements (dd/d, MM/M) cannot accidentally match letters inside the
+        // month name (e.g. "Ashadh" and "Bhadra" both contain 'd').
+        // Placeholders use control characters that will never appear in a format string.
+        const string ph4 = "\x01";  // MMMM placeholder
+        const string ph3 = "\x02";  // MMM  placeholder
+
         if (DisplayMode == DateDisplayMode.AdOnly)
         {
             DateTime ad = BsAdConverter.BsToAd(bsDate);
 
             if (UseNepaliScript)
             {
+                string mn = NepaliDate.AdMonthNamesNepali[ad.Month - 1];
                 return Format
-                    .Replace("MMMM", NepaliDate.AdMonthNamesNepali[ad.Month - 1])
-                    .Replace("MMM",  NepaliDate.AdMonthNamesNepali[ad.Month - 1])
+                    .Replace("MMMM", ph4)
+                    .Replace("MMM",  ph3)
                     .Replace("MM",   Nep(ad.Month, pad: true))
                     .Replace("M",    Nep(ad.Month))
                     .Replace("yyyy", Nep(ad.Year))
                     .Replace("yy",   Nep(ad.Year % 100, pad: true))
                     .Replace("dd",   Nep(ad.Day, pad: true))
-                    .Replace("d",    Nep(ad.Day));
+                    .Replace("d",    Nep(ad.Day))
+                    .Replace(ph4,    mn)
+                    .Replace(ph3,    mn);
             }
 
             return Format
-                .Replace("MMMM", ad.ToString("MMMM"))
-                .Replace("MMM",  ad.ToString("MMM"))
+                .Replace("MMMM", ph4)
+                .Replace("MMM",  ph3)
                 .Replace("MM",   ad.Month.ToString("D2"))
                 .Replace("M",    ad.Month.ToString())
                 .Replace("yyyy", ad.Year.ToString())
                 .Replace("yy",   (ad.Year % 100).ToString("D2"))
                 .Replace("dd",   ad.Day.ToString("D2"))
-                .Replace("d",    ad.Day.ToString());
+                .Replace("d",    ad.Day.ToString())
+                .Replace(ph4,    ad.ToString("MMMM"))
+                .Replace(ph3,    ad.ToString("MMM"));
         }
 
         if (UseNepaliScript)
         {
             return Format
-                .Replace("MMMM", bsDate.MonthNameNepali)
-                .Replace("MMM",  bsDate.MonthNameNepali)
+                .Replace("MMMM", ph4)
+                .Replace("MMM",  ph3)
                 .Replace("MM",   Nep(bsDate.Month, pad: true))
                 .Replace("M",    Nep(bsDate.Month))
                 .Replace("yyyy", Nep(bsDate.Year))
                 .Replace("yy",   Nep(bsDate.Year % 100, pad: true))
                 .Replace("dd",   Nep(bsDate.Day, pad: true))
-                .Replace("d",    Nep(bsDate.Day));
+                .Replace("d",    Nep(bsDate.Day))
+                .Replace(ph4,    bsDate.MonthNameNepali)
+                .Replace(ph3,    bsDate.MonthNameNepali);
         }
 
         return Format
-            .Replace("MMMM", bsDate.MonthName)
-            .Replace("MMM",  bsDate.MonthName[..3])
+            .Replace("MMMM", ph4)
+            .Replace("MMM",  ph3)
             .Replace("MM",   bsDate.Month.ToString("D2"))
             .Replace("M",    bsDate.Month.ToString())
             .Replace("yyyy", bsDate.Year.ToString())
             .Replace("yy",   (bsDate.Year % 100).ToString("D2"))
             .Replace("dd",   bsDate.Day.ToString("D2"))
-            .Replace("d",    bsDate.Day.ToString());
+            .Replace("d",    bsDate.Day.ToString())
+            .Replace(ph4,    bsDate.MonthName)
+            .Replace(ph3,    bsDate.MonthName[..3]);
     }
 
     private static string Nep(int n, bool pad = false)

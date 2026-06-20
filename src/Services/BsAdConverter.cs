@@ -9,9 +9,7 @@ namespace NepaliDatePicker.Services;
 /// </summary>
 public static class BsAdConverter
 {
-    // Epoch: 1 Baisakh 2000 BS = 4 April 1943 AD
-    // Validated: BS 2083/02/23 (Jestha 23) = AD 2026/06/06 ✓
-    private static readonly DateTime _AdEpoch = new(1943, 4, 4);
+    private static readonly DateTime _AdEpoch = new(1943, 4, 14);
     private const int _BsEpochYear = 2000;
     private const int _BsEpochMonth = 1;
     private const int _BsEpochDay = 1;
