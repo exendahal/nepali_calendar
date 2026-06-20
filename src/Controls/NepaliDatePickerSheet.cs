@@ -81,6 +81,7 @@ internal class NepaliDatePickerSheet : ContentView
     // ── Input-style state (created only for PickerStyle.Input) ───────────────
     private Button? _OkBtn;
     private Entry?  _InputEntry;
+    private bool    _FormattingInput;
 
     // Sun → Sat, matching DayOfWeek order (Sunday = 0)
     private static readonly string[] _DowLabels       = ["S",    "M",   "T",     "W",   "T",     "F",     "S"   ];
@@ -177,41 +178,13 @@ internal class NepaliDatePickerSheet : ContentView
         };
         _ChevronLabel.SetAppThemeColor(Label.TextColorProperty, _OnSurface, _OnSurfaceDark);
 
-        View headerDateRow;
-        if (_PickerStyle == PickerStyle.Input)
+        var headerDateRow = new HorizontalStackLayout
         {
-            var calIcon = new Label
-            {
-                Text = "🗓",
-                FontSize = 20,
-                TextColor = _HeaderText,
-                VerticalTextAlignment = TextAlignment.Center,
-                Margin = new Thickness(8, 0, 0, 0),
-            };
-            var dateGrid = new Grid
-            {
-                Margin = new Thickness(0, 4, 0, 2),
-                ColumnDefinitions =
-                {
-                    new ColumnDefinition(GridLength.Star),
-                    new ColumnDefinition(GridLength.Auto),
-                },
-            };
-            dateGrid.Add(_HeaderDateLabel);
-            Grid.SetColumn(calIcon, 1);
-            dateGrid.Add(calIcon);
-            headerDateRow = dateGrid;
-        }
-        else
-        {
-            headerDateRow = new HorizontalStackLayout
-            {
-                Spacing = 0,
-                Margin = new Thickness(0, 4, 0, 2),
-                HorizontalOptions = LayoutOptions.Start,
-                Children = { _HeaderDateLabel },
-            };
-        }
+            Spacing = 0,
+            Margin = new Thickness(0, 4, 0, 2),
+            HorizontalOptions = LayoutOptions.Start,
+            Children = { _HeaderDateLabel },
+        };
 
         _HeaderEquivLabel = new Label
         {
@@ -985,16 +958,18 @@ internal class NepaliDatePickerSheet : ContentView
             Placeholder = "YYYY-MM-DD",
             Keyboard = Keyboard.Default,
             MaxLength = 10,
-            FontSize = 16,
+            FontSize = 14,
             BackgroundColor = Colors.Transparent,
         };
         if (_FontFamily is not null) _InputEntry.FontFamily = _FontFamily;
         _InputEntry.SetAppThemeColor(Entry.TextColorProperty, _OnSurface, _OnSurfaceDark);
-        _InputEntry.TextChanged += (_, e) => ValidateAndApplyInput(e.NewTextValue);
+        _InputEntry.TextChanged += AutoFormatInput;
 
-        var fieldLabel = new Label { Text = "Enter Date", FontSize = 11 };
+        var fieldLabel = new Label { Text = _UseNepaliScript ? "मिति लेख्नुहोस्" : "Enter Date", FontSize = 10 };
         fieldLabel.SetAppThemeColor(Label.TextColorProperty, _OnSurfaceVar, _OnSurfaceVarDk);
-        ApplyFont(fieldLabel, false);
+        ApplyFont(fieldLabel, _UseNepaliScript);
+
+        _InputEntry.Margin = new Thickness(0, -6, 0, 0);
 
         var borderColor = Application.Current?.RequestedTheme == AppTheme.Dark ? _PrimaryDark : _Primary;
         var entryBorder = new Border
@@ -1002,15 +977,54 @@ internal class NepaliDatePickerSheet : ContentView
             Stroke = new SolidColorBrush(borderColor),
             StrokeThickness = 1.5,
             StrokeShape = new RoundRectangle { CornerRadius = 4 },
-            Padding = new Thickness(12, 8),
+            Padding = new Thickness(10, 6),
             Content = new VerticalStackLayout
             {
-                Spacing = 4,
+                Spacing = 0,
                 Children = { fieldLabel, _InputEntry },
             },
         };
 
         _CalendarHost.Content = entryBorder;
+    }
+
+    private void AutoFormatInput(object? sender, TextChangedEventArgs e)
+    {
+        if (_FormattingInput) return;
+
+        string newText  = e.NewTextValue  ?? "";
+        bool isDeleting = newText.Length  < (e.OldTextValue?.Length ?? 0);
+
+        // Strip non-digits, cap at 8 (YYYYMMDD).
+        var digits = new string(newText.Where(char.IsDigit).ToArray());
+        if (digits.Length > 8) digits = digits[..8];
+
+        // Rebuild YYYY-MM-DD, appending the next separator automatically
+        // unless the user is deleting (to avoid the separator bouncing back).
+        string formatted = digits.Length switch
+        {
+            < 4 => digits,
+            4   => isDeleting ? digits : digits + "-",
+            < 6 => digits[..4] + "-" + digits[4..],
+            6   => isDeleting ? digits[..4] + "-" + digits[4..] : digits[..4] + "-" + digits[4..] + "-",
+            _   => digits[..4] + "-" + digits[4..6] + "-" + digits[6..],
+        };
+
+        if (formatted != newText)
+        {
+            _FormattingInput = true;
+            // Defer the assignment past Android's afterTextChanged pipeline.
+            // Setting Text synchronously here causes SpannableStringBuilder to
+            // throw "end should be < than charSequence length" when the new text
+            // is longer than the old (e.g. auto-inserting the '-' separator).
+            Dispatcher.Dispatch(() =>
+            {
+                _InputEntry!.Text = formatted;
+                _FormattingInput = false;
+            });
+        }
+
+        ValidateAndApplyInput(formatted);
     }
 
     private void ValidateAndApplyInput(string text)
