@@ -66,6 +66,18 @@ A **Bikram Sambat (BS)** date picker for **.NET MAUI** built on a Material Desig
   </tr>
 </table>
 
+### Input Style
+
+<table>
+  <tr>
+    <th>Dark Theme</th>
+    <th>Light Theme</th>
+  </tr>
+  <tr>
+    <td><img src="preview/12.png" width="180"/></td>
+    <td><img src="preview/13.png" width="180"/></td>
+  </tr>
+</table>
 ---
 
 ## Features
@@ -340,6 +352,90 @@ Conversion data covers **1970 – 2100 BS** using official Government of Nepal c
 
 ---
 
+## Date utilities
+
+Add `using NepaliDatePicker.Formatting;` to access the formatting classes and the extension methods they surface on `NepaliDate`.
+
+### `NepaliDateFormatter` — token-based formatting
+
+Format a BS date with a pattern string, optionally in Devanagari script.
+
+```csharp
+using NepaliDatePicker.Formatting;
+
+var date = new NepaliDate(2082, 1, 15);   // 15 Baisakh 2082
+
+NepaliDateFormatter.Format(date, "d MMMM yyyy")               // "15 Baisakh 2082"
+NepaliDateFormatter.Format(date, "dd/MM/yyyy")                // "15/01/2082"
+NepaliDateFormatter.Format(date, "EEEE, d MMMM yyyy")         // "Tuesday, 15 Baisakh 2082"
+NepaliDateFormatter.Format(date, "EEE d MMM, yy")             // "Tue 15 Bai, 82"
+NepaliDateFormatter.Format(date, "d MMMM yyyy", nepali: true) // "१५ बैशाख २०८२"
+NepaliDateFormatter.Format(date, "EEEE, d MMMM yyyy", true)   // "मंगलबार, १५ बैशाख २०८२"
+
+// Extension method shorthand
+date.Format("d MMMM yyyy")
+```
+
+#### Pattern tokens
+
+| Token | Output |
+|---|---|
+| `yyyy` | 4-digit year — `2082` |
+| `yy` | 2-digit year — `82` |
+| `MMMM` | Full month name — `Baisakh` / `बैशाख` |
+| `MMM` | Abbreviated month — `Bai` / `बैशाख` |
+| `MM` | Zero-padded month — `01` |
+| `M` | Month number — `1` |
+| `dd` | Zero-padded day — `05` |
+| `d` | Day number — `5` |
+| `EEEE` | Full weekday — `Tuesday` / `मंगलबार` |
+| `EEE` | Short weekday — `Tue` / `मंगल` |
+| `EE` | Minimal weekday — `Tu` / `मं` |
+
+Wrap literal characters in single quotes — `'of'` — to prevent token substitution. Use `''` for a literal apostrophe.
+
+---
+
+### `NepaliMoment` — relative time
+
+Describes how long ago or until a BS date is, relative to today or a custom reference point.
+
+```csharp
+using NepaliDatePicker.Formatting;
+
+var date = new NepaliDate(2082, 1, 12);   // 3 days before 2082-01-15
+
+NepaliMoment.Elapsed(date)                            // "3 days ago"
+NepaliMoment.Elapsed(date, nepali: true)              // "३ दिन पहिले"
+
+// With an explicit reference date
+var reference = new NepaliDate(2082, 1, 15);
+NepaliMoment.Elapsed(date, reference)                 // "3 days ago"
+NepaliMoment.Elapsed(date, reference, nepali: true)   // "३ दिन पहिले"
+
+// From AD DateTime
+NepaliMoment.Elapsed(DateTime.Today.AddDays(-8))      // "1 week ago"
+
+// Extension method shorthand
+date.Elapsed()
+date.Elapsed(nepali: true)
+```
+
+#### Threshold behaviour
+
+| Difference | English | Nepali |
+|---|---|---|
+| Under 1 minute | `Just now` | `भर्खरै` |
+| Under 1 hour | `X minutes ago / In X minutes` | `X मिनेट पहिले / X मिनेटमा` |
+| Under 1 day | `X hours ago / In X hours` | `X घण्टा पहिले / X घण्टामा` |
+| Exactly 1 day | `Yesterday / Tomorrow` | `हिजो / भोलि` |
+| Under 7 days | `X days ago / In X days` | `X दिन पहिले / X दिनमा` |
+| Under 30 days | `X weeks ago / In X weeks` | `X हप्ता पहिले / X हप्तामा` |
+| Under 365 days | `X months ago / In X months` | `X महिना पहिले / X महिनामा` |
+| 365 days+ | `X years ago / In X years` | `X वर्ष पहिले / X वर्षमा` |
+
+---
+
 ## Project layout
 
 ```
@@ -362,11 +458,19 @@ src/                               ← NuGet library
 │   DateDisplayMode.cs             BsOnly / AdOnly / Both enum
 │   PickerPresentation.cs          BottomSheet / Dialog enum
 │
-└─ Services/
-    BsAdConverter.cs               BS ↔ AD conversion utilities
-    INepaliDatePickerService.cs    public service interface
+├─ Services/
+│   BsAdConverter.cs               BS ↔ AD conversion utilities
+│   INepaliDatePickerService.cs    public service interface
+│
+└─ Utils/
+    NepaliDateFormatter.cs         token-based BS date formatter (Format)
+    NepaliMoment.cs                relative-time strings (Elapsed)
+    NepaliDateExtensions.cs        Format() and Elapsed() extension methods on NepaliDate
 
 example/                           ← demo MAUI app (Android / iOS / Windows)
+│  MainPage.xaml                   full-featured picker showcase
+│  UtilsPage.xaml                  date utils demo (formatter · moment · amount)
+│  CalendarPage.xaml               minimal AD-only dialog example
 ```
 
 ---

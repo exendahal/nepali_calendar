@@ -21,4 +21,9 @@ public partial class MainPage : ContentPage
     {
         await Navigation.PushAsync(new CalendarPage());
     }
+
+    private async void OnOpenUtilsPageClicked(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new UtilsPage());
+    }
 }

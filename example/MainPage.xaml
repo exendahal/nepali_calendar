@@ -693,7 +693,7 @@
                 Text="Open with Teal Theme"
                 TextColor="White" />
 
-            <Grid Margin="0,0,0,32" ColumnSpacing="12">
+            <Grid Margin="0,0,0,12" ColumnSpacing="12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -716,6 +716,17 @@
                     Text="Clear"
                     TextColor="White" />
             </Grid>
+
+            <!--  ── Navigation ──────────────────────────────────────────────  -->
+            <Button
+                Margin="0,0,0,32"
+                BackgroundColor="#FF9500"
+                Clicked="OnOpenUtilsPageClicked"
+                CornerRadius="12"
+                FontAttributes="Bold"
+                HeightRequest="50"
+                Text="Date Utils (Format · Moment) →"
+                TextColor="White" />
 
         </VerticalStackLayout>
     </ScrollView>
