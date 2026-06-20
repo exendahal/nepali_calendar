@@ -78,7 +78,6 @@ A **Bikram Sambat (BS)** date picker for **.NET MAUI** built on a Material Desig
     <td><img src="preview/13.png" width="180"/></td>
   </tr>
 </table>
----
 
 ## Features
 
