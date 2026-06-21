@@ -63,6 +63,32 @@ public class NepaliDatePickerOptions
     /// </summary>
     public bool FullWidth { get; set; } = false;
 
+    /// <summary>
+    /// When <c>true</c>, the colored header band showing the selected date is shown above the calendar.
+    /// Set to <c>false</c> for a more compact picker without the banner.
+    /// Automatically set to <c>false</c> for Cupertino and Fluent themes when
+    /// <see cref="NativeTheme"/> is <c>true</c>. Default: <c>true</c>.
+    /// </summary>
+    public bool ShowHeader { get; set; } = true;
+
+    // ── Labels ────────────────────────────────────────────────────────────────
+
+    /// <summary>Text for the dismiss action button. Default: "CANCEL" (MD3 convention).</summary>
+    public string CancelLabel { get; set; } = "CANCEL";
+
+    /// <summary>Text for the confirm action button. Default: "OK" (MD3 convention).</summary>
+    public string ConfirmLabel { get; set; } = "OK";
+
+    // ── Native theme ─────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// When <c>true</c>, the picker automatically adopts the visual style of the host platform:
+    /// Material Design 3 on Android, Human Interface Guidelines on iOS/macOS, Fluent Design on Windows.
+    /// Explicit color overrides set on this options object take precedence over theme defaults.
+    /// Default: <c>false</c> — MD3 style is used on all platforms.
+    /// </summary>
+    public bool NativeTheme { get; set; } = false;
+
     // ── Behaviour ─────────────────────────────────────────────────────────────
 
     /// <summary>Which calendar system(s) are available in the picker. Default: <see cref="DateDisplayMode.Both"/>.</summary>

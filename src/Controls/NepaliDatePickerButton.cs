@@ -174,6 +174,14 @@ public class NepaliDatePicker : ContentView
     public static readonly BindableProperty FullWidthProperty =
         BindableProperty.Create(nameof(FullWidth), typeof(bool), typeof(NepaliDatePicker), false);
 
+    /// <summary>
+    /// When <c>true</c>, the picker automatically adopts the visual style of the host platform:
+    /// Material Design 3 on Android, Human Interface Guidelines on iOS/macOS, Fluent Design on Windows.
+    /// Default: <c>false</c>.
+    /// </summary>
+    public static readonly BindableProperty NativeThemeProperty =
+        BindableProperty.Create(nameof(NativeTheme), typeof(bool), typeof(NepaliDatePicker), false);
+
     // ── Public property accessors ─────────────────────────────────────────────
 
     public NepaliDate? SelectedDate
@@ -339,6 +347,12 @@ public class NepaliDatePicker : ContentView
         set => SetValue(FullWidthProperty, value);
     }
 
+    public bool NativeTheme
+    {
+        get => (bool)GetValue(NativeThemeProperty);
+        set => SetValue(NativeThemeProperty, value);
+    }
+
     // ── Events ────────────────────────────────────────────────────────────────
     public event EventHandler<NepaliDate?>? DateSelected;
 
@@ -427,6 +441,7 @@ public class NepaliDatePicker : ContentView
             DisplayMode     = DisplayMode,
             FontFamily      = PickerFontFamily,
             FullWidth       = FullWidth,
+            NativeTheme     = NativeTheme,
             Presentation    = Presentation,
             PickerStyle     = PickerStyle,
             UseNepaliScript = UseNepaliScript,

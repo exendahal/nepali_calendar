@@ -143,7 +143,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsLight}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsLight}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -152,7 +155,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Light">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsLight}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsLight}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -161,7 +167,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsDark}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsDark}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -170,7 +179,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Dark">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsDark}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsDark}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -179,7 +191,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsSystem}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsSystem}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -188,7 +203,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="System">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsSystem}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsSystem}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -205,7 +223,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsEnglish}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsEnglish}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -214,7 +235,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="English">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsEnglish}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsEnglish}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -223,7 +247,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsNepali}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsNepali}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -232,7 +259,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Nepali">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsNepali}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsNepali}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -249,7 +279,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsBottomSheet}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsBottomSheet}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -258,7 +291,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Bottom Sheet">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsBottomSheet}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsBottomSheet}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -267,7 +303,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsDialog}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsDialog}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -276,7 +315,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Dialog">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsDialog}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsDialog}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -293,7 +335,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsCalendar}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsCalendar}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -302,7 +347,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Calendar">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsCalendar}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsCalendar}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -311,7 +359,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsWheel}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsWheel}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -320,7 +371,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Wheel">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsWheel}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsWheel}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -329,7 +383,10 @@
 
                             <Border Style="{StaticResource ChipBorder}">
                                 <Border.Triggers>
-                                    <DataTrigger Binding="{Binding Settings.IsInput}" TargetType="Border" Value="True">
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsInput}"
+                                        TargetType="Border"
+                                        Value="True">
                                         <Setter Property="BackgroundColor" Value="#6750A4" />
                                     </DataTrigger>
                                 </Border.Triggers>
@@ -338,7 +395,10 @@
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Input">
                                     <Label.Triggers>
-                                        <DataTrigger Binding="{Binding Settings.IsInput}" TargetType="Label" Value="True">
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsInput}"
+                                            TargetType="Label"
+                                            Value="True">
                                             <Setter Property="TextColor" Value="White" />
                                         </DataTrigger>
                                     </Label.Triggers>
@@ -346,6 +406,66 @@
                             </Border>
 
                         </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!--  Platform theme  -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Style="{StaticResource SubLabel}" Text="Platform Theme" />
+                        <HorizontalStackLayout Spacing="8">
+
+                            <Border Style="{StaticResource ChipBorder}">
+                                <Border.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsNotNativeTheme}"
+                                        TargetType="Border"
+                                        Value="True">
+                                        <Setter Property="BackgroundColor" Value="#6750A4" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Settings.DisableNativeThemeCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Style="{StaticResource ChipLabel}" Text="Material">
+                                    <Label.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsNotNativeTheme}"
+                                            TargetType="Label"
+                                            Value="True">
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+
+                            <Border Style="{StaticResource ChipBorder}">
+                                <Border.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsNativeTheme}"
+                                        TargetType="Border"
+                                        Value="True">
+                                        <Setter Property="BackgroundColor" Value="#6750A4" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Settings.EnableNativeThemeCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Style="{StaticResource ChipLabel}" Text="Native">
+                                    <Label.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsNativeTheme}"
+                                            TargetType="Label"
+                                            Value="True">
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+
+                        </HorizontalStackLayout>
+                        <Label
+                            FontSize="11"
+                            Opacity="0.4"
+                            Text="Native overrides Presentation and Style to match the platform." />
                     </VerticalStackLayout>
 
                 </VerticalStackLayout>
@@ -367,13 +487,19 @@
                             DateSelected="OnDateSelected"
                             DisplayMode="{Binding Settings.DisplayMode}"
                             Format="d MMMM yyyy"
+                            NativeTheme="{Binding Settings.UseNativeTheme}"
+                            PickerStyle="{Binding Settings.PickerStyle}"
                             Placeholder="Select a date…"
                             Presentation="{Binding Settings.Presentation}"
                             SelectedDate="{Binding SelectedDate}"
                             UseNepaliScript="{Binding Settings.IsNepali}" />
                     </VerticalStackLayout>
 
-                    <BoxView HeightRequest="1" Margin="0,0,0,14" Opacity="0.12" Color="#6750A4" />
+                    <BoxView
+                        Margin="0,0,0,14"
+                        HeightRequest="1"
+                        Opacity="0.12"
+                        Color="#6750A4" />
 
                     <!--  Teal theme  -->
                     <VerticalStackLayout Margin="0,0,0,14" Spacing="6">
@@ -399,10 +525,14 @@
                             UseNepaliScript="{Binding Settings.IsNepali}" />
                     </VerticalStackLayout>
 
-                    <BoxView HeightRequest="1" Margin="0,0,0,14" Opacity="0.12" Color="#6750A4" />
+                    <BoxView
+                        Margin="0,0,0,14"
+                        HeightRequest="1"
+                        Opacity="0.12"
+                        Color="#6750A4" />
 
                     <!--  Coral theme  -->
-                    <VerticalStackLayout Spacing="6">
+                    <VerticalStackLayout Margin="0,0,0,14" Spacing="6">
                         <Label Style="{StaticResource SubLabel}" Text="Coral theme" />
                         <nep:NepaliDatePicker
                             BorderColor="#E53935"
@@ -423,11 +553,33 @@
                             UseNepaliScript="{Binding Settings.IsNepali}" />
                     </VerticalStackLayout>
 
+                    <BoxView
+                        Margin="0,0,0,14"
+                        HeightRequest="1"
+                        Opacity="0.12"
+                        Color="#6750A4" />
+
+                    <!--  Platform native (always on)  -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Style="{StaticResource SubLabel}" Text="Platform native (NativeTheme=True)" />
+                        <nep:NepaliDatePicker
+                            DisplayMode="{Binding Settings.DisplayMode}"
+                            Format="d MMMM yyyy"
+                            NativeTheme="True"
+                            Placeholder="Select a date…"
+                            SelectedDate="{Binding SelectedDate}"
+                            UseNepaliScript="{Binding Settings.IsNepali}" />
+                        <Label
+                            FontSize="11"
+                            Opacity="0.4"
+                            Text="Material on Android · Cupertino on iOS/macOS · Fluent on Windows" />
+                    </VerticalStackLayout>
+
                 </VerticalStackLayout>
             </Border>
 
             <!--  Selected date result  -->
-            <Border Style="{StaticResource Card}" Margin="0,-4,0,24">
+            <Border Margin="0,-4,0,24" Style="{StaticResource Card}">
                 <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto">
                     <Label Style="{StaticResource SubLabel}" Text="Selected date" />
                     <Label
@@ -441,8 +593,8 @@
                         Opacity="0.55"
                         Text="{Binding AdEquivalentDisplay}" />
                     <Label
-                        Grid.Column="1"
                         Grid.RowSpan="3"
+                        Grid.Column="1"
                         FontSize="12"
                         HorizontalTextAlignment="End"
                         Opacity="0.4"
@@ -484,20 +636,38 @@
                         </VerticalStackLayout>
                     </Grid>
 
-                    <BoxView HeightRequest="1" Opacity="0.1" Color="#6750A4" />
+                    <BoxView
+                        HeightRequest="1"
+                        Opacity="0.1"
+                        Color="#6750A4" />
 
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                        <Label VerticalTextAlignment="Center" FontSize="13" Opacity="0.5" Text="Duration" />
+                        <Label
+                            FontSize="13"
+                            Opacity="0.5"
+                            Text="Duration"
+                            VerticalTextAlignment="Center" />
                         <Label
                             Grid.Column="1"
-                            HorizontalTextAlignment="Center"
-                            VerticalTextAlignment="Center"
                             FontAttributes="Bold"
                             FontSize="17"
-                            Text="{Binding RangeDurationDisplay}" />
-                        <VerticalStackLayout Grid.Column="2" Spacing="1" HorizontalOptions="End">
-                            <Label FontSize="11" Opacity="0.45" Text="{Binding StartDateDisplay, StringFormat='From  {0}'}" HorizontalTextAlignment="End" />
-                            <Label FontSize="11" Opacity="0.45" Text="{Binding EndDateDisplay,   StringFormat='To      {0}'}" HorizontalTextAlignment="End" />
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding RangeDurationDisplay}"
+                            VerticalTextAlignment="Center" />
+                        <VerticalStackLayout
+                            Grid.Column="2"
+                            HorizontalOptions="End"
+                            Spacing="1">
+                            <Label
+                                FontSize="11"
+                                HorizontalTextAlignment="End"
+                                Opacity="0.45"
+                                Text="{Binding StartDateDisplay, StringFormat='From  {0}'}" />
+                            <Label
+                                FontSize="11"
+                                HorizontalTextAlignment="End"
+                                Opacity="0.45"
+                                Text="{Binding EndDateDisplay, StringFormat='To      {0}'}" />
                         </VerticalStackLayout>
                     </Grid>
 
@@ -505,8 +675,8 @@
             </Border>
 
             <Button
-                Command="{Binding OpenRangePickerCommand}"
                 Margin="0,0,0,28"
+                Command="{Binding OpenRangePickerCommand}"
                 Style="{StaticResource PrimaryButton}"
                 Text="Open Range Picker (programmatic)" />
 
@@ -529,30 +699,35 @@
 
             <Button
                 Command="{Binding OpenTealThemePickerCommand}"
-                Margin="0,0,0,12"
                 Style="{StaticResource PrimaryButton}"
                 Text="Open Picker — teal theme" />
 
+            <Button
+                Margin="0,0,0,12"
+                Command="{Binding OpenNativeThemePickerCommand}"
+                Style="{StaticResource PrimaryButton}"
+                Text="Open Picker — platform native" />
+
             <Grid Margin="0,0,0,28" ColumnDefinitions="*, 12, *">
                 <Button
+                    BorderColor="#6750A4"
                     Command="{Binding SetTodayCommand}"
                     Style="{StaticResource OutlinedButton}"
-                    BorderColor="#6750A4"
-                    TextColor="#6750A4"
-                    Text="Set Today" />
+                    Text="Set Today"
+                    TextColor="#6750A4" />
                 <Button
                     Grid.Column="2"
+                    BorderColor="#B3261E"
                     Command="{Binding ClearDateCommand}"
                     Style="{StaticResource OutlinedButton}"
-                    BorderColor="#B3261E"
-                    TextColor="#B3261E"
-                    Text="Clear" />
+                    Text="Clear"
+                    TextColor="#B3261E" />
             </Grid>
 
             <!--  ── Navigation ──────────────────────────────────────────────  -->
             <Button
-                Clicked="OnOpenUtilsPageClicked"
                 Margin="0,0,0,32"
+                Clicked="OnOpenUtilsPageClicked"
                 Style="{StaticResource PrimaryButton}"
                 Text="Date Utilities — Format · Moment" />
 

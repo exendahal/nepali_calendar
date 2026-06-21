@@ -110,6 +110,27 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private async Task OpenNativeThemePickerAsync()
+    {
+        var opts = new NepaliDatePickerOptions
+        {
+            DisplayMode     = Settings.DisplayMode,
+            NativeTheme     = true,
+            UseNepaliScript = Settings.IsNepali,
+        };
+        var result = await _Picker.ShowAsync(SelectedDate, opts);
+        if (result is not null)
+        {
+            SelectedDate  = result;
+            StatusMessage = $"Selected (native theme): {result.ToDisplayString()}";
+        }
+        else
+        {
+            StatusMessage = "Picker cancelled.";
+        }
+    }
+
+    [RelayCommand]
     private async Task OpenTealThemePickerAsync()
     {
         var opts = new NepaliDatePickerOptions

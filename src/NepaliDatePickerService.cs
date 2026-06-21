@@ -9,6 +9,9 @@ internal sealed class NepaliDatePickerService : INepaliDatePickerService
 
     public async Task<NepaliDate?> ShowAsync(NepaliDate? initialDate = null, NepaliDatePickerOptions? options = null)
     {
+        if (options is not null)
+            PickerThemeResolver.Apply(options);
+
         var page = GetCurrentPage() ?? throw new InvalidOperationException(
             "NepaliDatePicker: No active Page found. " +
             "Ensure ShowAsync() is called while a page is displayed.");
