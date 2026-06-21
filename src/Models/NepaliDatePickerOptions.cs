@@ -55,6 +55,14 @@ public class NepaliDatePickerOptions
     /// <summary>Corner radius for the top-left and top-right corners of the bottom sheet. Default: 28.</summary>
     public double SheetCornerRadius { get; set; } = 28;
 
+    /// <summary>
+    /// When <c>true</c>, the dialog stretches to fill the available width (minus 32 dp margins each side).
+    /// When <c>false</c> (default), the dialog uses a compact fixed width (320 dp) and centers on screen —
+    /// the recommended behavior on tablets and desktops.
+    /// Has no effect on <see cref="PickerPresentation.BottomSheet"/>.
+    /// </summary>
+    public bool FullWidth { get; set; } = false;
+
     // ── Behaviour ─────────────────────────────────────────────────────────────
 
     /// <summary>Which calendar system(s) are available in the picker. Default: <see cref="DateDisplayMode.Both"/>.</summary>

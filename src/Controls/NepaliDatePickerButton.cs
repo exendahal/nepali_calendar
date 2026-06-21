@@ -166,6 +166,14 @@ public class NepaliDatePicker : ContentView
         BindableProperty.Create(nameof(UseNepaliScript), typeof(bool), typeof(NepaliDatePicker), false,
             propertyChanged: (b, _, _) => ((NepaliDatePicker)b).Refresh());
 
+    /// <summary>
+    /// When <c>true</c>, the dialog stretches to fill the available width.
+    /// When <c>false</c> (default), the dialog uses a compact 320 dp width and centers — recommended
+    /// for desktop and tablet. Has no effect on <see cref="PickerPresentation.BottomSheet"/>.
+    /// </summary>
+    public static readonly BindableProperty FullWidthProperty =
+        BindableProperty.Create(nameof(FullWidth), typeof(bool), typeof(NepaliDatePicker), false);
+
     // ── Public property accessors ─────────────────────────────────────────────
 
     public NepaliDate? SelectedDate
@@ -325,6 +333,12 @@ public class NepaliDatePicker : ContentView
         set => SetValue(UseNepaliScriptProperty, value);
     }
 
+    public bool FullWidth
+    {
+        get => (bool)GetValue(FullWidthProperty);
+        set => SetValue(FullWidthProperty, value);
+    }
+
     // ── Events ────────────────────────────────────────────────────────────────
     public event EventHandler<NepaliDate?>? DateSelected;
 
@@ -412,6 +426,7 @@ public class NepaliDatePicker : ContentView
         {
             DisplayMode     = DisplayMode,
             FontFamily      = PickerFontFamily,
+            FullWidth       = FullWidth,
             Presentation    = Presentation,
             PickerStyle     = PickerStyle,
             UseNepaliScript = UseNepaliScript,
