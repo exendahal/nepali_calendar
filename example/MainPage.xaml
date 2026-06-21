@@ -5,82 +5,143 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:nep="clr-namespace:NepaliDatePicker.Controls;assembly=NepaliDatePicker.Maui"
     xmlns:vm="clr-namespace:NepaliDatePickerDemo"
-    Title="Nepali Date Picker Demo"
+    Title="NepaliDatePicker"
     x:DataType="vm:MainViewModel">
 
     <ContentPage.Resources>
+
+        <!--  Section label: small allcaps metadata above each group  -->
         <Style x:Key="SectionLabel" TargetType="Label">
             <Setter Property="FontSize" Value="11" />
             <Setter Property="FontAttributes" Value="Bold" />
-            <Setter Property="Opacity" Value="0.5" />
-            <Setter Property="Margin" Value="0,0,0,6" />
+            <Setter Property="Opacity" Value="0.45" />
+            <Setter Property="Margin" Value="0,0,0,8" />
         </Style>
 
-        <!--  Chip: outlined border that fills when selected via DataTrigger  -->
+        <!--  Sub-label: dim descriptor inside a card  -->
+        <Style x:Key="SubLabel" TargetType="Label">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+
+        <!--  Standard bordered card  -->
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Margin" Value="0,0,0,20" />
+            <Setter Property="Stroke">
+                <Setter.Value>
+                    <AppThemeBinding Dark="#3A3A3A" Light="#E5E0EB" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--  Chip: fills with primary when DataTrigger fires  -->
         <Style x:Key="ChipBorder" TargetType="Border">
             <Setter Property="StrokeShape" Value="RoundRectangle 20" />
             <Setter Property="StrokeThickness" Value="1.5" />
-            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="Padding" Value="14,7" />
             <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="Stroke">
+                <Setter.Value>
+                    <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style x:Key="ChipLabel" TargetType="Label">
             <Setter Property="FontSize" Value="13" />
-            <Setter Property="FontAttributes" Value="Bold" />
             <Setter Property="VerticalTextAlignment" Value="Center" />
-            <Setter Property="HorizontalTextAlignment" Value="Center" />
+            <Setter Property="TextColor">
+                <Setter.Value>
+                    <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
+                </Setter.Value>
+            </Setter>
         </Style>
+
+        <!--  Primary filled button  -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#6750A4" />
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="HeightRequest" Value="48" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <!--  Outlined button (secondary / destructive)  -->
+        <Style x:Key="OutlinedButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="BorderWidth" Value="1.5" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="HeightRequest" Value="48" />
+            <Setter Property="Margin" Value="0,0,0,0" />
+        </Style>
+
     </ContentPage.Resources>
 
     <ScrollView>
-        <VerticalStackLayout Padding="20,16" Spacing="0">
+        <VerticalStackLayout Padding="20,20" Spacing="0">
 
-            <!--  ── Hero ─────────────────────────────────────────────────────  -->
+            <!--  ── Page header ──────────────────────────────────────────────  -->
             <Label
-                Margin="0,8,0,4"
+                Margin="0,4,0,2"
                 FontAttributes="Bold"
                 FontSize="26"
-                HorizontalTextAlignment="Center"
                 Text="Nepali Date Picker" />
             <Label
-                Margin="0,0,0,20"
-                FontSize="12"
-                HorizontalTextAlignment="Center"
-                Opacity="0.6"
+                Margin="0,0,0,24"
+                FontSize="13"
+                Opacity="0.5"
                 Text="Bikram Sambat · Material Design 3 · .NET MAUI" />
+
+            <!--  ── Today banner ───────────────────────────────────────────────  -->
+            <Border
+                Margin="0,0,0,24"
+                Padding="16,14"
+                StrokeShape="RoundRectangle 12"
+                StrokeThickness="0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Offset="0" Color="#6750A4" />
+                        <GradientStop Offset="1" Color="#7965AF" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <VerticalStackLayout Spacing="3">
+                    <Label
+                        FontSize="11"
+                        Opacity="0.75"
+                        Text="Today"
+                        TextColor="White" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        Text="{Binding TodayBsDisplay}"
+                        TextColor="White" />
+                    <Label
+                        FontSize="13"
+                        Opacity="0.8"
+                        Text="{Binding TodayAdDisplay}"
+                        TextColor="White" />
+                </VerticalStackLayout>
+            </Border>
 
             <!--
                 ═══════════════════════════════════════════════════════════════
-                SETTINGS CARD
-                ════════════════════════════════════════════════════════════════════
+                CONFIGURATION
+                ═══════════════════════════════════════════════════════════════
             -->
-            <Border
-                Margin="0,0,0,20"
-                Padding="16,14"
-                StrokeShape="RoundRectangle 16"
-                StrokeThickness="1">
-                <Border.Stroke>
-                    <AppThemeBinding Dark="#3A3A3A" Light="#E0E0E0" />
-                </Border.Stroke>
+            <Label Style="{StaticResource SectionLabel}" Text="CONFIGURATION" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="20">
 
-                <VerticalStackLayout Spacing="16">
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="14"
-                        Text="⚙  Preview Settings" />
-
-                    <!--  THEME row  -->
+                    <!--  Theme  -->
                     <VerticalStackLayout Spacing="8">
-                        <Label
-                            Margin="0"
-                            Style="{StaticResource SectionLabel}"
-                            Text="THEME" />
+                        <Label Style="{StaticResource SubLabel}" Text="Theme" />
                         <HorizontalStackLayout Spacing="8">
 
-                            <!--  Light  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsLight}"
@@ -93,9 +154,6 @@
                                     <TapGestureRecognizer Command="{Binding Settings.SetThemeLightCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Light">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsLight}"
@@ -107,11 +165,7 @@
                                 </Label>
                             </Border>
 
-                            <!--  Dark  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsDark}"
@@ -124,9 +178,6 @@
                                     <TapGestureRecognizer Command="{Binding Settings.SetThemeDarkCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Dark">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsDark}"
@@ -138,11 +189,7 @@
                                 </Label>
                             </Border>
 
-                            <!--  System  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsSystem}"
@@ -155,9 +202,6 @@
                                     <TapGestureRecognizer Command="{Binding Settings.SetThemeSystemCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="System">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsSystem}"
@@ -172,19 +216,12 @@
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
 
-                    <!--  LANGUAGE row  -->
+                    <!--  Language  -->
                     <VerticalStackLayout Spacing="8">
-                        <Label
-                            Margin="0"
-                            Style="{StaticResource SectionLabel}"
-                            Text="LANGUAGE" />
+                        <Label Style="{StaticResource SubLabel}" Text="Language" />
                         <HorizontalStackLayout Spacing="8">
 
-                            <!--  English (Both)  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsEnglish}"
@@ -197,9 +234,6 @@
                                     <TapGestureRecognizer Command="{Binding Settings.SetEnglishCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="English">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsEnglish}"
@@ -211,11 +245,7 @@
                                 </Label>
                             </Border>
 
-                            <!--  Nepali (BsOnly)  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsNepali}"
@@ -228,9 +258,6 @@
                                     <TapGestureRecognizer Command="{Binding Settings.SetNepaliCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Nepali">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsNepali}"
@@ -245,19 +272,12 @@
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
 
-                    <!--  PICKER LAYOUT row  -->
+                    <!--  Presentation  -->
                     <VerticalStackLayout Spacing="8">
-                        <Label
-                            Margin="0"
-                            Style="{StaticResource SectionLabel}"
-                            Text="PICKER LAYOUT" />
+                        <Label Style="{StaticResource SubLabel}" Text="Presentation" />
                         <HorizontalStackLayout Spacing="8">
 
-                            <!--  Bottom Sheet  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsBottomSheet}"
@@ -270,9 +290,6 @@
                                     <TapGestureRecognizer Command="{Binding Settings.SetBottomSheetCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Bottom Sheet">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsBottomSheet}"
@@ -284,11 +301,7 @@
                                 </Label>
                             </Border>
 
-                            <!--  Middle (Dialog)  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsDialog}"
@@ -300,10 +313,7 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Settings.SetDialogCommand}" />
                                 </Border.GestureRecognizers>
-                                <Label Style="{StaticResource ChipLabel}" Text="Middle (Dialog)">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
+                                <Label Style="{StaticResource ChipLabel}" Text="Dialog">
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsDialog}"
@@ -318,19 +328,12 @@
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
 
-                    <!--  PICKER STYLE row  -->
+                    <!--  Picker style  -->
                     <VerticalStackLayout Spacing="8">
-                        <Label
-                            Margin="0"
-                            Style="{StaticResource SectionLabel}"
-                            Text="PICKER STYLE" />
+                        <Label Style="{StaticResource SubLabel}" Text="Style" />
                         <HorizontalStackLayout Spacing="8">
 
-                            <!--  Calendar  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsCalendar}"
@@ -343,9 +346,6 @@
                                     <TapGestureRecognizer Command="{Binding Settings.SetCalendarCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Calendar">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsCalendar}"
@@ -357,11 +357,7 @@
                                 </Label>
                             </Border>
 
-                            <!--  Wheel  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsWheel}"
@@ -374,9 +370,6 @@
                                     <TapGestureRecognizer Command="{Binding Settings.SetWheelCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Wheel">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsWheel}"
@@ -388,11 +381,7 @@
                                 </Label>
                             </Border>
 
-                            <!--  Input  -->
                             <Border Style="{StaticResource ChipBorder}">
-                                <Border.Stroke>
-                                    <SolidColorBrush Color="#6750A4" />
-                                </Border.Stroke>
                                 <Border.Triggers>
                                     <DataTrigger
                                         Binding="{Binding Settings.IsInput}"
@@ -405,9 +394,6 @@
                                     <TapGestureRecognizer Command="{Binding Settings.SetInputCommand}" />
                                 </Border.GestureRecognizers>
                                 <Label Style="{StaticResource ChipLabel}" Text="Input">
-                                    <Label.TextColor>
-                                        <AppThemeBinding Dark="#D0BCFF" Light="#6750A4" />
-                                    </Label.TextColor>
                                     <Label.Triggers>
                                         <DataTrigger
                                             Binding="{Binding Settings.IsInput}"
@@ -422,311 +408,328 @@
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
 
+                    <!--  Platform theme  -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Style="{StaticResource SubLabel}" Text="Platform Theme" />
+                        <HorizontalStackLayout Spacing="8">
+
+                            <Border Style="{StaticResource ChipBorder}">
+                                <Border.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsNotNativeTheme}"
+                                        TargetType="Border"
+                                        Value="True">
+                                        <Setter Property="BackgroundColor" Value="#6750A4" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Settings.DisableNativeThemeCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Style="{StaticResource ChipLabel}" Text="Material">
+                                    <Label.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsNotNativeTheme}"
+                                            TargetType="Label"
+                                            Value="True">
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+
+                            <Border Style="{StaticResource ChipBorder}">
+                                <Border.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Settings.IsNativeTheme}"
+                                        TargetType="Border"
+                                        Value="True">
+                                        <Setter Property="BackgroundColor" Value="#6750A4" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Settings.EnableNativeThemeCommand}" />
+                                </Border.GestureRecognizers>
+                                <Label Style="{StaticResource ChipLabel}" Text="Native">
+                                    <Label.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding Settings.IsNativeTheme}"
+                                            TargetType="Label"
+                                            Value="True">
+                                            <Setter Property="TextColor" Value="White" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+
+                        </HorizontalStackLayout>
+                        <Label
+                            FontSize="11"
+                            Opacity="0.4"
+                            Text="Native overrides Presentation and Style to match the platform." />
+                    </VerticalStackLayout>
+
                 </VerticalStackLayout>
             </Border>
 
-            <!--  ── Today info card ──────────────────────────────────────────  -->
-            <Border
-                Margin="0,0,0,20"
-                Padding="16,14"
-                StrokeShape="RoundRectangle 12"
-                StrokeThickness="0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Offset="0" Color="#6750A4" />
-                        <GradientStop Offset="1" Color="#9C27B0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-                <VerticalStackLayout Spacing="4">
+            <!--
+                ═══════════════════════════════════════════════════════════════
+                PICKER CONTROL
+                ═══════════════════════════════════════════════════════════════
+            -->
+            <Label Style="{StaticResource SectionLabel}" Text="PICKER CONTROL" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="0">
+
+                    <!--  Default  -->
+                    <VerticalStackLayout Margin="0,0,0,14" Spacing="6">
+                        <Label Style="{StaticResource SubLabel}" Text="Default" />
+                        <nep:NepaliDatePicker
+                            DateSelected="OnDateSelected"
+                            DisplayMode="{Binding Settings.DisplayMode}"
+                            Format="d MMMM yyyy"
+                            NativeTheme="{Binding Settings.UseNativeTheme}"
+                            PickerStyle="{Binding Settings.PickerStyle}"
+                            Placeholder="Select a date…"
+                            Presentation="{Binding Settings.Presentation}"
+                            SelectedDate="{Binding SelectedDate}"
+                            UseNepaliScript="{Binding Settings.IsNepali}" />
+                    </VerticalStackLayout>
+
+                    <BoxView
+                        Margin="0,0,0,14"
+                        HeightRequest="1"
+                        Opacity="0.12"
+                        Color="#6750A4" />
+
+                    <!--  Teal theme  -->
+                    <VerticalStackLayout Margin="0,0,0,14" Spacing="6">
+                        <Label Style="{StaticResource SubLabel}" Text="Teal theme" />
+                        <nep:NepaliDatePicker
+                            BorderColor="#00897B"
+                            BorderColorDark="#4DB6AC"
+                            CornerRadius="20"
+                            DisplayMode="{Binding Settings.DisplayMode}"
+                            Format="d MMMM yyyy"
+                            InputBackgroundColor="#E0F2F1"
+                            InputBackgroundColorDark="#004D40"
+                            PickerHeaderColor="#00695C"
+                            PickerStyle="{Binding Settings.PickerStyle}"
+                            Placeholder="Select a date…"
+                            PlaceholderColor="#80CBC4"
+                            Presentation="{Binding Settings.Presentation}"
+                            PrimaryColor="#00897B"
+                            PrimaryColorDark="#80CBC4"
+                            SelectedDate="{Binding SelectedDate}"
+                            TextColor="#004D40"
+                            TextColorDark="#A7FFEB"
+                            UseNepaliScript="{Binding Settings.IsNepali}" />
+                    </VerticalStackLayout>
+
+                    <BoxView
+                        Margin="0,0,0,14"
+                        HeightRequest="1"
+                        Opacity="0.12"
+                        Color="#6750A4" />
+
+                    <!--  Coral theme  -->
+                    <VerticalStackLayout Margin="0,0,0,14" Spacing="6">
+                        <Label Style="{StaticResource SubLabel}" Text="Coral theme" />
+                        <nep:NepaliDatePicker
+                            BorderColor="#E53935"
+                            CornerRadius="4"
+                            DisplayMode="{Binding Settings.DisplayMode}"
+                            Format="d MMMM yyyy"
+                            InputBackgroundColor="#FFEBEE"
+                            InputBackgroundColorDark="#4A0000"
+                            PickerHeaderColor="#B71C1C"
+                            PickerStyle="{Binding Settings.PickerStyle}"
+                            Placeholder="Select a date…"
+                            PlaceholderColor="#EF9A9A"
+                            Presentation="{Binding Settings.Presentation}"
+                            PrimaryColor="#E53935"
+                            SelectedDate="{Binding SelectedDate}"
+                            TextColor="#B71C1C"
+                            TextColorDark="#FF8A80"
+                            UseNepaliScript="{Binding Settings.IsNepali}" />
+                    </VerticalStackLayout>
+
+                    <BoxView
+                        Margin="0,0,0,14"
+                        HeightRequest="1"
+                        Opacity="0.12"
+                        Color="#6750A4" />
+
+                    <!--  Platform native (always on)  -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Style="{StaticResource SubLabel}" Text="Platform native (NativeTheme=True)" />
+                        <nep:NepaliDatePicker
+                            DisplayMode="{Binding Settings.DisplayMode}"
+                            Format="d MMMM yyyy"
+                            NativeTheme="True"
+                            Placeholder="Select a date…"
+                            SelectedDate="{Binding SelectedDate}"
+                            UseNepaliScript="{Binding Settings.IsNepali}" />
+                        <Label
+                            FontSize="11"
+                            Opacity="0.4"
+                            Text="Material on Android · Cupertino on iOS/macOS · Fluent on Windows" />
+                    </VerticalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!--  Selected date result  -->
+            <Border Margin="0,-4,0,24" Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto">
+                    <Label Style="{StaticResource SubLabel}" Text="Selected date" />
                     <Label
-                        FontSize="12"
-                        Opacity="0.75"
-                        Text="Today"
-                        TextColor="White" />
-                    <Label
+                        Grid.Row="1"
                         FontAttributes="Bold"
                         FontSize="20"
-                        Text="{Binding TodayBsDisplay}"
-                        TextColor="White" />
+                        Text="{Binding SelectedDateDisplay}" />
                     <Label
+                        Grid.Row="2"
                         FontSize="13"
-                        Opacity="0.85"
-                        Text="{Binding TodayAdDisplay}"
-                        TextColor="White" />
-                </VerticalStackLayout>
+                        Opacity="0.55"
+                        Text="{Binding AdEquivalentDisplay}" />
+                    <Label
+                        Grid.RowSpan="3"
+                        Grid.Column="1"
+                        FontSize="12"
+                        HorizontalTextAlignment="End"
+                        Opacity="0.4"
+                        Text="{Binding StatusMessage}"
+                        VerticalTextAlignment="Center"
+                        WidthRequest="120" />
+                </Grid>
             </Border>
 
             <!--
-                ══════════════════════════════════════════════════════════════
-                SECTION 1 — Default picker
-                ══════════════════════════════════════════════════════════════════
+                ═══════════════════════════════════════════════════════════════
+                DATE RANGE
+                ═══════════════════════════════════════════════════════════════
             -->
-            <Label Style="{StaticResource SectionLabel}" Text="DEFAULT" />
+            <Label Style="{StaticResource SectionLabel}" Text="DATE RANGE" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
 
-            <nep:NepaliDatePicker
-                Margin="0,0,0,16"
-                DateSelected="OnDateSelected"
-                DisplayMode="{Binding Settings.DisplayMode}"
-                Format="d MMMM yyyy"
-                PickerStyle="{Binding Settings.PickerStyle}"
-                Placeholder="Pick a date…"
-                Presentation="{Binding Settings.Presentation}"
-                SelectedDate="{Binding SelectedDate}"
-                UseNepaliScript="{Binding Settings.IsNepali}" />
+                    <Grid ColumnDefinitions="*, 8, *">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Style="{StaticResource SubLabel}" Text="Start date" />
+                            <nep:NepaliDatePicker
+                                DisplayMode="{Binding Settings.DisplayMode}"
+                                Format="d MMM yyyy"
+                                Placeholder="Start…"
+                                Presentation="{Binding Settings.Presentation}"
+                                SelectedDate="{Binding StartDate}"
+                                UseNepaliScript="{Binding Settings.IsNepali}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2" Spacing="6">
+                            <Label Style="{StaticResource SubLabel}" Text="End date" />
+                            <nep:NepaliDatePicker
+                                DisplayMode="{Binding Settings.DisplayMode}"
+                                Format="d MMM yyyy"
+                                Placeholder="End…"
+                                Presentation="{Binding Settings.Presentation}"
+                                SelectedDate="{Binding EndDate}"
+                                UseNepaliScript="{Binding Settings.IsNepali}" />
+                        </VerticalStackLayout>
+                    </Grid>
 
-            <!--
-                ══════════════════════════════════════════════════════════════
-                SECTION 2 — Custom teal theme
-                ══════════════════════════════════════════════════════════════════
-            -->
-            <Label Style="{StaticResource SectionLabel}" Text="CUSTOM STYLE — teal theme" />
+                    <BoxView
+                        HeightRequest="1"
+                        Opacity="0.1"
+                        Color="#6750A4" />
 
-            <nep:NepaliDatePicker
-                Margin="0,0,0,16"
-                BorderColor="#00897B"
-                BorderColorDark="#4DB6AC"
-                CornerRadius="20"
-                DisplayMode="{Binding Settings.DisplayMode}"
-                Format="d MMMM yyyy"
-                InputBackgroundColor="#E0F2F1"
-                InputBackgroundColorDark="#004D40"
-                PickerHeaderColor="#00695C"
-                PickerStyle="{Binding Settings.PickerStyle}"
-                Placeholder="Custom teal picker…"
-                PlaceholderColor="#80CBC4"
-                Presentation="{Binding Settings.Presentation}"
-                PrimaryColor="#00897B"
-                PrimaryColorDark="#80CBC4"
-                SelectedDate="{Binding SelectedDate}"
-                TextColor="#004D40"
-                TextColorDark="#A7FFEB"
-                UseNepaliScript="{Binding Settings.IsNepali}" />
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                        <Label
+                            FontSize="13"
+                            Opacity="0.5"
+                            Text="Duration"
+                            VerticalTextAlignment="Center" />
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            FontSize="17"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding RangeDurationDisplay}"
+                            VerticalTextAlignment="Center" />
+                        <VerticalStackLayout
+                            Grid.Column="2"
+                            HorizontalOptions="End"
+                            Spacing="1">
+                            <Label
+                                FontSize="11"
+                                HorizontalTextAlignment="End"
+                                Opacity="0.45"
+                                Text="{Binding StartDateDisplay, StringFormat='From  {0}'}" />
+                            <Label
+                                FontSize="11"
+                                HorizontalTextAlignment="End"
+                                Opacity="0.45"
+                                Text="{Binding EndDateDisplay, StringFormat='To      {0}'}" />
+                        </VerticalStackLayout>
+                    </Grid>
 
-            <!--
-                ══════════════════════════════════════════════════════════════
-                SECTION 3 — Custom coral theme
-                ══════════════════════════════════════════════════════════════════
-            -->
-            <Label Style="{StaticResource SectionLabel}" Text="CUSTOM STYLE — coral theme" />
-
-            <nep:NepaliDatePicker
-                Margin="0,0,0,24"
-                BorderColor="#E53935"
-                CornerRadius="4"
-                DisplayMode="{Binding Settings.DisplayMode}"
-                Format="d MMMM yyyy"
-                InputBackgroundColor="#FFEBEE"
-                InputBackgroundColorDark="#4A0000"
-                PickerHeaderColor="#B71C1C"
-                PickerStyle="{Binding Settings.PickerStyle}"
-                Placeholder="Custom coral picker…"
-                PlaceholderColor="#EF9A9A"
-                Presentation="{Binding Settings.Presentation}"
-                PrimaryColor="#E53935"
-                SelectedDate="{Binding SelectedDate}"
-                TextColor="#B71C1C"
-                TextColorDark="#FF8A80"
-                UseNepaliScript="{Binding Settings.IsNepali}" />
-
-            <!--
-                ══════════════════════════════════════════════════════════════
-                SECTION 4 — Date range selection
-                ══════════════════════════════════════════════════════════════════
-            -->
-            <Label Style="{StaticResource SectionLabel}" Text="DATE RANGE SELECTION" />
-
-            <Grid Margin="0,0,0,6" ColumnSpacing="12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <VerticalStackLayout Spacing="4">
-                    <Label
-                        FontSize="11"
-                        Opacity="0.55"
-                        Text="Start date" />
-                    <nep:NepaliDatePicker
-                        DisplayMode="{Binding Settings.DisplayMode}"
-                        Format="d MMM yyyy"
-                        Placeholder="Start…"
-                        Presentation="{Binding Settings.Presentation}"
-                        SelectedDate="{Binding StartDate}"
-                        UseNepaliScript="{Binding Settings.IsNepali}" />
-                </VerticalStackLayout>
-
-                <VerticalStackLayout Grid.Column="1" Spacing="4">
-                    <Label
-                        FontSize="11"
-                        Opacity="0.55"
-                        Text="End date" />
-                    <nep:NepaliDatePicker
-                        DisplayMode="{Binding Settings.DisplayMode}"
-                        Format="d MMM yyyy"
-                        Placeholder="End…"
-                        Presentation="{Binding Settings.Presentation}"
-                        SelectedDate="{Binding EndDate}"
-                        UseNepaliScript="{Binding Settings.IsNepali}" />
-                </VerticalStackLayout>
-            </Grid>
-
-            <Border
-                Margin="0,0,0,8"
-                Padding="16,14"
-                StrokeShape="RoundRectangle 12"
-                StrokeThickness="0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Offset="0" Color="#0097A7" />
-                        <GradientStop Offset="1" Color="#00695C" />
-                    </LinearGradientBrush>
-                </Border.Background>
-                <VerticalStackLayout Spacing="4">
-                    <Label
-                        FontSize="12"
-                        Opacity="0.75"
-                        Text="Selected Range"
-                        TextColor="White" />
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="22"
-                        Text="{Binding RangeDurationDisplay}"
-                        TextColor="White" />
-                    <Label
-                        FontSize="13"
-                        Opacity="0.85"
-                        Text="{Binding StartDateDisplay, StringFormat='From: {0}'}"
-                        TextColor="White" />
-                    <Label
-                        FontSize="13"
-                        Opacity="0.85"
-                        Text="{Binding EndDateDisplay, StringFormat='To:     {0}'}"
-                        TextColor="White" />
                 </VerticalStackLayout>
             </Border>
 
             <Button
-                Margin="0,0,0,24"
-                BackgroundColor="#0097A7"
+                Margin="0,0,0,28"
                 Command="{Binding OpenRangePickerCommand}"
-                CornerRadius="12"
-                FontAttributes="Bold"
-                HeightRequest="50"
-                Text="Open Range Picker (programmatic)"
-                TextColor="White" />
-
-            <!--  ── Selected date card ────────────────────────────────────────  -->
-            <Border
-                Margin="0,0,0,12"
-                Padding="16,14"
-                StrokeShape="RoundRectangle 12"
-                StrokeThickness="0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Offset="0" Color="#FF4081" />
-                        <GradientStop Offset="1" Color="#7C4DFF" />
-                    </LinearGradientBrush>
-                </Border.Background>
-                <VerticalStackLayout Spacing="4">
-                    <Label
-                        FontSize="12"
-                        Opacity="0.75"
-                        Text="Selected Date"
-                        TextColor="White" />
-                    <Label
-                        FontAttributes="Bold"
-                        FontSize="22"
-                        Text="{Binding SelectedDateDisplay}"
-                        TextColor="White" />
-                    <Label
-                        FontSize="13"
-                        Opacity="0.85"
-                        Text="{Binding AdEquivalentDisplay}"
-                        TextColor="White" />
-                </VerticalStackLayout>
-            </Border>
-
-            <Label
-                Margin="0,8,0,20"
-                FontSize="13"
-                HorizontalTextAlignment="Center"
-                Opacity="0.65"
-                Text="{Binding StatusMessage}" />
+                Style="{StaticResource PrimaryButton}"
+                Text="Open Range Picker (programmatic)" />
 
             <!--
-                ══════════════════════════════════════════════════════════════
+                ═══════════════════════════════════════════════════════════════
                 PROGRAMMATIC API
-                ══════════════════════════════════════════════════════════════════
+                ═══════════════════════════════════════════════════════════════
             -->
             <Label Style="{StaticResource SectionLabel}" Text="PROGRAMMATIC API" />
-            <Label
-                Margin="0,0,0,12"
-                FontSize="12"
-                Opacity="0.55"
-                Text="All buttons use the Language + Layout settings above." />
 
             <Button
-                Margin="0,0,0,8"
-                BackgroundColor="#007AFF"
                 Command="{Binding OpenPickerCommand}"
-                CornerRadius="12"
-                FontAttributes="Bold"
-                HeightRequest="50"
-                Text="Open Picker (today's date)"
-                TextColor="White" />
+                Style="{StaticResource PrimaryButton}"
+                Text="Open Picker — today's date" />
 
             <Button
-                Margin="0,0,0,8"
-                BackgroundColor="#5856D6"
                 Command="{Binding OpenPickerAtSpecificDateCommand}"
-                CornerRadius="12"
-                HeightRequest="50"
-                Text="Open Picker at 2075 / Ashwin / 15"
-                TextColor="White" />
+                Style="{StaticResource PrimaryButton}"
+                Text="Open Picker — 2075 / Ashwin / 15" />
 
             <Button
-                Margin="0,0,0,8"
-                BackgroundColor="#00897B"
                 Command="{Binding OpenTealThemePickerCommand}"
-                CornerRadius="12"
-                HeightRequest="50"
-                Text="Open with Teal Theme"
-                TextColor="White" />
+                Style="{StaticResource PrimaryButton}"
+                Text="Open Picker — teal theme" />
 
-            <Grid Margin="0,0,0,12" ColumnSpacing="12">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+            <Button
+                Margin="0,0,0,12"
+                Command="{Binding OpenNativeThemePickerCommand}"
+                Style="{StaticResource PrimaryButton}"
+                Text="Open Picker — platform native" />
 
+            <Grid Margin="0,0,0,28" ColumnDefinitions="*, 12, *">
                 <Button
-                    BackgroundColor="#34C759"
+                    BorderColor="#6750A4"
                     Command="{Binding SetTodayCommand}"
-                    CornerRadius="12"
-                    HeightRequest="48"
+                    Style="{StaticResource OutlinedButton}"
                     Text="Set Today"
-                    TextColor="White" />
-
+                    TextColor="#6750A4" />
                 <Button
-                    Grid.Column="1"
-                    BackgroundColor="#FF3B30"
+                    Grid.Column="2"
+                    BorderColor="#B3261E"
                     Command="{Binding ClearDateCommand}"
-                    CornerRadius="12"
-                    HeightRequest="48"
+                    Style="{StaticResource OutlinedButton}"
                     Text="Clear"
-                    TextColor="White" />
+                    TextColor="#B3261E" />
             </Grid>
 
             <!--  ── Navigation ──────────────────────────────────────────────  -->
             <Button
                 Margin="0,0,0,32"
-                BackgroundColor="#FF9500"
                 Clicked="OnOpenUtilsPageClicked"
-                CornerRadius="12"
-                FontAttributes="Bold"
-                HeightRequest="50"
-                Text="Date Utils (Format · Moment) →"
-                TextColor="White" />
+                Style="{StaticResource PrimaryButton}"
+                Text="Date Utilities — Format · Moment" />
 
         </VerticalStackLayout>
     </ScrollView>

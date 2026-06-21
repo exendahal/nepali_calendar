@@ -137,8 +137,20 @@ internal class NepaliDatePickerSheet : ContentView
         _ViewMonth = _IsBsMode ? _BsMonth : _AdDate.Month;
         _PickerSelectedYear = _ViewYear;
 
+        // ── Resolve structural options ────────────────────────────────────────
+        bool isDialog   = (options?.Presentation ?? PickerPresentation.BottomSheet) == PickerPresentation.Dialog;
+        bool showHeader = options?.ShowHeader ?? true;
+        string cancelLabel  = options?.CancelLabel  ?? "CANCEL";
+        string confirmLabel = options?.ConfirmLabel ?? "OK";
+
+        // Nepali script: Devanagari labels take precedence over any theme-resolved defaults.
+        if (_UseNepaliScript)
+        {
+            cancelLabel  = "रद्द गर्नुहोस";
+            confirmLabel = "ठीक छ";
+        }
+
         // ── Drag handle (bottom-sheet only) ──────────────────────────────────
-        bool isDialog = (options?.Presentation ?? PickerPresentation.BottomSheet) == PickerPresentation.Dialog;
         var handle = new BoxView
         {
             HeightRequest     = 4,
@@ -269,7 +281,7 @@ internal class NepaliDatePickerSheet : ContentView
         // ── Action buttons ────────────────────────────────────────────────────
         var cancelBtn = new Button
         {
-            Text = "CANCEL",
+            Text = cancelLabel,
             BackgroundColor = Colors.Transparent,
             BorderWidth = 0,
             FontSize = 14,
@@ -283,7 +295,7 @@ internal class NepaliDatePickerSheet : ContentView
 
         _OkBtn = new Button
         {
-            Text = "OK",
+            Text = confirmLabel,
             BackgroundColor = Colors.Transparent,
             BorderWidth = 0,
             FontSize = 14,
@@ -307,7 +319,8 @@ internal class NepaliDatePickerSheet : ContentView
         var root = new VerticalStackLayout { Spacing = 0 };
         root.SetAppThemeColor(VisualElement.BackgroundColorProperty, _Surface, _SurfaceDark);
         root.Children.Add(handle);
-        root.Children.Add(headerContent);
+        if (showHeader)
+            root.Children.Add(headerContent);
         root.Children.Add(chipRow);
         if (_PickerStyle == PickerStyle.Calendar)
         {

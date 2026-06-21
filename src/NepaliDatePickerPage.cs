@@ -39,12 +39,19 @@ internal class NepaliDatePickerPage
         Color surfaceDark  = options?.SurfaceColorDark ?? options?.SurfaceColor ?? Color.FromArgb("#1C1B1F");
         sheetFrame.SetAppThemeColor(Border.BackgroundColorProperty, surfaceLight, surfaceDark);
 
+        bool fullWidth = options?.FullWidth ?? false;
+
+        // Compact mode (default): 320 dp width, centered on both Dialog and BottomSheet.
+        // WidthRequest gives the inner star-column grid a concrete parent width to divide.
+        // Full-width mode: fill the screen (Dialog adds 32 dp side margins; BottomSheet is edge-to-edge).
         _SheetContainer = new Grid
         {
-            HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions   = _IsDialog ? LayoutOptions.Center : LayoutOptions.End,
-            Margin            = _IsDialog ? new Thickness(32, 0) : Thickness.Zero,
+            HorizontalOptions = fullWidth ? LayoutOptions.Fill : LayoutOptions.Center,
+            WidthRequest      = fullWidth ? -1 : 320,
+            Margin            = fullWidth && _IsDialog ? new Thickness(32, 0) : Thickness.Zero,
         };
+
         _SheetContainer.Add(sheetFrame);
 
         Grid rootGrid;
