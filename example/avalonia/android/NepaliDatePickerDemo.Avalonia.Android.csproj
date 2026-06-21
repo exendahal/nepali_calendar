@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-android</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <RootNamespace>NepaliDatePickerDemo.Avalonia.Android</RootNamespace>
+    <AssemblyName>NepaliDatePickerDemo.Avalonia.Android</AssemblyName>
+    <ApplicationTitle>Nepali Date Picker</ApplicationTitle>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Android" Version="11.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NepaliDatePickerDemo.Avalonia.csproj" />
+  </ItemGroup>
+
+</Project>

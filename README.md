@@ -1,337 +1,56 @@
-# NepaliDatePicker.Maui
+# NepaliDatePicker
 
-A **Bikram Sambat (BS)** date picker for **.NET MAUI** built on a Material Design calendar grid. Supports bottom-sheet and dialog presentation, BS ↔ AD dual-calendar toggle, full Devanagari script rendering, and rich theming.
-
-[![NepaliDatePicker.Maui](https://img.shields.io/nuget/v/NepaliDatePicker.Maui)](https://www.nuget.org/packages/NepaliDatePicker.Maui/)
+A **Bikram Sambat (BS)** date picker library for .NET — available for both **.NET MAUI** and **Avalonia UI**. Supports calendar and input picker styles, BS ↔ AD dual-calendar toggle, full Devanagari script rendering, light/dark theme, and comprehensive color theming.
 
 ---
 
-## Preview
+## Choose your platform
 
-### Bottom Sheet — Light Theme
+| | MAUI | Avalonia |
+|---|---|---|
+| **NuGet** | [![NepaliDatePicker.Maui](https://img.shields.io/nuget/v/NepaliDatePicker.Maui)](https://www.nuget.org/packages/NepaliDatePicker.Maui/) | [![NepaliDatePicker.Avalonia](https://img.shields.io/nuget/v/NepaliDatePicker.Avalonia)](https://www.nuget.org/packages/NepaliDatePicker.Avalonia/) |
+| **Targets** | Android, iOS, Windows, macOS | Windows, macOS, Linux, Android, iOS |
+| **Docs** | [docs/maui.md](docs/maui.md) | [docs/avalonia.md](docs/avalonia.md) |
 
-<table>
-  <tr>
-    <th>English (Purple)</th>
-    <th>English (Teal)</th>
-    <th>Nepali Script (Purple)</th>
-    <th>Nepali Script (Teal)</th>
-  </tr>
-  <tr>
-    <td><img src="preview/1.png" width="180"/></td>
-    <td><img src="preview/2.png" width="180"/></td>
-    <td><img src="preview/3.png" width="180"/></td>
-    <td><img src="preview/4.png" width="180"/></td>
-  </tr>
-</table>
-
-### Dialog — Light & Dark Theme
-
-<table>
-  <tr>
-    <th>Light (Purple)</th>
-    <th>Light (Teal)</th>
-    <th>Dark (Teal)</th>
-  </tr>
-  <tr>
-    <td><img src="preview/5.png" width="180"/></td>
-    <td><img src="preview/6.png" width="180"/></td>
-    <td><img src="preview/7.png" width="180"/></td>
-  </tr>
-</table>
-
-### Year / Month Fast-Nav — Dark Theme
-
-<table>
-  <tr>
-    <th>Purple Theme</th>
-    <th>Teal Theme</th>
-  </tr>
-  <tr>
-    <td><img src="preview/8.png" width="180"/></td>
-    <td><img src="preview/9.png" width="180"/></td>
-  </tr>
-</table>
-
-### Wheel Style
-
-<table>
-  <tr>
-    <th>Dark Theme</th>
-    <th>Light Theme</th>
-  </tr>
-  <tr>
-    <td><img src="preview/10.png" width="180"/></td>
-    <td><img src="preview/11.png" width="180"/></td>
-  </tr>
-</table>
-
-### Input Style
-
-<table>
-  <tr>
-    <th>Dark Theme</th>
-    <th>Light Theme</th>
-  </tr>
-  <tr>
-    <td><img src="preview/12.png" width="180"/></td>
-    <td><img src="preview/13.png" width="180"/></td>
-  </tr>
-</table>
+---
 
 ## Features
 
 | Feature | Details |
 |---|---|
 | **Material Design calendar** | Month grid with today highlight, selected-day fill, and smooth navigation |
-| **Dual presentation** | Bottom sheet (slide-up) or centered dialog (fade + scale) |
-| **BS / AD toggle** | Chip switch lets users pick in Bikram Sambat or Gregorian; live header updates |
+| **BS / AD toggle** | Chip switch lets users pick Bikram Sambat or Gregorian; live header updates |
 | **Devanagari script** | Month names, day/year numerals, weekday labels all render in Nepali script |
-| **Light & dark theme** | All surfaces and text use `SetAppThemeColor`; follows system appearance |
+| **Light & dark theme** | All surfaces and text adapt to system appearance automatically |
 | **Year / month fast-nav** | Tap the month–year label to open a scrollable year + month grid |
 | **Auto day clamping** | BS months vary 29–32 days; changing year or month re-clamps the selected day |
 | **BS year range** | 1970 – 2100 BS (official Government of Nepal calendar data) |
-| **Drop-in XAML control** | `<nep:NepaliDatePicker>` — bind `SelectedDate`, done |
-| **DI / MVVM service** | `INepaliDatePickerService` registered via `AddNepaliDatePicker()` |
-| **Full theming** | Primary color, header, surface, text — every MD3 token is overridable |
+| **Drop-in control** | Bind `SelectedDate`, done |
+| **Service API** | `INepaliDatePickerService` for programmatic / MVVM usage |
+| **Full theming** | Primary color, header, surface, text — every MD3 token overridable |
 
 ---
 
-## Installation
+## Common models
 
-```csharp
-// MauiProgram.cs
-builder.AddNepaliDatePicker();
-```
+Both packages share the same core models.
 
-Add the XAML namespace where needed:
-
-```xml
-xmlns:nep="clr-namespace:NepaliDatePicker.Controls;assembly=NepaliDatePicker.Maui"
-```
-
----
-
-## Usage
-
-### Drop-in XAML control
-
-```xml
-<nep:NepaliDatePicker
-    SelectedDate="{Binding MyDate}"
-    Placeholder="Pick a date…"
-    Format="d MMMM yyyy"
-    DisplayMode="Both"
-    UseNepaliScript="False"
-    DateSelected="OnDateSelected" />
-```
-
-### Wheel picker style
-
-Set `PickerStyle="Wheel"` to swap the calendar grid for three iOS-style drum-roll
-wheels (year | month | day). Works with every display mode, presentation and theme
-option; the day wheel adapts to the number of days in the selected month.
-
-```xml
-<nep:NepaliDatePicker
-    SelectedDate="{Binding MyDate}"
-    PickerStyle="Wheel"
-    UseNepaliScript="True"
-    DateSelected="OnDateSelected" />
-```
-
-### Programmatic / MVVM
-
-```csharp
-// Inject INepaliDatePickerService
-public MyViewModel(INepaliDatePickerService picker) => _picker = picker;
-
-[RelayCommand]
-async Task OpenPicker()
-{
-    var opts = new NepaliDatePickerOptions
-    {
-        DisplayMode     = DateDisplayMode.Both,
-        Presentation    = PickerPresentation.BottomSheet,
-        UseNepaliScript = false,
-    };
-    NepaliDate? result = await _picker.ShowAsync(SelectedDate, opts);
-    if (result is not null)
-        SelectedDate = result;
-}
-```
-
----
-
-## `NepaliDatePicker` control
-
-The drop-in control renders as a tappable date-input field. All properties are bindable.
-
-### Core
-
-| Property | Type | Default | Description |
-|---|---|---|---|
-| `SelectedDate` | `NepaliDate?` | `null` | Two-way bindable selected date |
-| `Placeholder` | `string` | `"Select Date"` | Text shown when no date is selected |
-| `Format` | `string` | `"d MMMM yyyy"` | Format tokens: `d` `dd` `M` `MM` `MMMM` `yy` `yyyy` |
-| `IsReadOnly` | `bool` | `false` | Prevents the picker from opening |
-
-### Picker behaviour
-
-| Property | Type | Default | Description |
-|---|---|---|---|
-| `DisplayMode` | `DateDisplayMode` | `Both` | Which calendar system(s) the picker exposes |
-| `Presentation` | `PickerPresentation` | `BottomSheet` | Bottom sheet or centered dialog |
-| `PickerStyle` | `PickerStyle` | `Calendar` | MD3 calendar grid or iOS-style drum wheels |
-| `UseNepaliScript` | `bool` | `false` | Render BS dates in Devanagari script |
-
-### Picker theming (passed through to the sheet)
-
-| Property | Type | Default | Description |
-|---|---|---|---|
-| `PrimaryColor` | `Color?` | MD3 purple | Selected day fill, active chip, today outline |
-| `PrimaryColorDark` | `Color?` | `PrimaryColor` | Dark-theme override |
-| `PickerHeaderColor` | `Color?` | MD3 purple | Header band background color |
-| `PickerFontFamily` | `string?` | `null` | Custom font for all text inside the picker |
-
-### Button appearance
-
-| Property | Type | Default | Description |
-|---|---|---|---|
-| `BorderColor` | `Color` | `#C8C8C8` | Input field border (light theme) |
-| `BorderColorDark` | `Color` | `#3A3A3A` | Input field border (dark theme) |
-| `InputBackgroundColor` | `Color` | `#F2F2F7` | Input field fill (light theme) |
-| `InputBackgroundColorDark` | `Color` | `#2C2C2E` | Input field fill (dark theme) |
-| `TextColor` | `Color` | `#111111` | Date text color (light theme) |
-| `TextColorDark` | `Color` | `#EEEEEE` | Date text color (dark theme) |
-| `PlaceholderColor` | `Color` | `#AAAAAA` | Placeholder text color (light theme) |
-| `PlaceholderColorDark` | `Color` | `#666666` | Placeholder text color (dark theme) |
-| `FontFamily` | `string?` | `null` | Font for the date / placeholder label |
-| `FontSize` | `double` | `15.0` | Font size of the date / placeholder label |
-| `CornerRadius` | `double` | `10.0` | Corner radius of the input field border |
-| `CalendarIcon` | `string` | `"📅"` | Icon shown on the right side of the field |
-
-### Event
-
-| Event | Signature | Fires when |
-|---|---|---|
-| `DateSelected` | `EventHandler<NepaliDate?>` | User confirms a date in the picker |
-
----
-
-## `NepaliDatePickerOptions`
-
-Passed to `INepaliDatePickerService.ShowAsync()` for full programmatic control.
-
-### Behaviour
-
-| Property | Type | Default | Description |
-|---|---|---|---|
-| `DisplayMode` | `DateDisplayMode` | `Both` | `BsOnly`, `AdOnly`, or `Both` (shows BS/AD chip toggle) |
-| `Presentation` | `PickerPresentation` | `BottomSheet` | `BottomSheet` or `Dialog` |
-| `PickerStyle` | `PickerStyle` | `Calendar` | `Calendar` grid or iOS-style `Wheel` drum roll |
-| `UseNepaliScript` | `bool` | `false` | All BS text rendered in Devanagari script |
-| `SheetCornerRadius` | `double` | `28` | Top-corner radius of the bottom sheet / dialog |
-| `FontFamily` | `string?` | `null` | Custom font family for all picker labels |
-
-### Full palette
-
-Every color token is nullable — unset tokens fall back to MD3 defaults.
-
-| Property | Affects |
-|---|---|
-| `PrimaryColor` / `PrimaryColorDark` | Selected day fill, active chip background, today ring, OK button text |
-| `OnPrimaryColor` | Text/icon drawn on top of the primary-filled circle or chip |
-| `HeaderBackgroundColor` / `HeaderBackgroundColorDark` | Colored header band |
-| `HeaderTextColor` | All text inside the header band |
-| `SurfaceColor` / `SurfaceColorDark` | Picker body background |
-| `OnSurfaceColor` / `OnSurfaceColorDark` | Day numbers, month/year label |
-| `OnSurfaceVariantColor` / `OnSurfaceVariantColorDark` | Day-of-week header initials |
-
----
-
-## `DateDisplayMode` enum
-
-| Value | Behaviour |
-|---|---|
-| `Both` *(default)* | Picker shows a BS / AD chip toggle; user can switch between calendars |
-| `BsOnly` | Only the Bikram Sambat calendar is available; chip toggle is hidden |
-| `AdOnly` | Only the Gregorian calendar is available; chip toggle is hidden |
-
----
-
-## `PickerPresentation` enum
-
-| Value | Behaviour |
-|---|---|
-| `BottomSheet` *(default)* | Sheet slides up from the bottom with a cubic-ease animation |
-| `Dialog` | Sheet floats centered over the page with a fade + scale animation |
-
----
-
-## `PickerStyle` enum
-
-| Value | Behaviour |
-|---|---|
-| `Calendar` *(default)* | Material Design 3 month grid with tap-to-jump year/month picker |
-| `Wheel` | Three iOS-style drum-roll wheels (year \| month \| day); the day wheel adapts to the selected month |
-
----
-
-## Nepali script mode (`UseNepaliScript`)
-
-When enabled (and `DisplayMode` is `BsOnly` or `Both` with BS active — or `AdOnly`,
-where the AD calendar itself is rendered in Devanagari with Nepali Gregorian month
-names like जनवरी, फेब्रुअरी):
-
-- **Month names** — "Baisakh" → "बैशाख", "Jestha" → "जेठ", … "Chaitra" → "चैत्र"
-- **Day numbers** — 1–32 → १–३२
-- **Year number** — 2082 → २०८२
-- **Weekday header row** — S M T W T F S → आइ सो मं बु बि शु श
-- **Header date line** — "Sun, Baisakh 5, 2082" → "आइत, बैशाख ५, २०८२"
-- **Header label** — "SELECT DATE" → "मिति छान्नुहोस्"
-
-AD dates always remain in English regardless of this setting.
-
----
-
-## `INepaliDatePickerService`
-
-```csharp
-public interface INepaliDatePickerService
-{
-    /// Current date in Bikram Sambat.
-    NepaliDate Today { get; }
-
-    /// Open the picker and await the user's selection.
-    /// Returns null if the user cancels.
-    Task<NepaliDate?> ShowAsync(NepaliDate? initialDate = null,
-                                NepaliDatePickerOptions? options = null);
-}
-```
-
-Registered as **transient** by `AddNepaliDatePicker()`. Inject via constructor in your ViewModel.
-
----
-
-## `NepaliDate` model
+### `NepaliDate`
 
 ```csharp
 var d = new NepaliDate(2082, 1, 15);
 
-d.Year            // 2082
-d.Month           // 1
-d.Day             // 15
-d.MonthName       // "Baisakh"
-d.MonthNameNepali // "बैशाख"
+d.Year              // 2082
+d.Month             // 1
+d.Day               // 15
+d.MonthName         // "Baisakh"
+d.MonthNameNepali   // "बैशाख"
 d.ToDisplayString() // "15 Baisakh 2082"
 d.ToString()        // "2082/01/15"
 d.IsValid()         // true
 ```
 
----
-
-## BS ↔ AD conversion
+### `BsAdConverter`
 
 ```csharp
 using NepaliDatePicker.Services;
@@ -353,25 +72,21 @@ Conversion data covers **1970 – 2100 BS** using official Government of Nepal c
 
 ## Date utilities
 
-Add `using NepaliDatePicker.Formatting;` to access the formatting classes and the extension methods they surface on `NepaliDate`.
+Add `using NepaliDatePicker.Formatting;` to access formatting helpers.
 
 ### `NepaliDateFormatter` — token-based formatting
-
-Format a BS date with a pattern string, optionally in Devanagari script.
 
 ```csharp
 using NepaliDatePicker.Formatting;
 
-var date = new NepaliDate(2082, 1, 15);   // 15 Baisakh 2082
+var date = new NepaliDate(2082, 1, 15);
 
 NepaliDateFormatter.Format(date, "d MMMM yyyy")               // "15 Baisakh 2082"
 NepaliDateFormatter.Format(date, "dd/MM/yyyy")                // "15/01/2082"
 NepaliDateFormatter.Format(date, "EEEE, d MMMM yyyy")         // "Tuesday, 15 Baisakh 2082"
-NepaliDateFormatter.Format(date, "EEE d MMM, yy")             // "Tue 15 Bai, 82"
 NepaliDateFormatter.Format(date, "d MMMM yyyy", nepali: true) // "१५ बैशाख २०८२"
-NepaliDateFormatter.Format(date, "EEEE, d MMMM yyyy", true)   // "मंगलबार, १५ बैशाख २०८२"
 
-// Extension method shorthand
+// Extension method
 date.Format("d MMMM yyyy")
 ```
 
@@ -382,7 +97,7 @@ date.Format("d MMMM yyyy")
 | `yyyy` | 4-digit year — `2082` |
 | `yy` | 2-digit year — `82` |
 | `MMMM` | Full month name — `Baisakh` / `बैशाख` |
-| `MMM` | Abbreviated month — `Bai` / `बैशाख` |
+| `MMM` | Abbreviated month — `Bai` |
 | `MM` | Zero-padded month — `01` |
 | `M` | Month number — `1` |
 | `dd` | Zero-padded day — `05` |
@@ -391,31 +106,24 @@ date.Format("d MMMM yyyy")
 | `EEE` | Short weekday — `Tue` / `मंगल` |
 | `EE` | Minimal weekday — `Tu` / `मं` |
 
-Wrap literal characters in single quotes — `'of'` — to prevent token substitution. Use `''` for a literal apostrophe.
+Wrap literal characters in single quotes — `'of'` — to prevent token substitution.
 
 ---
 
 ### `NepaliMoment` — relative time
 
-Describes how long ago or until a BS date is, relative to today or a custom reference point.
-
 ```csharp
 using NepaliDatePicker.Formatting;
 
-var date = new NepaliDate(2082, 1, 12);   // 3 days before 2082-01-15
+var date = new NepaliDate(2082, 1, 12);
 
-NepaliMoment.Elapsed(date)                            // "3 days ago"
-NepaliMoment.Elapsed(date, nepali: true)              // "३ दिन पहिले"
-
-// With an explicit reference date
-var reference = new NepaliDate(2082, 1, 15);
-NepaliMoment.Elapsed(date, reference)                 // "3 days ago"
-NepaliMoment.Elapsed(date, reference, nepali: true)   // "३ दिन पहिले"
+NepaliMoment.Elapsed(date)                  // "3 days ago"
+NepaliMoment.Elapsed(date, nepali: true)    // "३ दिन पहिले"
 
 // From AD DateTime
-NepaliMoment.Elapsed(DateTime.Today.AddDays(-8))      // "1 week ago"
+NepaliMoment.Elapsed(DateTime.Today.AddDays(-8))  // "1 week ago"
 
-// Extension method shorthand
+// Extension method
 date.Elapsed()
 date.Elapsed(nepali: true)
 ```
@@ -425,51 +133,31 @@ date.Elapsed(nepali: true)
 | Difference | English | Nepali |
 |---|---|---|
 | Under 1 minute | `Just now` | `भर्खरै` |
-| Under 1 hour | `X minutes ago / In X minutes` | `X मिनेट पहिले / X मिनेटमा` |
-| Under 1 day | `X hours ago / In X hours` | `X घण्टा पहिले / X घण्टामा` |
+| Under 1 hour | `X minutes ago / In X minutes` | `X मिनेट पहिले` |
+| Under 1 day | `X hours ago / In X hours` | `X घण्टा पहिले` |
 | Exactly 1 day | `Yesterday / Tomorrow` | `हिजो / भोलि` |
-| Under 7 days | `X days ago / In X days` | `X दिन पहिले / X दिनमा` |
-| Under 30 days | `X weeks ago / In X weeks` | `X हप्ता पहिले / X हप्तामा` |
-| Under 365 days | `X months ago / In X months` | `X महिना पहिले / X महिनामा` |
-| 365 days+ | `X years ago / In X years` | `X वर्ष पहिले / X वर्षमा` |
+| Under 7 days | `X days ago / In X days` | `X दिन पहिले` |
+| Under 30 days | `X weeks ago / In X weeks` | `X हप्ता पहिले` |
+| Under 365 days | `X months ago / In X months` | `X महिना पहिले` |
+| 365 days+ | `X years ago / In X years` | `X वर्ष पहिले` |
 
 ---
 
-## Project layout
+## Repository layout
 
 ```
-src/                               ← NuGet library
-│  MauiAppBuilderExtensions.cs     service registration
-│  NepaliDatePickerPage.cs         modal page (scrim + sheet)
-│  NepaliDatePickerService.cs      INepaliDatePickerService implementation
-│
-├─ Controls/
-│   NepaliDatePickerSheet.cs       MD3 calendar sheet (header, nav, grid, year picker)
-│   NepaliDatePickerButton.cs      drop-in bindable input control
-│   DrumRollPicker.cs              scroll-snap drum roll (wheel picker style)
-│
-├─ Data/
-│   BsCalendarData.cs              1970–2100 BS month-day counts
-│
-├─ Models/
-│   NepaliDate.cs                  record: Year / Month / Day + helpers
-│   NepaliDatePickerOptions.cs     picker configuration
-│   DateDisplayMode.cs             BsOnly / AdOnly / Both enum
-│   PickerPresentation.cs          BottomSheet / Dialog enum
-│
-├─ Services/
-│   BsAdConverter.cs               BS ↔ AD conversion utilities
-│   INepaliDatePickerService.cs    public service interface
-│
-└─ Utils/
-    NepaliDateFormatter.cs         token-based BS date formatter (Format)
-    NepaliMoment.cs                relative-time strings (Elapsed)
-    NepaliDateExtensions.cs        Format() and Elapsed() extension methods on NepaliDate
+src/
+├─ core/            shared models, conversion, formatting utilities
+├─ maui/            NepaliDatePicker.Maui library
+└─ avalonia/        NepaliDatePicker.Avalonia library
 
-example/                           ← demo MAUI app (Android / iOS / Windows)
-│  MainPage.xaml                   full-featured picker showcase
-│  UtilsPage.xaml                  date utils demo (formatter · moment · amount)
-│  CalendarPage.xaml               minimal AD-only dialog example
+example/
+├─ maui/            MAUI demo app (Android / iOS / Windows)
+└─ avalonia/        Avalonia demo app (Desktop / Android / iOS)
+
+docs/
+├─ maui.md          MAUI platform guide
+└─ avalonia.md      Avalonia platform guide
 ```
 
 ---

@@ -13,7 +13,7 @@ on:
 env:
   BUILD_CONFIGURATION: Release
   DOTNET_VERSION: 10.0.x
-  CSPROJ_TO_BUILD: example\NepaliDatePickerDemo.csproj
+  CSPROJ_TO_BUILD: example\maui\NepaliDatePickerDemo.Maui.csproj
 jobs:
   build-sample-ci:
 

@@ -1,0 +1,228 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:npd="clr-namespace:NepaliDatePicker.Controls;assembly=NepaliDatePicker.Avalonia"
+             x:Class="NepaliDatePickerDemo.Avalonia.Views.MainView">
+
+    <UserControl.Styles>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource AppCardBackground}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Margin" Value="0,0,0,20" />
+        </Style>
+        <Style Selector="TextBlock.section">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Opacity" Value="0.5" />
+            <Setter Property="Margin" Value="0,0,0,10" />
+        </Style>
+    </UserControl.Styles>
+
+    <ScrollViewer x:Name="RootScroll">
+        <StackPanel Margin="20,20,20,48">
+
+            <!-- ── Header ─────────────────────────────────────────── -->
+            <TextBlock Text="Nepali Date Picker"
+                       FontSize="26" FontWeight="Bold"
+                       Margin="0,0,0,4" />
+            <TextBlock Text="Bikram Sambat · Avalonia UI"
+                       FontSize="13" Opacity="0.5"
+                       Margin="0,0,0,24" />
+
+            <!-- ── Today Banner ───────────────────────────────────── -->
+            <Border CornerRadius="14" Padding="18,16" Margin="0,0,0,24">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Color="#6750A4" Offset="0" />
+                        <GradientStop Color="#8B6EBF" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid ColumnDefinitions="*,Auto">
+                    <StackPanel Spacing="3">
+                        <TextBlock Text="TODAY" FontSize="10" FontWeight="Bold"
+                                   Foreground="White" Opacity="0.75" />
+                        <TextBlock x:Name="TodayBsLabel" FontSize="20" FontWeight="Bold"
+                                   Foreground="White" />
+                        <TextBlock x:Name="TodayAdLabel" FontSize="12" Foreground="White"
+                                   Opacity="0.82" />
+                    </StackPanel>
+                    <TextBlock Text="&#128197;" FontSize="34" Grid.Column="1"
+                               VerticalAlignment="Center" Opacity="0.45" />
+                </Grid>
+            </Border>
+
+            <!-- ── CONFIGURATION ──────────────────────────────────── -->
+            <TextBlock Text="CONFIGURATION" Classes="section" />
+            <Border Classes="card">
+                <StackPanel Spacing="20">
+
+                    <!-- Language -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Language" FontSize="13" FontWeight="SemiBold" Opacity="0.65" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border x:Name="EnglishChip"
+                                    Background="#6750A4"
+                                    CornerRadius="20" Padding="16,7"
+                                    Cursor="Hand"
+                                    PointerPressed="OnEnglishChipPressed">
+                                <TextBlock x:Name="EnglishChipText"
+                                           Text="English" FontSize="13" Foreground="White" />
+                            </Border>
+                            <Border x:Name="NepaliChip"
+                                    Background="Transparent"
+                                    BorderBrush="#6750A4" BorderThickness="1.5"
+                                    CornerRadius="20" Padding="16,7"
+                                    Cursor="Hand"
+                                    PointerPressed="OnNepaliChipPressed">
+                                <TextBlock x:Name="NepaliChipText"
+                                           Text="&#2344;&#2375;&#2346;&#2366;&#2354;&#2368;" FontSize="13" Foreground="#6750A4" />
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Style -->
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Style" FontSize="13" FontWeight="SemiBold" Opacity="0.65" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border x:Name="CalendarChip"
+                                    Background="#6750A4"
+                                    CornerRadius="20" Padding="16,7"
+                                    Cursor="Hand"
+                                    PointerPressed="OnCalendarChipPressed">
+                                <TextBlock x:Name="CalendarChipText"
+                                           Text="Calendar" FontSize="13" Foreground="White" />
+                            </Border>
+                            <Border x:Name="InputChip"
+                                    Background="Transparent"
+                                    BorderBrush="#6750A4" BorderThickness="1.5"
+                                    CornerRadius="20" Padding="16,7"
+                                    Cursor="Hand"
+                                    PointerPressed="OnInputChipPressed">
+                                <TextBlock x:Name="InputChipText"
+                                           Text="Input" FontSize="13" Foreground="#6750A4" />
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+
+            <!-- ── PICKER CONTROL ──────────────────────────────────── -->
+            <TextBlock Text="PICKER CONTROL" Classes="section" />
+            <Border Classes="card">
+                <StackPanel Spacing="16">
+
+                    <npd:NepaliDatePickerField x:Name="DefaultPickerField"
+                                               Label="Default (Purple)"
+                                               PlaceholderText="Tap to select a BS date…"
+                                               DateSelected="OnPickerDateSelected" />
+
+                    <npd:NepaliDatePickerField x:Name="TealPickerField"
+                                               Label="Teal Theme"
+                                               PlaceholderText="Tap to select a BS date…"
+                                               DateSelected="OnPickerDateSelected" />
+
+                    <npd:NepaliDatePickerField x:Name="CoralPickerField"
+                                               Label="Coral Theme"
+                                               PlaceholderText="Tap to select a BS date…"
+                                               DateSelected="OnPickerDateSelected" />
+
+                </StackPanel>
+            </Border>
+
+            <!-- Result -->
+            <Border Background="{DynamicResource AppTintBackground}"
+                    CornerRadius="12" Padding="16" Margin="0,0,0,24">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Selected Date" FontSize="11" Opacity="0.55" />
+                    <TextBlock x:Name="ResultLabel" Text="—"
+                               FontSize="18" FontWeight="SemiBold" />
+                    <TextBlock x:Name="ResultAdLabel" Text=""
+                               FontSize="12" Opacity="0.6" />
+                </StackPanel>
+            </Border>
+
+            <!-- ── DATE RANGE ──────────────────────────────────────── -->
+            <TextBlock Text="DATE RANGE" Classes="section" />
+            <Border Classes="card">
+                <StackPanel Spacing="14">
+
+                    <npd:NepaliDatePickerField x:Name="StartDateField"
+                                               Label="Start Date"
+                                               PlaceholderText="Select start date"
+                                               DateSelected="OnStartDateSelected" />
+
+                    <npd:NepaliDatePickerField x:Name="EndDateField"
+                                               Label="End Date"
+                                               PlaceholderText="Select end date"
+                                               DateSelected="OnEndDateSelected" />
+
+                    <Border Background="{DynamicResource AppSubtleTint}" CornerRadius="8" Padding="14,10">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Duration" FontSize="11" Opacity="0.55" />
+                            <TextBlock x:Name="DurationLabel" Text="—"
+                                       FontSize="15" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+
+            <!-- ── COLOR PRESETS ───────────────────────────────────── -->
+            <TextBlock Text="COLOR PRESETS" Classes="section" />
+            <Border Classes="card">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Tap a swatch to open the picker with that accent color"
+                               FontSize="12" Opacity="0.6" />
+                    <WrapPanel Orientation="Horizontal">
+                        <Border Width="44" Height="44" Margin="0,0,8,8" CornerRadius="8"
+                                Background="#6750A4" Cursor="Hand"
+                                Tag="#6750A4" PointerPressed="OnColorSwatchPressed"
+                                ToolTip.Tip="Purple (default)" />
+                        <Border Width="44" Height="44" Margin="0,0,8,8" CornerRadius="8"
+                                Background="#1565C0" Cursor="Hand"
+                                Tag="#1565C0" PointerPressed="OnColorSwatchPressed"
+                                ToolTip.Tip="Blue" />
+                        <Border Width="44" Height="44" Margin="0,0,8,8" CornerRadius="8"
+                                Background="#2E7D32" Cursor="Hand"
+                                Tag="#2E7D32" PointerPressed="OnColorSwatchPressed"
+                                ToolTip.Tip="Green" />
+                        <Border Width="44" Height="44" Margin="0,0,8,8" CornerRadius="8"
+                                Background="#C62828" Cursor="Hand"
+                                Tag="#C62828" PointerPressed="OnColorSwatchPressed"
+                                ToolTip.Tip="Red" />
+                        <Border Width="44" Height="44" Margin="0,0,8,8" CornerRadius="8"
+                                Background="#E65100" Cursor="Hand"
+                                Tag="#E65100" PointerPressed="OnColorSwatchPressed"
+                                ToolTip.Tip="Deep Orange" />
+                        <Border Width="44" Height="44" Margin="0,0,8,8" CornerRadius="8"
+                                Background="#AD1457" Cursor="Hand"
+                                Tag="#AD1457" PointerPressed="OnColorSwatchPressed"
+                                ToolTip.Tip="Pink" />
+                        <Border Width="44" Height="44" Margin="0,0,8,8" CornerRadius="8"
+                                Background="#00695C" Cursor="Hand"
+                                Tag="#00695C" PointerPressed="OnColorSwatchPressed"
+                                ToolTip.Tip="Teal" />
+                        <Border Width="44" Height="44" Margin="0,0,8,8" CornerRadius="8"
+                                Background="#37474F" Cursor="Hand"
+                                Tag="#37474F" PointerPressed="OnColorSwatchPressed"
+                                ToolTip.Tip="Blue Grey" />
+                    </WrapPanel>
+                    <Border Background="{DynamicResource AppTintBackground}" CornerRadius="8" Padding="14,10">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Color Picker Result" FontSize="11" Opacity="0.55" />
+                            <TextBlock x:Name="ColorResultLabel" Text="—"
+                                       FontSize="16" FontWeight="SemiBold" />
+                            <TextBlock x:Name="ColorResultAdLabel" Text=""
+                                       FontSize="12" Opacity="0.6" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

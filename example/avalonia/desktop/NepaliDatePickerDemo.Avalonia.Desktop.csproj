@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>NepaliDatePickerDemo.Avalonia.Desktop</RootNamespace>
+    <AssemblyName>NepaliDatePickerDemo.Avalonia.Desktop</AssemblyName>
+    <ApplicationTitle>Nepali Date Picker — Avalonia Demo</ApplicationTitle>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NepaliDatePickerDemo.Avalonia.csproj" />
+  </ItemGroup>
+
+</Project>

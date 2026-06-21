@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>NepaliDatePicker</RootNamespace>
+    <AssemblyName>NepaliDatePicker.Core</AssemblyName>
+
+    <PackageId>NepaliDatePicker.Core</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>exendahal</Authors>
+    <Copyright>Santosh Dahal</Copyright>
+    <Title>Nepali Bikram Sambat (BS) Calendar — Core Data Layer</Title>
+    <Description>Shared data layer for the NepaliDatePicker family. Provides BS↔AD conversion, calendar data, date formatting, and relative-time utilities with no UI dependencies.</Description>
+    <PackageTags>nepali;bikram-sambat;bs;calendar;nepal;date;conversion</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/exendahal/nepali_calendar</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/exendahal/nepali_calendar</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>
