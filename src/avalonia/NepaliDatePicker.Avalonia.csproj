@@ -18,9 +18,19 @@
     <PackageProjectUrl>https://github.com/exendahal/nepali_calendar</PackageProjectUrl>
     <RepositoryUrl>https://github.com/exendahal/nepali_calendar</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Optimize>true</Optimize>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\maui\icon\icon.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\avalonia.md" Pack="true" PackagePath="\README.md" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.2.3" />
