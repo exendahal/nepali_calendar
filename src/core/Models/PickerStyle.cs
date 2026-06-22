@@ -1,4 +1,4 @@
-namespace NepaliDatePicker.Models;
+namespace NepaliUtility.Models;
 
 /// <summary>Visual style of the date picker body.</summary>
 public enum PickerStyle

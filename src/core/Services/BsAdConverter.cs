@@ -1,7 +1,7 @@
-using NepaliDatePicker.Data;
-using NepaliDatePicker.Models;
+using NepaliUtility.Data;
+using NepaliUtility.Models;
 
-namespace NepaliDatePicker.Services;
+namespace NepaliUtility.Services;
 
 /// <summary>
 /// Converts dates between BS (Bikram Sambat) and AD (Anno Domini / Gregorian) calendars.
@@ -119,6 +119,15 @@ public static class BsAdConverter
 
         return new NepaliDate(year, month, day);
     }
+
+    /// <summary>Returns today's date in Bikram Sambat.</summary>
+    public static NepaliDate Today => AdToBs(DateTime.Today);
+
+    /// <summary>Converts a <see cref="DateOnly"/> AD date to its equivalent BS date.</summary>
+    public static NepaliDate AdToBs(DateOnly date) => AdToBs(date.ToDateTime(TimeOnly.MinValue));
+
+    /// <summary>Converts a BS date to its equivalent <see cref="DateOnly"/> AD date.</summary>
+    public static DateOnly BsToAdDateOnly(NepaliDate bs) => DateOnly.FromDateTime(BsToAd(bs));
 
     /// <summary>Returns the AD date string for display alongside the BS picker.</summary>
     public static string FormatAdEquivalent(NepaliDate bs)

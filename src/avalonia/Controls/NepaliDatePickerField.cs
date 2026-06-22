@@ -5,6 +5,7 @@ using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Styling;
 using NepaliDatePicker.Models;
+using NepaliUtility.Models;
 
 namespace NepaliDatePicker.Controls;
 

@@ -4,22 +4,32 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>NepaliDatePicker</RootNamespace>
-    <AssemblyName>NepaliDatePicker.Core</AssemblyName>
+    <RootNamespace>NepaliUtility</RootNamespace>
+    <AssemblyName>NepaliUtility.Core</AssemblyName>
 
-    <PackageId>NepaliDatePicker.Core</PackageId>
+    <PackageId>NepaliUtility.Core</PackageId>
     <Version>1.0.0</Version>
     <Authors>exendahal</Authors>
     <Copyright>Santosh Dahal</Copyright>
-    <Title>Nepali Bikram Sambat (BS) Calendar — Core Data Layer</Title>
-    <Description>Shared data layer for the NepaliDatePicker family. Provides BS↔AD conversion, calendar data, date formatting, and relative-time utilities with no UI dependencies.</Description>
-    <PackageTags>nepali;bikram-sambat;bs;calendar;nepal;date;conversion</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <Title>NepaliUtility.Core — Bikram Sambat (BS) utilities for .NET</Title>
+    <Description>A zero-dependency .NET library for the Bikram Sambat (BS/Nepali) calendar. Provides BS↔AD date conversion, token-based formatting, relative-time strings, Devanagari numeral conversion, Nepal fiscal year helpers, and authoritative Government of Nepal calendar data for BS 1970–2100.</Description>
+    <PackageTags>nepali;bikram-sambat;bs;calendar;nepal;date;conversion;devanagari;fiscal-year;nepali-calendar</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/exendahal/nepali_calendar</PackageProjectUrl>
     <RepositoryUrl>https://github.com/exendahal/nepali_calendar</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Optimize>true</Optimize>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\maui\icon\icon.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\docs\core.md" Pack="true" PackagePath="\README.md" />
+  </ItemGroup>
 
 </Project>

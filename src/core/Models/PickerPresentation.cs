@@ -1,4 +1,4 @@
-namespace NepaliDatePicker.Models;
+namespace NepaliUtility.Models;
 
 /// <summary>Controls how the date picker is presented on screen.</summary>
 public enum PickerPresentation

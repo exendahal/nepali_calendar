@@ -1,7 +1,7 @@
-using NepaliDatePicker.Models;
-using NepaliDatePicker.Services;
+using NepaliUtility.Models;
+using NepaliUtility.Services;
 
-namespace NepaliDatePicker.Formatting;
+namespace NepaliUtility.Formatting;
 
 /// <summary>
 /// Formats a <see cref="NepaliDate"/> into a human-readable string using a token-based

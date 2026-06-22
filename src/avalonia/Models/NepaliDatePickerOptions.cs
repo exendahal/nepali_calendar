@@ -1,5 +1,5 @@
 using Avalonia.Media;
-using NepaliDatePicker.Models;
+using NepaliUtility.Models;
 
 namespace NepaliDatePicker.Models;
 

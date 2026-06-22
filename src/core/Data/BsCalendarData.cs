@@ -1,4 +1,4 @@
-namespace NepaliDatePicker.Data;
+namespace NepaliUtility.Data;
 
 /// <summary>
 /// Authoritative day-count data for each BS year/month.
