@@ -1,4 +1,4 @@
-name: Build MAUI APP
+name: Build Avalonia App
 
 on:
   push:
@@ -15,9 +15,10 @@ on:
 env:
   BUILD_CONFIGURATION: Release
   DOTNET_VERSION: 10.0.x
-  CSPROJ_TO_BUILD: example\maui\NepaliDatePickerDemo.Maui.csproj
+  CSPROJ_TO_BUILD: example\avalonia\desktop\NepaliDatePickerDemo.Avalonia.Desktop.csproj
+
 jobs:
-  build-maui:
+  build-avalonia:
 
     runs-on: windows-latest
 
@@ -29,11 +30,8 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Install .NET MAUI Workload
-      run: dotnet workload install maui
-
     - name: Restore dependencies
       run: dotnet restore ${{ env.CSPROJ_TO_BUILD }}
 
-    - name: Build MAUI sample ${{ env.CSPROJ_TO_BUILD }}
-      run: dotnet build ${{ env.CSPROJ_TO_BUILD }} -c ${{ env.BUILD_CONFIGURATION }} -f:net10.0-android
+    - name: Build Avalonia sample ${{ env.CSPROJ_TO_BUILD }}
+      run: dotnet build ${{ env.CSPROJ_TO_BUILD }} -c ${{ env.BUILD_CONFIGURATION }}

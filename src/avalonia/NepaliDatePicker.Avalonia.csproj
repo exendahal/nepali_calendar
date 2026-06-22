@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>NepaliDatePicker</RootNamespace>
+    <AssemblyName>NepaliDatePicker.Avalonia</AssemblyName>
+
+    <PackageId>NepaliDatePicker.Avalonia</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>exendahal</Authors>
+    <Copyright>Santosh Dahal</Copyright>
+    <Title>Nepali Bikram Sambat (BS) Date Picker for Avalonia</Title>
+    <Description>A Nepali Bikram Sambat (BS) date picker control for Avalonia. Supports calendar and wheel styles, BS/AD toggle, Nepali (Devanagari) script, light/dark mode, and full color customization.</Description>
+    <PackageTags>avalonia;dotnet;nepali;calendar;bikram-sambat;bs;date-picker;nepal</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/exendahal/nepali_calendar</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/exendahal/nepali_calendar</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../core/NepaliDatePicker.Core.csproj" />
+  </ItemGroup>
+
+</Project>

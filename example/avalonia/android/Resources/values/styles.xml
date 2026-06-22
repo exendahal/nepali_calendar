@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Avalonia Android requires the action bar to be absent at the theme level,
+         not disabled via item overrides — the latter can crash theme inflation. -->
+    <style name="MyTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    </style>
+</resources>

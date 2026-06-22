@@ -1,0 +1,30 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NepaliDatePickerDemo.Avalonia.App">
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="AppCardBackground"   Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="AppCardBorder"        Color="#E5E0EB" />
+                    <SolidColorBrush x:Key="AppTintBackground"    Color="#F5F0FF" />
+                    <SolidColorBrush x:Key="AppSubtleTint"        Color="#F0F4FF" />
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="AppCardBackground"   Color="#2B2930" />
+                    <SolidColorBrush x:Key="AppCardBorder"        Color="#47434E" />
+                    <SolidColorBrush x:Key="AppTintBackground"    Color="#2D2538" />
+                    <SolidColorBrush x:Key="AppSubtleTint"        Color="#252A38" />
+                </ResourceDictionary>
+
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

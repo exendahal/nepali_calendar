@@ -41,7 +41,7 @@
 
   <!-- Reference the library project directly (for development) -->
   <ItemGroup>   
-    <ProjectReference Include="..\src\NepaliDatePicker.csproj" />
+    <ProjectReference Include="..\..\src\maui\NepaliDatePicker.Maui.csproj" />
   </ItemGroup>
 
 </Project>

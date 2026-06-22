@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>NepaliDatePickerDemo.Avalonia</RootNamespace>
+    <AssemblyName>NepaliDatePickerDemo.Avalonia</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="desktop/**/*.cs" />
+    <Compile Remove="android/**/*.cs" />
+    <Compile Remove="ios/**/*.cs" />
+    <Compile Remove="browser/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\avalonia\NepaliDatePicker.Avalonia.csproj" />
+  </ItemGroup>
+
+</Project>
