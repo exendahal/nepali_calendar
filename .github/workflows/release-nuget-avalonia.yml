@@ -1,12 +1,12 @@
-name: Create a (Pre)release on NuGet
+name: Create a (Pre)release on NuGet (Avalonia)
 
 on:
   push:
     tags:
-      - "maui_[0-9]+.[0-9]+.[0-9]+"
-      - "maui_[0-9]+.[0-9]+.[0-9]+-beta"
-      - "maui_[0-9]+.[0-9]+.[0-9]+-beta[0-9]+"
-      - "maui_[0-9]+.[0-9]+.[0-9]+-preview[0-9]+"
+      - "avalonia_[0-9]+.[0-9]+.[0-9]+"
+      - "avalonia_[0-9]+.[0-9]+.[0-9]+-beta"
+      - "avalonia_[0-9]+.[0-9]+.[0-9]+-beta[0-9]+"
+      - "avalonia_[0-9]+.[0-9]+.[0-9]+-preview[0-9]+"
 
 jobs:
   release-nuget:
@@ -20,9 +20,6 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Install MAUI workloads
-        run: dotnet workload install maui
-
       - name: Verify commit exists in origin/main or origin/develop
         run: |
           git fetch --no-tags --prune origin +refs/heads/*:refs/remotes/origin/*
@@ -35,17 +32,17 @@ jobs:
       - name: Get version information from tag
         id: get_version
         run: |
-          $version = "${{ github.ref_name }}" -replace '^maui_', ''
+          $version = "${{ github.ref_name }}" -replace '^avalonia_', ''
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Restore dependencies
-        run: dotnet restore src\NepaliDatePicker.csproj
+        run: dotnet restore src\avalonia\NepaliDatePicker.Avalonia.csproj
 
       - name: Build library
-        run: dotnet build src\NepaliDatePicker.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }}
+        run: dotnet build src\avalonia\NepaliDatePicker.Avalonia.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }}
 
       - name: Pack library
-        run: dotnet pack src\NepaliDatePicker.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }} --no-build --output .
+        run: dotnet pack src\avalonia\NepaliDatePicker.Avalonia.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }} --no-build --output .
 
       - name: Push
         run: dotnet nuget push "*.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate

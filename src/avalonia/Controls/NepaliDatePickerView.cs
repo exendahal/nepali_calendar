@@ -755,7 +755,7 @@ internal class NepaliDatePickerView : UserControl
         var grid = new Grid();
         for (int c = 0; c < 7; c++)
             grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
-        for (int r = 0; r < rowCount; r++)
+        for (int r = 0; r < 6; r++)
             grid.RowDefinitions.Add(new RowDefinition(new GridLength(46)));
 
         int dayNum = 1;

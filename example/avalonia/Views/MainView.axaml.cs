@@ -43,7 +43,7 @@ public partial class MainView : UserControl
     }
 
     private void ApplySafeArea(Thickness insets) =>
-        RootScroll.Padding = new Thickness(0, insets.Top, 0, insets.Bottom);
+        RootScroll.Padding = new Thickness(0, Math.Max(insets.Top, 48), 0, insets.Bottom);
 
     private void SetTodayBanner()
     {
