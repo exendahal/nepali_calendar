@@ -12,6 +12,9 @@ jobs:
   release-maui:
     runs-on: windows-latest
 
+    permissions:
+      id-token: write
+
     steps:
       - uses: actions/checkout@v3
 
@@ -39,13 +42,19 @@ jobs:
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Restore dependencies
-        run: dotnet restore src\NepaliDatePicker.csproj
+        run: dotnet restore src\maui\NepaliDatePicker.Maui.csproj
 
       - name: Build library
-        run: dotnet build src\NepaliDatePicker.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }}
+        run: dotnet build src\maui\NepaliDatePicker.Maui.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }}
 
       - name: Pack library
-        run: dotnet pack src\NepaliDatePicker.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }} --no-build --output .
+        run: dotnet pack src\maui\NepaliDatePicker.Maui.csproj -c Release /p:Version=${{ steps.get_version.outputs.version }} --no-build --output .
+
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
 
       - name: Push
-        run: dotnet nuget push "*.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ secrets.NUGET_API_KEY }} --skip-duplicate
+        run: dotnet nuget push "*.nupkg" -s https://api.nuget.org/v3/index.json -k ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate
