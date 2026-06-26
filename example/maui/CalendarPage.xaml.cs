@@ -1,4 +1,4 @@
-using NepaliDatePicker.Models;
+using NepaliUtility.Models;
 
 namespace NepaliDatePickerDemo;
 
