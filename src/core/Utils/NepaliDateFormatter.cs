@@ -1,64 +1,65 @@
-using NepaliUtility.Models;
+﻿using NepaliUtility.Models;
 using NepaliUtility.Services;
 
 namespace NepaliUtility.Formatting;
 
 /// <summary>
-/// Formats a <see cref="NepaliDate"/> into a human-readable string using a token-based
-/// pattern language adapted for the Bikram Sambat calendar.
+/// Formats a <see cref="NepaliDate"/> or <see cref="NepaliDateTime"/> using a token-based pattern.
 /// </summary>
-/// <remarks>
-/// <para><b>Supported tokens</b> (longer tokens always win over shorter ones):</para>
-/// <list type="table">
-///   <listheader><term>Token</term><description>Example output</description></listheader>
-///   <item><term>yyyy</term><description>4-digit BS year — <c>2082</c></description></item>
-///   <item><term>yy</term><description>2-digit BS year — <c>82</c></description></item>
-///   <item><term>MMMM</term><description>Full month name — <c>Baisakh</c> / <c>बैशाख</c></description></item>
-///   <item><term>MMM</term><description>Abbreviated month — <c>Bai</c> / <c>बैशाख</c></description></item>
-///   <item><term>MM</term><description>Zero-padded month number — <c>01</c></description></item>
-///   <item><term>M</term><description>Month number — <c>1</c></description></item>
-///   <item><term>dd</term><description>Zero-padded day — <c>05</c></description></item>
-///   <item><term>d</term><description>Day number — <c>5</c></description></item>
-///   <item><term>EEEE</term><description>Full weekday — <c>Tuesday</c> / <c>मंगलबार</c></description></item>
-///   <item><term>EEE</term><description>Short weekday — <c>Tue</c> / <c>मंगल</c></description></item>
-///   <item><term>EE</term><description>Minimal weekday — <c>Tu</c> / <c>मं</c></description></item>
-/// </list>
-/// <para>
-/// Wrap literal text in single quotes to prevent token substitution.
-/// Use <c>''</c> (two consecutive single quotes) to emit a literal apostrophe.
-/// </para>
-/// <para>Example: <c>"EEEE, d MMMM yyyy"</c> → <c>"Tuesday, 15 Baisakh 2082"</c></para>
-/// </remarks>
 public static class NepaliDateFormatter
 {
-    // ── Weekday name tables (Sunday = index 0) ────────────────────────────────
-    private static readonly string[] _DayFull    = ["Sunday",    "Monday",   "Tuesday",  "Wednesday", "Thursday",  "Friday",   "Saturday" ];
-    private static readonly string[] _DayShort   = ["Sun",       "Mon",      "Tue",       "Wed",       "Thu",       "Fri",       "Sat"      ];
-    private static readonly string[] _DayMin     = ["Su",        "Mo",       "Tu",        "We",        "Th",        "Fr",        "Sa"       ];
-    private static readonly string[] _DayFullNp  = ["आइतबार",   "सोमबार",   "मंगलबार",  "बुधबार",   "बिहिबार",  "शुक्रबार", "शनिबार"  ];
-    private static readonly string[] _DayShortNp = ["आइत",      "सोम",      "मंगल",      "बुध",       "बिहि",      "शुक्र",    "शनि"      ];
-    private static readonly string[] _DayMinNp   = ["आइ",       "सो",       "मं",        "बु",        "बि",        "शु",       "श"        ];
+    // Weekday tables (Sunday = 0)
+    private static readonly string[] _DayFull    = ["Sunday",   "Monday",  "Tuesday", "Wednesday", "Thursday", "Friday",   "Saturday"];
+    private static readonly string[] _DayShort   = ["Sun",      "Mon",     "Tue",     "Wed",       "Thu",      "Fri",      "Sat"     ];
+    private static readonly string[] _DayMin     = ["Su",       "Mo",      "Tu",      "We",        "Th",       "Fr",       "Sa"      ];
+    private static readonly string[] _DayFullNp  = ["आइतबार",  "सोमबार",  "मंगलबार", "बुधबार",   "बिहिबार",  "शुक्रबार", "शनिबार" ];
+    private static readonly string[] _DayShortNp = ["आइत",     "सोम",     "मंगल",    "बुध",       "बिहि",     "शुक्र",    "शनि"    ];
+    private static readonly string[] _DayMinNp   = ["आइ",      "सो",      "मं",      "बु",        "बि",       "शु",       "श"      ];
 
-    // Distinct 3-char abbreviations for all 12 BS months
     private static readonly string[] _MonthAbbrevEn =
         ["Bai", "Jes", "Ash", "Shr", "Bha", "Asw", "Kar", "Mgs", "Pou", "Mag", "Fal", "Cha"];
 
-    /// <summary>
-    /// Formats <paramref name="date"/> using the given <paramref name="pattern"/>.
-    /// </summary>
-    /// <param name="date">The BS date to format.</param>
-    /// <param name="pattern">A token-based format string.</param>
-    /// <param name="nepali">
-    ///   When <c>true</c>, month and weekday names are rendered in Devanagari script
-    ///   and all digits are converted to Nepali (Devanagari) numerals.
-    /// </param>
+    // Formal / Sanskrit names (MMMMM)
+    private static readonly string[] _MonthFormalEn =
+        ["Vaishakha", "Jyeshtha", "Ashadha", "Shravana", "Bhadrapada",
+         "Ashvina", "Kartika", "Marga", "Pausha", "Magha", "Phalguna", "Chaitra"];
+    private static readonly string[] _MonthFormalNp =
+        ["वैशाख", "ज्येष्ठ", "आषाढ", "श्रावण", "भाद्रपद",
+         "आश्विन", "कार्तिक", "मार्ग", "पौष", "माघ", "फाल्गुन", "चैत्र"];
+
+    private static readonly string[] _QuarterOrdinal = ["1st", "2nd", "3rd", "4th"];
+
+    /// <summary>Formats a BS date using the given pattern.</summary>
     public static string Format(NepaliDate date, string pattern, bool nepali = false)
     {
         ArgumentNullException.ThrowIfNull(date);
         if (string.IsNullOrEmpty(pattern)) return string.Empty;
-
         var ad  = BsAdConverter.BsToAd(date);
-        int dow = (int)ad.DayOfWeek;   // 0 = Sunday
+        int dow = (int)ad.DayOfWeek;
+        return FormatCore(date.Year, date.Month, date.Day, dow, null, pattern, nepali);
+    }
+
+    /// <summary>Formats a BS date-time using the given pattern.</summary>
+    public static string Format(NepaliDateTime dt, string pattern, bool nepali = false)
+    {
+        ArgumentNullException.ThrowIfNull(dt);
+        if (string.IsNullOrEmpty(pattern)) return string.Empty;
+        var ad  = BsAdConverter.BsToAd(dt.Date);
+        int dow = (int)ad.DayOfWeek;
+        return FormatCore(dt.Year, dt.Month, dt.Day, dow, dt.Time, pattern, nepali);
+    }
+
+    private static string FormatCore(
+        int year, int month, int day, int dow,
+        TimeOnly? time, string pattern, bool nepali)
+    {
+        int quarter = (month - 1) / 3 + 1;
+        int h24   = time?.Hour ?? 0;
+        int h12   = h24 % 12 == 0 ? 12 : h24 % 12;
+        int min   = time?.Minute ?? 0;
+        int sec   = time?.Second ?? 0;
+        int ms    = time?.Millisecond ?? 0;
+        bool isPm = h24 >= 12;
 
         var sb = new System.Text.StringBuilder(pattern.Length + 16);
         int i  = 0;
@@ -67,96 +68,80 @@ public static class NepaliDateFormatter
         {
             char c = pattern[i];
 
-            // ── Quoted literal ─────────────────────────────────────────────────
             if (c == '\'')
             {
                 i++;
-                if (i < pattern.Length && pattern[i] == '\'')  // '' → literal apostrophe
-                {
-                    sb.Append('\'');
-                    i++;
-                    continue;
-                }
-                while (i < pattern.Length && pattern[i] != '\'')
-                    sb.Append(pattern[i++]);
-                if (i < pattern.Length) i++;   // consume closing quote
+                if (i < pattern.Length && pattern[i] == '\'') { sb.Append('\''); i++; continue; }
+                while (i < pattern.Length && pattern[i] != '\'') sb.Append(pattern[i++]);
+                if (i < pattern.Length) i++;
                 continue;
             }
 
-            // ── Token dispatch (longest match takes priority) ──────────────────
-            if (Peek(pattern, i, "yyyy"))
-            {
-                AppendDigits(sb, date.Year.ToString("D4"), nepali);
-                i += 4;
-            }
-            else if (Peek(pattern, i, "yy"))
-            {
-                AppendDigits(sb, (date.Year % 100).ToString("D2"), nepali);
-                i += 2;
-            }
-            else if (Peek(pattern, i, "MMMM"))
-            {
-                sb.Append(nepali ? NepaliDate.MonthNamesNepali[date.Month - 1] : NepaliDate.MonthNames[date.Month - 1]);
-                i += 4;
-            }
-            else if (Peek(pattern, i, "MMM"))
-            {
-                // Nepali month names are already compact — return the full Devanagari name for MMM.
-                sb.Append(nepali ? NepaliDate.MonthNamesNepali[date.Month - 1] : _MonthAbbrevEn[date.Month - 1]);
-                i += 3;
-            }
-            else if (Peek(pattern, i, "MM"))
-            {
-                AppendDigits(sb, date.Month.ToString("D2"), nepali);
-                i += 2;
-            }
-            else if (Peek(pattern, i, "M"))
-            {
-                AppendDigits(sb, date.Month.ToString(), nepali);
-                i++;
-            }
-            else if (Peek(pattern, i, "dd"))
-            {
-                AppendDigits(sb, date.Day.ToString("D2"), nepali);
-                i += 2;
-            }
-            else if (Peek(pattern, i, "d"))
-            {
-                AppendDigits(sb, date.Day.ToString(), nepali);
-                i++;
-            }
-            else if (Peek(pattern, i, "EEEE"))
-            {
-                sb.Append(nepali ? _DayFullNp[dow] : _DayFull[dow]);
-                i += 4;
-            }
-            else if (Peek(pattern, i, "EEE"))
-            {
-                sb.Append(nepali ? _DayShortNp[dow] : _DayShort[dow]);
-                i += 3;
-            }
-            else if (Peek(pattern, i, "EE"))
-            {
-                sb.Append(nepali ? _DayMinNp[dow] : _DayMin[dow]);
-                i += 2;
-            }
-            else
-            {
-                sb.Append(c);
-                i++;
-            }
+            // Era: GGG > GG > G
+            if      (Peek(pattern, i, "GGG")) { sb.Append(nepali ? "बिक्रम संबत" : "Bikram Sambat"); i += 3; }
+            else if (Peek(pattern, i, "GG"))  { sb.Append(nepali ? "बि.सं." : "B.S."); i += 2; }
+            else if (Peek(pattern, i, "G"))   { sb.Append(nepali ? "बि सं" : "BS"); i++; }
+
+            // Year: yyyy > yy > y
+            else if (Peek(pattern, i, "yyyy")) { AppendNum(sb, year.ToString("D4"), nepali); i += 4; }
+            else if (Peek(pattern, i, "yy"))   { AppendNum(sb, (year % 100).ToString("D2"), nepali); i += 2; }
+            else if (Peek(pattern, i, "y"))    { AppendNum(sb, year.ToString(), nepali); i++; }
+
+            // Quarter: QQQQ > QQQ > QQ > Q
+            else if (Peek(pattern, i, "QQQQ")) { sb.Append($"{_QuarterOrdinal[quarter - 1]} quarter"); i += 4; }
+            else if (Peek(pattern, i, "QQQ"))  { sb.Append($"Q{quarter}"); i += 3; }
+            else if (Peek(pattern, i, "QQ"))   { AppendNum(sb, quarter.ToString("D2"), nepali); i += 2; }
+            else if (Peek(pattern, i, "Q"))    { AppendNum(sb, quarter.ToString(), nepali); i++; }
+
+            // Month (capital M): MMMMM > MMMM > MMM > MM > M
+            else if (Peek(pattern, i, "MMMMM")) { sb.Append(nepali ? _MonthFormalNp[month - 1] : _MonthFormalEn[month - 1]); i += 5; }
+            else if (Peek(pattern, i, "MMMM"))  { sb.Append(nepali ? NepaliDate.MonthNamesNepali[month - 1] : NepaliDate.MonthNames[month - 1]); i += 4; }
+            else if (Peek(pattern, i, "MMM"))   { sb.Append(nepali ? NepaliDate.MonthNamesNepali[month - 1] : _MonthAbbrevEn[month - 1]); i += 3; }
+            else if (Peek(pattern, i, "MM"))    { AppendNum(sb, month.ToString("D2"), nepali); i += 2; }
+            else if (Peek(pattern, i, "M"))     { AppendNum(sb, month.ToString(), nepali); i++; }
+
+            // Day: dd > d
+            else if (Peek(pattern, i, "dd")) { AppendNum(sb, day.ToString("D2"), nepali); i += 2; }
+            else if (Peek(pattern, i, "d"))  { AppendNum(sb, day.ToString(), nepali); i++; }
+
+            // Weekday: EEEE > EEE > EE > E  (E = same as EEE short)
+            else if (Peek(pattern, i, "EEEE")) { sb.Append(nepali ? _DayFullNp[dow]  : _DayFull[dow]);  i += 4; }
+            else if (Peek(pattern, i, "EEE"))  { sb.Append(nepali ? _DayShortNp[dow] : _DayShort[dow]); i += 3; }
+            else if (Peek(pattern, i, "EE"))   { sb.Append(nepali ? _DayMinNp[dow]   : _DayMin[dow]);   i += 2; }
+            else if (Peek(pattern, i, "E"))    { sb.Append(nepali ? _DayShortNp[dow] : _DayShort[dow]); i++; }
+
+            // 24-hour: HH > H
+            else if (Peek(pattern, i, "HH")) { AppendNum(sb, h24.ToString("D2"), nepali); i += 2; }
+            else if (Peek(pattern, i, "H"))  { AppendNum(sb, h24.ToString(), nepali); i++; }
+
+            // 12-hour: hh > h
+            else if (Peek(pattern, i, "hh")) { AppendNum(sb, h12.ToString("D2"), nepali); i += 2; }
+            else if (Peek(pattern, i, "h"))  { AppendNum(sb, h12.ToString(), nepali); i++; }
+
+            // AM/PM: aa > a
+            else if (Peek(pattern, i, "aa")) { sb.Append(nepali ? (isPm ? "बेलुकी" : "बिहान") : (isPm ? "PM" : "AM")); i += 2; }
+            else if (Peek(pattern, i, "a"))  { sb.Append(nepali ? (isPm ? "बेलुकी" : "बिहान") : (isPm ? "pm" : "am")); i++; }
+
+            // Minute (lowercase): mm > m
+            else if (Peek(pattern, i, "mm")) { AppendNum(sb, min.ToString("D2"), nepali); i += 2; }
+            else if (Peek(pattern, i, "m"))  { AppendNum(sb, min.ToString(), nepali); i++; }
+
+            // Second: ss > s; Fractional: S
+            else if (Peek(pattern, i, "ss")) { AppendNum(sb, sec.ToString("D2"), nepali); i += 2; }
+            else if (Peek(pattern, i, "s"))  { AppendNum(sb, sec.ToString(), nepali); i++; }
+            else if (Peek(pattern, i, "S"))  { AppendNum(sb, ms.ToString(), nepali); i++; }
+
+            else { sb.Append(c); i++; }
         }
 
         return sb.ToString();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
     private static bool Peek(string s, int at, string token)
         => at + token.Length <= s.Length
         && s.AsSpan(at, token.Length).Equals(token.AsSpan(), StringComparison.Ordinal);
 
-    private static void AppendDigits(System.Text.StringBuilder sb, string digits, bool nepali)
+    private static void AppendNum(System.Text.StringBuilder sb, string digits, bool nepali)
     {
         if (!nepali) { sb.Append(digits); return; }
         foreach (char ch in digits)

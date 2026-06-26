@@ -120,8 +120,20 @@ public static class BsAdConverter
         return new NepaliDate(year, month, day);
     }
 
-    /// <summary>Returns today's date in Bikram Sambat.</summary>
-    public static NepaliDate Today => AdToBs(DateTime.Today);
+    private static readonly TimeSpan _NepalOffset = TimeSpan.FromMinutes(5 * 60 + 45);
+
+    /// <summary>Returns today's date in Bikram Sambat (Nepal Standard Time, UTC+5:45).</summary>
+    public static NepaliDate Today => AdToBs(DateTimeOffset.UtcNow.ToOffset(_NepalOffset).DateTime);
+
+    /// <summary>Returns the current date and time in Bikram Sambat (Nepal Standard Time, UTC+5:45).</summary>
+    public static NepaliDateTime Now
+    {
+        get
+        {
+            var nepal = DateTimeOffset.UtcNow.ToOffset(_NepalOffset).DateTime;
+            return new NepaliDateTime(AdToBs(nepal), TimeOnly.FromDateTime(nepal));
+        }
+    }
 
     /// <summary>Converts a <see cref="DateOnly"/> AD date to its equivalent BS date.</summary>
     public static NepaliDate AdToBs(DateOnly date) => AdToBs(date.ToDateTime(TimeOnly.MinValue));

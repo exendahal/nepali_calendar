@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../core/NepaliDatePicker.Core.csproj" />
+    <ProjectReference Include="../core/NepaliUtility.Core.csproj" />
   </ItemGroup>
 
 </Project>

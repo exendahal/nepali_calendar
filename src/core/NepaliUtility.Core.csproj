@@ -13,7 +13,7 @@
     <Copyright>Santosh Dahal</Copyright>
     <PackageIcon>icon.png</PackageIcon>
     <Title>NepaliUtility.Core — Bikram Sambat (BS) utilities for .NET</Title>
-    <Description>A zero-dependency .NET library for the Bikram Sambat (BS/Nepali) calendar. Provides BS↔AD date conversion, token-based formatting, relative-time strings, Devanagari numeral conversion, Nepal fiscal year helpers, and authoritative Government of Nepal calendar data for BS 1970–2100.</Description>
+    <Description>A zero-dependency utility library for .NET developers building Nepali applications. Provides Bikram Sambat (BS/Nepali) calendar utilities: BS↔AD date conversion, token-based formatting, relative-time strings, Devanagari numeral conversion, Nepal fiscal year helpers, and authoritative Government of Nepal calendar data for BS 1970–2100.</Description>
     <PackageTags>nepali;bikram-sambat;bs;calendar;nepal;date;conversion;devanagari;fiscal-year;nepali-calendar</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/exendahal/nepali_calendar</PackageProjectUrl>
@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <None Include="..\maui\icon\icon.png" Pack="true" PackagePath="\" />
-    <None Include="..\..\docs\core.md" Pack="true" PackagePath="\README.md" />
+    <None Include="README.md" Pack="true" PackagePath="\README.md" />
   </ItemGroup>
 
 </Project>
