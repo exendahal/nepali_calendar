@@ -1,7 +1,7 @@
-using NepaliDatePicker.Models;
-using NepaliDatePicker.Services;
+using NepaliUtility.Models;
+using NepaliUtility.Services;
 
-namespace NepaliDatePicker.Formatting;
+namespace NepaliUtility.Formatting;
 
 /// <summary>
 /// Produces human-readable relative-time strings ("3 days ago", "in 2 months", "Yesterday")

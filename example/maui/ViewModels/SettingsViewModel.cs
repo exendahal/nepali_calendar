@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NepaliDatePicker.Models;
+using NepaliUtility.Models;
 
 namespace NepaliDatePickerDemo;
 

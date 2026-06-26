@@ -1,40 +1,39 @@
-namespace NepaliDatePicker.Formatting;
+﻿using NepaliUtility.Models;
+using NepaliUtility.Services;
+
+namespace NepaliUtility.Formatting;
 
 /// <summary>
-/// Extension methods that enrich <see cref="NepaliDatePicker.Models.NepaliDate"/>
-/// with formatting and relative-time utilities.
-/// Add <c>using NepaliDatePicker.Formatting;</c> to bring these into scope.
+/// Extension methods on <see cref="NepaliDate"/> and <see cref="NepaliDateTime"/>.
+/// Add <c>using NepaliUtility.Formatting;</c> to bring these into scope.
 /// </summary>
 public static class NepaliDateExtensions
 {
-    /// <summary>
-    /// Formats this date using the given pattern string.
-    /// Delegates to <see cref="NepaliDateFormatter.Format"/>.
-    /// </summary>
-    /// <param name="date">The BS date to format.</param>
-    /// <param name="pattern">
-    ///   Token-based format string — e.g. <c>"d MMMM yyyy"</c>,
-    ///   <c>"EEEE, dd/MM/yyyy"</c>. See <see cref="NepaliDateFormatter"/> for all tokens.
-    /// </param>
-    /// <param name="nepali">
-    ///   When <c>true</c>, names are Devanagari and digits are Nepali numerals.
-    /// </param>
-    public static string Format(
-        this NepaliDatePicker.Models.NepaliDate date,
-        string pattern,
-        bool   nepali = false)
+    // ── NepaliDate extensions ─────────────────────────────────────────────────
+
+    public static string Format(this NepaliDate date, string pattern, bool nepali = false)
         => NepaliDateFormatter.Format(date, pattern, nepali);
 
-    /// <summary>
-    /// Returns a relative-time string such as <c>"3 days ago"</c> or <c>"in 2 months"</c>.
-    /// Delegates to <see cref="NepaliMoment.Elapsed(NepaliDatePicker.Models.NepaliDate, NepaliDatePicker.Models.NepaliDate?, bool)"/>.
-    /// </summary>
-    /// <param name="date">The BS date to describe.</param>
-    /// <param name="reference">Comparison point; defaults to today if <c>null</c>.</param>
-    /// <param name="nepali">When <c>true</c>, returns Devanagari text and numerals.</param>
-    public static string Elapsed(
-        this NepaliDatePicker.Models.NepaliDate date,
-        NepaliDatePicker.Models.NepaliDate?     reference = null,
-        bool                                    nepali    = false)
+    public static string Elapsed(this NepaliDate date, NepaliDate? reference = null, bool nepali = false)
         => NepaliMoment.Elapsed(date, reference, nepali);
+
+    public static NepaliDate AddDays(this NepaliDate date, int days)
+        => BsAdConverter.AdToBs(BsAdConverter.BsToAd(date).AddDays(days));
+
+    public static DayOfWeek GetDayOfWeek(this NepaliDate date)
+        => BsAdConverter.BsToAd(date).DayOfWeek;
+
+    public static int DaysTo(this NepaliDate date, NepaliDate other)
+        => (int)(BsAdConverter.BsToAd(other) - BsAdConverter.BsToAd(date)).TotalDays;
+
+    // ── NepaliDateTime extensions ─────────────────────────────────────────────
+
+    public static string Format(this NepaliDateTime dt, string pattern, bool nepali = false)
+        => NepaliDateFormatter.Format(dt, pattern, nepali);
+
+    public static string Elapsed(this NepaliDateTime dt, NepaliDate? reference = null, bool nepali = false)
+        => NepaliMoment.Elapsed(dt.Date, reference, nepali);
+
+    public static DayOfWeek GetDayOfWeek(this NepaliDateTime dt)
+        => BsAdConverter.BsToAd(dt.Date).DayOfWeek;
 }

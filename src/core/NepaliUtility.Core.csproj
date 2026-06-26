@@ -4,21 +4,21 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>NepaliDatePicker</RootNamespace>
-    <AssemblyName>NepaliDatePicker.Avalonia</AssemblyName>
+    <RootNamespace>NepaliUtility</RootNamespace>
+    <AssemblyName>NepaliUtility.Core</AssemblyName>
 
-    <PackageId>NepaliDatePicker.Avalonia</PackageId>
+    <PackageId>NepaliUtility.Core</PackageId>
     <Version>1.0.0</Version>
     <Authors>exendahal</Authors>
     <Copyright>Santosh Dahal</Copyright>
-    <Title>Nepali Bikram Sambat (BS) Date Picker for Avalonia</Title>
-    <Description>A Nepali Bikram Sambat (BS) date picker control for Avalonia. Supports calendar and wheel styles, BS/AD toggle, Nepali (Devanagari) script, light/dark mode, and full color customization.</Description>
-    <PackageTags>avalonia;dotnet;nepali;calendar;bikram-sambat;bs;date-picker;nepal</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <Title>NepaliUtility.Core — Bikram Sambat (BS) utilities for .NET</Title>
+    <Description>A zero-dependency utility library for .NET developers building Nepali applications. Provides Bikram Sambat (BS/Nepali) calendar utilities: BS↔AD date conversion, token-based formatting, relative-time strings, Devanagari numeral conversion, Nepal fiscal year helpers, and authoritative Government of Nepal calendar data for BS 1970–2100.</Description>
+    <PackageTags>nepali;bikram-sambat;bs;calendar;nepal;date;conversion;devanagari;fiscal-year;nepali-calendar</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/exendahal/nepali_calendar</PackageProjectUrl>
     <RepositoryUrl>https://github.com/exendahal/nepali_calendar</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageIcon>icon.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <IsPackable>true</IsPackable>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -29,15 +29,7 @@
 
   <ItemGroup>
     <None Include="..\maui\icon\icon.png" Pack="true" PackagePath="\" />
-    <None Include="..\..\docs\avalonia.md" Pack="true" PackagePath="\README.md" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../core/NepaliUtility.Core.csproj" />
+    <None Include="README.md" Pack="true" PackagePath="\README.md" />
   </ItemGroup>
 
 </Project>

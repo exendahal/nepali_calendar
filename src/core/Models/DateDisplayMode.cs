@@ -1,4 +1,4 @@
-namespace NepaliDatePicker.Models;
+namespace NepaliUtility.Models;
 
 /// <summary>Controls which calendar system(s) the picker and button expose.</summary>
 public enum DateDisplayMode

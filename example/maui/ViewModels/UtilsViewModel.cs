@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using NepaliDatePicker.Models;
-using NepaliDatePicker.Services;
-using NepaliDatePicker.Formatting;
+using NepaliUtility.Models;
+using NepaliUtility.Services;
+using NepaliUtility.Formatting;
 
 namespace NepaliDatePickerDemo;
 

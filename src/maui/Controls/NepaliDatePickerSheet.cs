@@ -1,7 +1,8 @@
 using Microsoft.Maui.Controls.Shapes;
-using NepaliDatePicker.Data;
 using NepaliDatePicker.Models;
-using NepaliDatePicker.Services;
+using NepaliUtility.Data;
+using NepaliUtility.Models;
+using NepaliUtility.Services;
 
 namespace NepaliDatePicker.Controls;
 
