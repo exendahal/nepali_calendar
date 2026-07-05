@@ -1,0 +1,62 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Utility Reference";
+}
+
+<header class="top-app-bar" id="app-bar">
+    <span class="top-app-bar-title"><strong>NepaliUtility</strong>.Core</span>
+    <a class="btn-text" href="/api/examples" data-ripple>View raw JSON</a>
+</header>
+
+<div class="layout">
+    <aside class="drawer">
+        <span class="drawer-section-label">Types</span>
+        <nav>
+            <ul>
+                @foreach (var grp in Model.Sections)
+                {
+                    var slug = grp.Title.ToLowerInvariant();
+                    <li><a href="#@slug" data-ripple>@grp.Title</a></li>
+                }
+            </ul>
+        </nav>
+    </aside>
+
+    <main>
+        <div class="page-intro">
+            <p>Every public API in <code>NepaliUtility.Core</code>, called live on each request and shown next to its result.</p>
+        </div>
+
+        @foreach (var grp in Model.Sections)
+        {
+            var slug = grp.Title.ToLowerInvariant();
+            <section id="@slug" class="card">
+                <div class="card-header">
+                    <span class="card-eyebrow">@grp.Namespace</span>
+                    <h2>@grp.Title</h2>
+                    <p>@grp.Description</p>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-member">Member</th>
+                            <th class="col-code">Call</th>
+                            <th class="col-result">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in grp.Items)
+                        {
+                            <tr>
+                                <td class="col-member">@item.Member</td>
+                                <td class="col-code"><code>@item.Code</code></td>
+                                <td class="col-result"><span class="result">@item.Result</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </section>
+        }
+    </main>
+</div>

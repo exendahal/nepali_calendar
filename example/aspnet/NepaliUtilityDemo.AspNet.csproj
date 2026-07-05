@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>NepaliUtilityDemo.AspNet</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Reference the library project directly (for development) -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\core\NepaliUtility.Core.csproj" />
+  </ItemGroup>
+
+</Project>

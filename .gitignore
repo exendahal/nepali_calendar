@@ -36,3 +36,5 @@
 /.vs/NepaliDatePicker
 /example/avalonia/ios/bin/Debug/net10.0-ios/ios-arm64
 /nupkg
+example/aspnet/bin
+example/aspnet/obj
